@@ -1,15 +1,18 @@
 # Fenix2GSX
-<br/>
+Full GSX Integration and Automation for the Fenix A320!
+<br/><br/>
 
 ## Requirements
 - [.NET 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) x64 Runtime (Core + Desktop) installed & updated
 - MobiFlight [WASM Module](https://github.com/MobiFlight/MobiFlight-WASM-Module/releases) installed
 - MSFS, Fenix, GSX Pro :wink:
 
+<br/><br/>
 ## Installation
-Extract it anywhere you want, but do not use Application-Folders, User-Folders or even C:\<br/>
+Extract it anywhere you want, but do not use Application-Folders, User-Folders or even C:\\ <br/>
 It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/or setting an Exception helps.
 
+<br/><br/>
 ## Configuration
 Configure GSX to use Ctrl+Shift+F12 as the Menu Hotkey!<br/>
 
@@ -26,6 +29,7 @@ Change the Configuration to your Needs, all the Variables are in the File "Fenix
 * **autoDeboarding**" 			-  Automaticall start Deboarding on Arrival.
 * **refuelRateKGS**" 			-  The Speed at which the Tanks are filled, defaults to 15kg per Second.
 
+<br/><br/>
 ## Usage
 1) Create your SB Flightplan and start MSFS as you normally would. Depending on your Configuration, start the Tool before MSFS or when MSFS is in the Main Menu.
 2) When your Session is loaded (Ready to Fly was pressed), wait for the Repositioning and Jetway/Stair Call to happen (if configured)
