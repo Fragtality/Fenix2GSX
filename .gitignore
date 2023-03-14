@@ -10,7 +10,7 @@
 *.userosscache
 *.sln.docstates
 
-Releases/*
+Releases/
 Build.ps1
 desktop.ini
 

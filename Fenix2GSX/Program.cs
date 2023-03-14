@@ -25,6 +25,8 @@ namespace Fenix2GSX
         public static readonly bool repositionPlane = Convert.ToBoolean(ConfigurationManager.AppSettings["repositionPlane"]);
         public static readonly bool autoConnect = Convert.ToBoolean(ConfigurationManager.AppSettings["autoConnect"]);
         public static readonly bool connectPCA = Convert.ToBoolean(ConfigurationManager.AppSettings["connectPCA"]);
+        public static readonly bool autoRefuel = Convert.ToBoolean(ConfigurationManager.AppSettings["autoRefuel"]);
+        public static readonly bool callCatering = Convert.ToBoolean(ConfigurationManager.AppSettings["callCatering"]);
         public static readonly bool autoBoarding = Convert.ToBoolean(ConfigurationManager.AppSettings["autoBoarding"]);
         public static readonly bool autoDeboarding = Convert.ToBoolean(ConfigurationManager.AppSettings["autoDeboarding"]);
         public static readonly float refuelRateKGS = Convert.ToSingle(ConfigurationManager.AppSettings["refuelRateKGS"]);
@@ -126,8 +128,12 @@ namespace Fenix2GSX
                 }
             }
             
-            Log.Logger.Information($"Program: MainLoop ended. Cleaning Up ...");
-            controller.CleanUp();
+            Log.Logger.Information($"Program: MainLoop ended.");
+            if (Program.gsxVolumeControl)
+            {
+                Log.Logger.Information("Resetting GSX Audio");
+                controller.ResetAudio();
+            }
         }
 
         private static bool Wait()

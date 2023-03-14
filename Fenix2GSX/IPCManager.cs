@@ -144,15 +144,5 @@ namespace Fenix2GSX
             }
             catch { }
         }
-
-        //public static float ReadLVar(string name)
-        //{
-        //    return SimConnect.ReadLvar(name);
-        //}
-
-        //public static float ReadSimVar(string name, string unit)
-        //{
-        //    return SimConnect.ReadSimVar(name, unit);
-        //}
     }
 }

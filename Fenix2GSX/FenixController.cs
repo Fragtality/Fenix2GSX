@@ -119,7 +119,7 @@ namespace Fenix2GSX
         {
             if (fuelCurrent > fuelPlanned)
             {
-                Interface.FenixPost(FenixInterface.MsgMutation("float", "aircraft.fuel.total.amount.kg", 2500));
+                Interface.FenixPost(FenixInterface.MsgMutation("float", "aircraft.fuel.total.amount.kg", 2500.0f));
                 fuelCurrent = 2500;
             }
         }

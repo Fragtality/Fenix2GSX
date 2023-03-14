@@ -87,7 +87,7 @@ namespace Fenix2GSX
                     {
                         foreach (var session in device.SessionController.ActiveSessions())
                         {
-                            if (session.ExecutablePath.Contains("couatl64_MSFS"))
+                            if (!string.IsNullOrWhiteSpace(session.ExecutablePath) && session.ExecutablePath.Contains("couatl64_MSFS"))
                             {
                                 gsxAudioSession = session;
                                 break;
@@ -101,7 +101,7 @@ namespace Fenix2GSX
                 FenixController.Update(true);
         }
 
-        public void CleanUp()
+        public void ResetAudio()
         {
             if (Program.gsxVolumeControl && gsxAudioSession != null)
             {
@@ -135,14 +135,6 @@ namespace Fenix2GSX
         {
             bool simOnGround = SimConnect.ReadSimVar("SIM ON GROUND", "Bool") != 0.0f;
             FenixController.Update(false);
-
-            //if (!finalLoadsheetSend)
-            //{
-            //    Log.Information("Test");
-            //    FenixController.TriggerFinal();
-            //    finalLoadsheetSend = true;
-            //}
-            //return;
 
             //Pre-Flight - First-Flight
             if (flightState == 0 && simOnGround)
@@ -216,7 +208,7 @@ namespace Fenix2GSX
             if (flightState == 1 && (!refuelFinished || !boardFinished))
             {
                 Interval = 1000;
-                if (Program.autoBoarding)
+                if (Program.autoRefuel)
                 {
                     if (!refuelRequested && refuelState != 6)
                     {
@@ -227,7 +219,7 @@ namespace Fenix2GSX
                         return;
                     }
 
-                    if (!cateringRequested && cateringState != 6)
+                    if (Program.callCatering && !cateringRequested && cateringState != 6)
                     {
                         Log.Logger.Information("Calling Catering Service");
                         MenuOpenByVar();
@@ -235,14 +227,17 @@ namespace Fenix2GSX
                         cateringRequested = true;
                         return;
                     }
+                }
 
-                    if (!cateringFinished && cateringState == 6)
-                    {
-                        cateringFinished = true;
-                        Log.Logger.Information("Catering finished");
-                    }
+                if (!cateringFinished && cateringState == 6)
+                {
+                    cateringFinished = true;
+                    Log.Logger.Information("Catering finished");
+                }
 
-                    if (!boardingRequested && refuelFinished && cateringFinished)
+                if (Program.autoBoarding)
+                { 
+                    if (!boardingRequested && refuelFinished && ((Program.callCatering && cateringFinished) || !Program.callCatering))
                     {
                         if (delayCounter == 0)
                             Log.Logger.Information("Waiting 90s before calling Boarding");
