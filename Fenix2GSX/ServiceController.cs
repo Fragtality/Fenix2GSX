@@ -66,7 +66,7 @@ namespace Fenix2GSX
             SimConnect.SubscribeLvar("FSDT_GSX_DEBOARDING_CARGO_PERCENT");
             SimConnect.SubscribeLvar("FSDT_GSX_FUELHOSE_CONNECTED");
             SimConnect.SubscribeLvar("FSDT_VAR_EnginesStopped");
-            SimConnect.SubscribeLvar("FSDT_GSX_STATE");
+            SimConnect.SubscribeLvar("FSDT_GSX_COUATL_STARTED");
             SimConnect.SubscribeLvar("FSDT_GSX_JETWAY");
             SimConnect.SubscribeLvar("FSDT_GSX_STAIRS");
             SimConnect.SubscribeLvar("S_MIP_PARKING_BRAKE");
@@ -148,14 +148,16 @@ namespace Fenix2GSX
                 }
                 Interval = 1000;
 
-                if (SimConnect.ReadLvar("FSDT_GSX_STATE") != 5)
+                if (SimConnect.ReadLvar("FSDT_GSX_COUATL_STARTED") != 1)
                 {
-                    Log.Logger.Information("GSX not ready yet");
+                    Log.Logger.Information("Couatl Engine not running");
                     return;
                 }
 
                 if (Program.repositionPlane && !planePositioned)
                 {
+                    if (Program.operatorDelay > 0)
+                        OperatorDelay("before Reposition");
                     Log.Logger.Information("Repositioning Plane");
                     MenuOpenByVar();
                     MenuItem(0);
@@ -167,7 +169,9 @@ namespace Fenix2GSX
 
                 if (Program.autoConnect && !connectCalled)
                 {
-                    CallJetwayStairs();
+                    if (Program.operatorDelay > 0 && !Program.repositionPlane)
+                        OperatorDelay("before Service Call");
+                    CallJetwayStairs(Program.operatorDelay > 0);
                     connectCalled = true;
                     return;
                 }
@@ -371,6 +375,12 @@ namespace Fenix2GSX
                 if (flightState <= 2 && !simOnGround)
                 {
                     flightState = 3;
+                    if (flightState <= 1) //in flight restart
+                    {
+                        Log.Logger.Information("In-Flight restart detected");
+                        FenixController.Update(true);
+                        flightPlanID = FenixController.flightPlanID;
+                    }
                     Log.Logger.Information("Current State: Flight");
                     Interval = 180000;
                     
@@ -384,7 +394,6 @@ namespace Fenix2GSX
                     Log.Logger.Information("Current State: Arriving");
 
                     Interval = 2500;
-                    SetPassengers(FenixController.GetPaxPlanned());
                     if (testArrival)
                         flightPlanID = FenixController.flightPlanID;
                     pcaCalled = false;
@@ -398,15 +407,15 @@ namespace Fenix2GSX
             int deboard_state = (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_STATE");
             if (flightState == 4 && SimConnect.ReadLvar("FSDT_VAR_EnginesStopped") == 1 && SimConnect.ReadLvar("S_MIP_PARKING_BRAKE") == 1)
             {
-                if (SimConnect.ReadLvar("FSDT_GSX_STATE") != 5)
+                if (SimConnect.ReadLvar("FSDT_GSX_COUATL_STARTED") != 1)
                 {
-                    Log.Logger.Information("GSX not ready yet");
+                    Log.Logger.Information("Couatl Engine not running");
                     return;
                 }
 
                 if (Program.autoConnect && !connectCalled)
                 {
-                    CallJetwayStairs();
+                    CallJetwayStairs(Program.operatorDelay > 0);
                     connectCalled = true;
                     return;
                 }
@@ -423,6 +432,7 @@ namespace Fenix2GSX
 
                 FenixController.SetServiceChocks(true);
                 FenixController.SetServiceGPU(true);
+                SetPassengers(FenixController.GetPaxPlanned());
 
                 flightState = 5;
                 Log.Logger.Information("Current State: At Arrival Gate");
@@ -508,13 +518,23 @@ namespace Fenix2GSX
             }
         }
 
-        private void CallJetwayStairs()
+        private void OperatorDelay(string msg = "for Operator Selection")
+        {
+            Log.Logger.Information($"Sleeping {Program.operatorDelay}s {msg}");
+            Thread.Sleep((int)(Program.operatorDelay * 1000));
+        }
+
+        private void CallJetwayStairs(bool useDelay)
         {
             MenuOpenByVar();
+
             if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2)
             {
                 Log.Logger.Information("Calling Jetway");
                 MenuItem(6);
+                if (useDelay)
+                    OperatorDelay();
+
                 if (SimConnect.ReadLvar("FSDT_GSX_STAIRS") != 2)
                 {
                     MenuOpenByVar();
@@ -526,6 +546,8 @@ namespace Fenix2GSX
             {
                 Log.Logger.Information("Calling Stairs");
                 MenuItem(7);
+                if (useDelay)
+                    OperatorDelay();
             }
         }
 

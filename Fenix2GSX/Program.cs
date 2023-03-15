@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 using System.Threading;
 using CefSharp;
 using CefSharp.OffScreen;
@@ -24,6 +25,7 @@ namespace Fenix2GSX
         public static readonly bool disableCrew = Convert.ToBoolean(ConfigurationManager.AppSettings["disableCrew"]);
         public static readonly bool repositionPlane = Convert.ToBoolean(ConfigurationManager.AppSettings["repositionPlane"]);
         public static readonly bool autoConnect = Convert.ToBoolean(ConfigurationManager.AppSettings["autoConnect"]);
+        public static readonly float operatorDelay = Convert.ToSingle(ConfigurationManager.AppSettings["operatorDelay"], CultureInfo.InvariantCulture);
         public static readonly bool connectPCA = Convert.ToBoolean(ConfigurationManager.AppSettings["connectPCA"]);
         public static readonly bool autoRefuel = Convert.ToBoolean(ConfigurationManager.AppSettings["autoRefuel"]);
         public static readonly bool callCatering = Convert.ToBoolean(ConfigurationManager.AppSettings["callCatering"]);
@@ -97,7 +99,7 @@ namespace Fenix2GSX
                 Log.Logger.Error($"Program: Critical Exception occured: {ex.Source} - {ex.Message}");
             }
 
-            Log.Information($"Program: FNX2PLD terminated.");
+            Log.Information($"Program: Fenix2GSX terminated.");
         }
 
         private static void MainLoop()
@@ -106,6 +108,7 @@ namespace Fenix2GSX
             Thread.Sleep(5000);
             int elapsedMS = controller.Interval;
             int delay = 100;
+            Log.Logger.Information("Starting MainLoop()");
             while (!cancellationToken.IsCancellationRequested && IPCManager.IsProcessRunning(FenixExecutable) && IPCManager.IsSimRunning())
             {
                 try
