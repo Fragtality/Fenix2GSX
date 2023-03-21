@@ -1,20 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Globalization;
-using System.Text;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-using CefSharp;
+﻿using CefSharp;
 using CefSharp.OffScreen;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Fenix2GSX
 {
@@ -26,7 +16,7 @@ namespace Fenix2GSX
         private ChromiumWebBrowser Browser;
         private bool handlerRunning = false;
         private bool handlerExecuted = false;
-        private HttpClient httpClient;
+        private readonly HttpClient httpClient;
 
         public FenixInterface()
         {
@@ -56,17 +46,21 @@ namespace Fenix2GSX
             return string.Format("{{\"query\":\"query {{ dataRef {{{0}: dataRef(name: \\\"{1}\\\") {{value}} }} }}\",\"variables\":{{}} }}", id, dataRef);
         }
 
-        public async void FenixPost(string msg)
+        public void FenixPost(string msg)
         {
-            var post = new HttpRequestMessage(HttpMethod.Post, jsonURI);
-            post.Content = new StringContent(msg, Encoding.UTF8, "application/json");
-            var response = httpClient.Send(post);
+            var post = new HttpRequestMessage(HttpMethod.Post, jsonURI)
+            {
+                Content = new StringContent(msg, Encoding.UTF8, "application/json")
+            };
+            httpClient.Send(post);
         }
 
         public string FenixGet(string msg)
         {
-            var post = new HttpRequestMessage(HttpMethod.Post, jsonURI);
-            post.Content = new StringContent(msg, Encoding.UTF8, "application/json");
+            var post = new HttpRequestMessage(HttpMethod.Post, jsonURI)
+            {
+                Content = new StringContent(msg, Encoding.UTF8, "application/json")
+            };
             var response = httpClient.Send(post);
 
             return response.Content.ReadAsStringAsync().Result;
@@ -74,8 +68,10 @@ namespace Fenix2GSX
 
         public string FenixGetVariable(string name)
         {
-            var post = new HttpRequestMessage(HttpMethod.Post, jsonURI);
-            post.Content = new StringContent(MsgQuery(name, "queryResult"), Encoding.UTF8, "application/json");
+            var post = new HttpRequestMessage(HttpMethod.Post, jsonURI)
+            {
+                Content = new StringContent(MsgQuery(name, "queryResult"), Encoding.UTF8, "application/json")
+            };
             var response = httpClient.Send(post);
 
             string result = response.Content.ReadAsStringAsync().Result;

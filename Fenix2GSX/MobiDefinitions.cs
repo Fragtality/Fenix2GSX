@@ -33,9 +33,15 @@ namespace Fenix2GSX
         SIMCONNECT_GROUP_PRIORITY_DEFAULT,
         SIMCONNECT_GROUP_PRIORITY_HIGHEST
     }
-    public enum MOBIFLIGHT_EVENTS
+
+    public enum SIM_EVENTS
     {
-        DUMMY
+        EXTERNAL_SYSTEM_TOGGLE
+    };
+
+    public enum NOTFIY_GROUP
+    {
+        GROUP0
     };
 
     public class SimVar

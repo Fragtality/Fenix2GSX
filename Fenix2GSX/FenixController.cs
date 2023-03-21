@@ -1,21 +1,17 @@
-﻿using Serilog;
+﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Globalization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Fenix2GSX
 {
     public class FenixContoller
     {
         private FenixInterface Interface;
+        private ServiceModel Model;
         
         private float fuelCurrent = 0;
         private float fuelPlanned = 0;
+        private string fuelUnits = "KG";
         
         private bool[] paxPlanned;
         private int[] paxSeats;
@@ -29,11 +25,12 @@ namespace Fenix2GSX
 
         public string flightPlanID = "0";
 
-        public FenixContoller()
+        public FenixContoller(ServiceModel model)
         { 
             Interface = new();
             paxCurrent = new bool[162];
             paxSeats = null;
+            Model = model;
         }
 
         public void Update(bool forceCurrent)
@@ -42,6 +39,9 @@ namespace Fenix2GSX
             {
                 float.TryParse(Interface.FenixGetVariable("aircraft.fuel.total.amount.kg"), out fuelCurrent);
                 float.TryParse(Interface.FenixGetVariable("aircraft.refuel.fuelTarget"), out fuelPlanned);
+                fuelUnits = Interface.FenixGetVariable("system.config.Units.Weight");
+                if (fuelUnits == "LBS")
+                    fuelPlanned /= 2.205f;
 
                 string str = Interface.FenixGetVariable("fenix.efb.loadingStatus");
                 if (!string.IsNullOrWhiteSpace(str))
@@ -59,13 +59,13 @@ namespace Fenix2GSX
                 innerJson = result["fenixTimes"]["PRELIM_EDNO"].ToString();
                 if (flightPlanID != innerJson)
                 {
-                    Log.Information($"New FlightPlan with ID {innerJson} detected!");
+                    Logger.Log(LogLevel.Information, "FenixContoller:Update", $"New FlightPlan with ID {innerJson} detected!");
                     flightPlanID = innerJson;
                 }
             }
             catch (Exception ex)
             {
-                Log.Error($"FenixContoller: Exception on Update() - {ex.Message}");
+                Logger.Log(LogLevel.Error, "FenixContoller:Update", $"Exception during Update {ex.Message}");
             }
         }
 
@@ -126,8 +126,8 @@ namespace Fenix2GSX
 
         public bool Refuel()
         {
-            if (fuelCurrent + Program.refuelRateKGS < fuelPlanned)
-                fuelCurrent += Program.refuelRateKGS;
+            if (fuelCurrent + Model.RefuelRate < fuelPlanned)
+                fuelCurrent += Model.RefuelRate;
             else
                 fuelCurrent = fuelPlanned;
 
@@ -242,7 +242,6 @@ namespace Fenix2GSX
 
         public bool Deboarding(int paxCurrent, int cargoCurrent)
         {
-            //paxCurrent = GetPaxPlanned() - paxCurrent;
             ChangePassengers(paxCurrent - paxLast, false);
             paxLast = paxCurrent;
 

@@ -14,9 +14,8 @@ It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/
 
 <br/><br/>
 ## Configuration
-**GSX**: Configure it to use Ctrl+Shift+F12 as the Menu Hotkey. It is adviseable to have the SU10 Navdata API activated.<br/><br/>
-**Fenix**: Disable Auto-Door and Auto-Jetway Simulation in the EFB.<br/><br/>
-**Fenix2GSX**: Change the Configuration to your Needs, depending on how much Automation you want. All the Variables are in the File "Fenix2GSX.dll.config":
+**Fenix**: Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/><br/>
+**Fenix2GSX**: Change the Configuration to your Needs, depending on how much Automation you want. The Settings are available in the GUI, which is opened by double-clicking the SystemTray Icon of that Tool. But you can also change the Settings in the Fenix2GSX.dll.config File:
 * **waitForConnect**		- The Binary will wait until MSFS is started and SimConnect is available. Set it to true, if you want to start the Binary before MSFS. Else start it in the Main Menu.
 * **gsxVolumeControl**			- The GSX Volume is controlled via the INT Knob on ACP1.
 * **disableCrew**		- Disable Crew boarding and deboarding.
@@ -42,4 +41,3 @@ It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/
 8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called.
 9) It works with Turn-Arounds! As soon as you import a new Flightplan it will start over.
 
-Important: make sure GSX is active, else the Tool will not work! (The GSX Logo in the Menu is white and GSX reacts to the Hotkey)

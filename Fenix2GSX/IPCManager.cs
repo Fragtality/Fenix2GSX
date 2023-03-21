@@ -1,5 +1,4 @@
-﻿using Serilog;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -11,29 +10,29 @@ namespace Fenix2GSX
 
         public static MobiSimConnect SimConnect { get; set; } = null;
 
-        public static bool WaitForSimulator(CancellationToken cancellationToken)
+        public static bool WaitForSimulator(ServiceModel model)
         {
             bool simRunning = IsSimRunning();
-            if (!simRunning && Program.waitForConnect)
+            if (!simRunning && model.WaitForConnect)
             {
                 do
                 {
-                    Log.Logger.Information($"WaitForSimulator: Simulator not started - waiting {waitDuration/1000}s for Sim");
+                    Logger.Log(LogLevel.Information, "IPCManager:WaitForSimulator", $"Simulator not started - waiting {waitDuration / 1000}s for Sim");
                     Thread.Sleep(waitDuration);
                 }
-                while (!IsSimRunning() && !cancellationToken.IsCancellationRequested);
+                while (!IsSimRunning() && !model.CancellationRequested);
 
                 Thread.Sleep(waitDuration);
                 return true;
             }
             else if (simRunning)
             {
-                Log.Logger.Information($"WaitForSimulator: Simulator started");
+                Logger.Log(LogLevel.Information, "IPCManager:WaitForSimulator", $"Simulator started");
                 return true;
             }
             else
             {
-                Log.Logger.Error($"WaitForSimulator: Simulator not started - aborting");
+                Logger.Log(LogLevel.Error, "IPCManager:WaitForSimulator", $"Simulator not started - aborting");
                 return false;
             }
         }
@@ -48,8 +47,8 @@ namespace Fenix2GSX
         {
             return IsProcessRunning("FlightSimulator");
         }
-
-        public static bool WaitForConnection(CancellationToken cancellationToken)
+        
+        public static bool WaitForConnection(ServiceModel model)
         {
             if (!IsSimRunning())
                 return false;
@@ -61,64 +60,64 @@ namespace Fenix2GSX
             {
                 do
                 {
-                    Log.Logger.Information($"WaitForConnection: Connection not established - waiting {waitDuration / 1000}s for Retry");
+                    Logger.Log(LogLevel.Information, "IPCManager:WaitForConnection", $"Connection not established - waiting {waitDuration / 1000}s for Retry");
                     Thread.Sleep(waitDuration / 2);
                     if (!mobiRequested)
                         mobiRequested = SimConnect.Connect();
                 }
-                while (!SimConnect.IsConnected && IsSimRunning() && !cancellationToken.IsCancellationRequested);
+                while (!SimConnect.IsConnected && IsSimRunning() && !model.CancellationRequested);
 
                 return SimConnect.IsConnected;
             }
             else
             {
-                Log.Logger.Information($"WaitForFenixBinary: {Program.FenixExecutable} is running");
+                Logger.Log(LogLevel.Information, "IPCManager:WaitForConnection", $"{model.FenixExecutable} is running");
                 return true;
             }
         }
-
-        public static bool WaitForFenixBinary(CancellationToken cancellationToken)
+        
+        public static bool WaitForFenixBinary(ServiceModel model)
         {
             if (!IsSimRunning())
                 return false;
 
-            bool isRunning = IsProcessRunning(Program.FenixExecutable);
+            bool isRunning = IsProcessRunning(model.FenixExecutable);
             if (!isRunning)
             {
                 do
                 {
-                    Log.Logger.Information($"WaitForFenixBinary: {Program.FenixExecutable} is not running - waiting {waitDuration / 2 / 1000}s for Retry");
+                    Logger.Log(LogLevel.Information, "IPCManager:WaitForFenixBinary", $"{model.FenixExecutable} is not running - waiting {waitDuration / 2 / 1000}s for Retry");
                     Thread.Sleep(waitDuration / 2);
 
-                    isRunning = IsProcessRunning(Program.FenixExecutable);
+                    isRunning = IsProcessRunning(model.FenixExecutable);
                 }
-                while (!isRunning && IsSimRunning() && !cancellationToken.IsCancellationRequested);
+                while (!isRunning && IsSimRunning() && !model.CancellationRequested);
 
                 return isRunning && IsSimRunning();
             }
             else
             {
-                Log.Logger.Information($"WaitForFenixBinary: {Program.FenixExecutable} is running");
+                Logger.Log(LogLevel.Information, "IPCManager:WaitForFenixBinary", $"{model.FenixExecutable} is running");
                 return true;
             }
         }
-
-        public static bool WaitForSessionReady(CancellationToken cancellationToken)
+        
+        public static bool WaitForSessionReady(ServiceModel model)
         {
             int waitDuration = 5000;
             SimConnect.SubscribeSimVar("CAMERA STATE", "Enum");
             Thread.Sleep(250);
             bool isReady = IsCamReady();
-            while (IsSimRunning() && !isReady && !cancellationToken.IsCancellationRequested)
+            while (IsSimRunning() && !isReady && !model.CancellationRequested)
             {
-                Log.Logger.Information($"WaitForSessionReady: Session not ready - waiting {waitDuration / 1000}s for Retry");
+                Logger.Log(LogLevel.Information, "IPCManager:WaitForSessionReady", $"Session not ready - waiting {waitDuration / 1000}s for Retry");
                 Thread.Sleep(waitDuration);
                 isReady = IsCamReady();
             }
 
             if (!isReady)
             {
-                Log.Logger.Error($"WaitForSessionReady: SimConnect or Simulator not available - aborting");
+                Logger.Log(LogLevel.Error, "IPCManager:WaitForSessionReady", $"SimConnect or Simulator not available - aborting");
                 return false;
             }
 
