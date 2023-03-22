@@ -254,6 +254,7 @@ namespace Fenix2GSX
                         Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Catering Service");
                         MenuOpen();
                         MenuItem(2);
+                        OperatorSelection();
                         cateringRequested = true;
                         return;
                     }
