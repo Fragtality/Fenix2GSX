@@ -33,7 +33,7 @@ namespace Fenix2GSX
             chkDisableCrewBoarding.IsChecked = serviceModel.DisableCrew;
             chkAutoReposition.IsChecked = serviceModel.RepositionPlane;
             chkAutoConnect.IsChecked = serviceModel.AutoConnect;
-            txtOperatorDelay.Text = Convert.ToString(serviceModel.OperatorDelay, CultureInfo.InvariantCulture);
+            //txtOperatorDelay.Text = Convert.ToString(serviceModel.OperatorDelay, CultureInfo.InvariantCulture);
             chkConnectPCA.IsChecked = serviceModel.ConnectPCA;
             chkPcaOnlyJetway.IsChecked = serviceModel.PcaOnlyJetways;
             chkAutoRefuel.IsChecked = serviceModel.AutoRefuel;
@@ -160,11 +160,11 @@ namespace Fenix2GSX
             serviceModel.SetSetting("autoDeboarding", chkAutoDeboard.IsChecked.ToString().ToLower());
         }
 
-        private void txtOperatorDelay_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (float.TryParse(txtOperatorDelay.Text, CultureInfo.InvariantCulture, out _))
-                serviceModel.SetSetting("operatorDelay", Convert.ToString(txtOperatorDelay.Text, CultureInfo.InvariantCulture));
-        }
+        //private void txtOperatorDelay_LostFocus(object sender, RoutedEventArgs e)
+        //{
+        //    if (float.TryParse(txtOperatorDelay.Text, CultureInfo.InvariantCulture, out _))
+        //        serviceModel.SetSetting("operatorDelay", Convert.ToString(txtOperatorDelay.Text, CultureInfo.InvariantCulture));
+        //}
 
         private void txtRefuelRate_LostFocus(object sender, RoutedEventArgs e)
         {

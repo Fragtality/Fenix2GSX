@@ -71,7 +71,7 @@ namespace Fenix2GSX
             }
             else
             {
-                Logger.Log(LogLevel.Information, "IPCManager:WaitForConnection", $"{model.FenixExecutable} is running");
+                Logger.Log(LogLevel.Information, "IPCManager:WaitForConnection", $"SimConnect is opened");
                 return true;
             }
         }

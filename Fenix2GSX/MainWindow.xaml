@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Fenix2GSX"
         mc:Ignorable="d"
-        Title="Fenix2GSX" Height="548" Width="486" ShowInTaskbar="False" ResizeMode="NoResize" IsVisibleChanged="Window_IsVisibleChanged" Closing="Window_Closing">
+        Title="Fenix2GSX" Height="532" Width="486" ShowInTaskbar="False" ResizeMode="NoResize" IsVisibleChanged="Window_IsVisibleChanged" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="64"/>
-            <RowDefinition Height="348" />
+            <RowDefinition Height="316" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -35,11 +35,11 @@
                 <CheckBox Name="chkCallCatering" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkCallCatering_Click">Call Catering Service with Refuel Service</CheckBox>
                 <CheckBox Name="chkAutoBoard" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoBoard_Click">Automatically start Boarding when Refuel and Catering are finished</CheckBox>
                 <CheckBox Name="chkAutoDeboard" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoDeboard_Click">Automatically start Deboarding on Arrival</CheckBox>
-                <StackPanel Orientation="Horizontal" Margin="5,8,8,0" VerticalAlignment="Center" Height="26">
+                <!--<StackPanel Orientation="Horizontal" Margin="5,8,8,0" VerticalAlignment="Center" Height="26">
                     <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">Operator Delay</Label>
                     <TextBox Name="txtOperatorDelay" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtOperatorDelay_LostFocus"></TextBox>
                     <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">s</Label>
-                </StackPanel>
+                </StackPanel>-->
                 <StackPanel Orientation="Horizontal" Margin="5,8,8,8" VerticalAlignment="Center" Height="26">
                     <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">Refuel Rate</Label>
                     <TextBox Name="txtRefuelRate" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtRefuelRate_LostFocus"></TextBox>

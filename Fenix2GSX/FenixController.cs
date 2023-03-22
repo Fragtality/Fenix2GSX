@@ -45,7 +45,7 @@ namespace Fenix2GSX
 
                 string str = Interface.FenixGetVariable("fenix.efb.loadingStatus");
                 if (!string.IsNullOrWhiteSpace(str))
-                    int.TryParse(str.Substring(1), out cargoPlanned);
+                    int.TryParse(str[1..], out cargoPlanned);
 
                 JObject result = JObject.Parse(Interface.FenixGet(FenixInterface.MsgQuery("fenix.efb.passengers.booked", "queryResult")));
                 paxPlanned = result["data"]["dataRef"]["queryResult"]["value"].ToObject<bool[]>();
@@ -136,10 +136,10 @@ namespace Fenix2GSX
             return fuelCurrent == fuelPlanned;
         }
 
-        public void RefuelStop()
-        {
+        //public void RefuelStop()
+        //{
 
-        }
+        //}
 
         public void BoardingStart()
         {

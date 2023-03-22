@@ -30,8 +30,10 @@ namespace Fenix2GSX
             Controller = new(Model);
             Task.Run(Controller.Run);
 
-            var timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
+            var timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
             timer.Tick += OnTick;
             timer.Start();
 
@@ -91,10 +93,8 @@ namespace Fenix2GSX
 
         public Icon GetIcon(string filename)
         {
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Fenix2GSX.{filename}"))
-            {
-                return new Icon(stream);
-            }
+            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Fenix2GSX.{filename}");
+            return new Icon(stream);
         }
     }
 }

@@ -176,6 +176,7 @@ namespace Fenix2GSX
                 if (Model.RepositionPlane && !planePositioned)
                 {
                     Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Waiting 5s before Repositioning ...");
+                    FenixController.SetServiceChocks(true);
                     Thread.Sleep(5000);
                     Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Repositioning Plane");
                     MenuOpen();
@@ -276,6 +277,7 @@ namespace Fenix2GSX
                         else
                         {
                             Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Boarding Service");
+                            SetPassengers(FenixController.GetPaxPlanned());
                             MenuOpen();
                             MenuItem(4);
                             delayCounter = 0;
@@ -307,7 +309,7 @@ namespace Fenix2GSX
                             refueling = false;
                             refuelFinished = true;
                             refuelPaused = false;
-                            FenixController.RefuelStop();
+                            //FenixController.RefuelStop();
                             Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Refuel completed");
                         }
                     }
@@ -329,7 +331,7 @@ namespace Fenix2GSX
                 }
                 else if (boarding)
                 {
-                    if (FenixController.Boarding((int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_BOARDING_TOTAL"), (int)SimConnect.ReadLvar("FSDT_GSX_BOARDING_CARGO_PERCENT")))
+                    if (FenixController.Boarding((int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_BOARDING_TOTAL"), (int)SimConnect.ReadLvar("FSDT_GSX_BOARDING_CARGO_PERCENT")) || SimConnect.ReadLvar("FSDT_GSX_BOARDING_STATE") == 6)
                     {
                         boarding = false;
                         boardFinished = true;
@@ -372,12 +374,12 @@ namespace Fenix2GSX
                     {
                         Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Preparing for Pushback - removing Equipment");
                         //WORKAROUND
-                        //if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2)
-                        //{
+                        if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2)
+                        {
                             MenuOpen();
                             Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Removing Jetway");
                             MenuItem(6);
-                        //}
+                        }
                         FenixController.SetServiceChocks(false);
                         FenixController.SetServicePCA(false);
                         FenixController.SetServiceGPU(false);
@@ -467,6 +469,7 @@ namespace Fenix2GSX
                 if (Model.AutoDeboarding && deboard_state < 4)
                 {
                     Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Deboarding Service");
+                    SetPassengers(FenixController.GetPaxPlanned());
                     MenuOpen();
                     MenuItem(1);
                     if (!Model.AutoConnect)
@@ -538,52 +541,59 @@ namespace Fenix2GSX
             Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Passenger Count set to {numPax}");
             if (Model.DisableCrew)
             {
+                SimConnect.WriteLvar("FSDT_GSX_CREW_NOT_DEBOARDING", 1);
+                SimConnect.WriteLvar("FSDT_GSX_CREW_NOT_BOARDING", 1);
+                SimConnect.WriteLvar("FSDT_GSX_PILOTS_NOT_DEBOARDING", 1);
+                SimConnect.WriteLvar("FSDT_GSX_PILOTS_NOT_BOARDING", 1);
+                SimConnect.WriteLvar("FSDT_GSX_NUMCREW", 0);
+                SimConnect.WriteLvar("FSDT_GSX_NUMPILOTS", 0);
+                SimConnect.WriteLvar("FSDT_GSX_CREW_ON_BOARD", 1);
                 Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Crew Boarding disabled");
             }
         }
 
-        //private void CallJetwayStairs()
-        //{
-        //    MenuOpen();
-
-        //    if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2)
-        //    {
-        //        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Jetway");
-        //        MenuItem(6);
-        //        OperatorSelection();
-        //        //if (useDelay)
-        //        //    OperatorDelay();
-
-        //        if (SimConnect.ReadLvar("FSDT_GSX_STAIRS") != 2)
-        //        {
-        //            Thread.Sleep(1500);
-        //            MenuOpen();
-        //            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Stairs");
-        //            MenuItem(7);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Stairs");
-        //        MenuItem(7);
-        //        OperatorSelection();
-        //        //if (useDelay)
-        //        //    OperatorDelay();
-        //    }
-        //}
-        //WORKAROUND
         private void CallJetwayStairs()
         {
-            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Jetway");
             MenuOpen();
-            MenuItem(6);
-            OperatorSelection();
-            Thread.Sleep(3000);
-            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Stairs");
-            MenuOpen();
-            MenuItem(7);
-            OperatorSelection();
+
+            if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2)
+            {
+                Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Jetway");
+                MenuItem(6);
+                OperatorSelection();
+                //if (useDelay)
+                //    OperatorDelay();
+
+                if (SimConnect.ReadLvar("FSDT_GSX_STAIRS") != 2)
+                {
+                    Thread.Sleep(1500);
+                    MenuOpen();
+                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Stairs");
+                    MenuItem(7);
+                }
+            }
+            else
+            {
+                Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Stairs");
+                MenuItem(7);
+                OperatorSelection();
+                //if (useDelay)
+                //    OperatorDelay();
+            }
         }
+        //WORKAROUND
+        //private void CallJetwayStairs()
+        //{
+        //    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Jetway");
+        //    MenuOpen();
+        //    MenuItem(6);
+        //    OperatorSelection();
+        //    Thread.Sleep(3000);
+        //    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Stairs");
+        //    MenuOpen();
+        //    MenuItem(7);
+        //    OperatorSelection();
+        //}
 
         private void OperatorSelection()
         {
