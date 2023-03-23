@@ -39,7 +39,7 @@ It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/
 5) When Parking Brake is set, External Power disconnected (on the Overhead) and Beacon Light is On, the Tool will remove all Ground-Equipment: Jetway is disconnected, GPU and PCA (if configured) are removed, Chocks are removed.
 6) Happy Flight!
 7) When you arrive (on your preselected Gate), the Jetway/Stairs will automatically connect when the Engines are Off and the Parking Brake is set (if configured).
-8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, you can dismiss it if you want.
+8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, you can dismiss it if you want. *DO NOT* generate a new Flightplan in SimBrief until Deboarding has finished!
 9) It works with Turn-Arounds! As soon as you (re)import a new Flightplan it will start over.
 <br/>
 If you set every Option for automatic Service Calls, you can also disable GSX in the Toolbar. The Services are still called, but you won't see the Menu. You should open it for Pushback though :sweat_smile:
