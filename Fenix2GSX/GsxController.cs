@@ -45,6 +45,7 @@ namespace Fenix2GSX
         private int delayCounter = 0;
         private int delay = 0;
         private string flightPlanID = "0";
+        private int paxPlanned = 0;
         private bool firstRun = true;
 
         private MobiSimConnect SimConnect;
@@ -493,10 +494,16 @@ namespace Fenix2GSX
                 }
                 else if (deboarding)
                 {
-                    if (FenixController.Deboarding((int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_DEBOARDING_TOTAL"), (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_CARGO_PERCENT")) || deboard_state == 6)
+                    if (SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS") != paxPlanned)
+                    {
+                        Logger.Log(LogLevel.Warning, "GsxController:RunServices", $"Passenger changed during Boarding! Trying to reset Number ...");
+                        SimConnect.WriteLvar("FSDT_GSX_NUMPASSENGERS", paxPlanned);
+                    }
+
+                    if (FenixController.Deboarding((int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_DEBOARDING_TOTAL"), (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_CARGO_PERCENT")) || deboard_state == 6 || deboard_state == 1)
                     {
                         deboarding = false;
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Deboarding finished");
+                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Deboarding finished (GSX State {deboard_state})");
                         FenixController.DeboardingStop();
                         Logger.Log(LogLevel.Information, "GsxController:RunServices", $"State Change: Arrival -> Turn-Around (Waiting for new Flightplan)");
                         state = FlightState.TURNAROUND;
@@ -529,6 +536,7 @@ namespace Fenix2GSX
                     equipmentRemoved = false;
                     deboarding = false;
                     delayCounter = 0;
+                    paxPlanned = 0;
                     delay = 0;
 
                     Logger.Log(LogLevel.Information, "GsxController:RunServices", $"State Change: Turn-Around -> Depature (Waiting for Refueling and Boarding)");
@@ -539,6 +547,7 @@ namespace Fenix2GSX
         private void SetPassengers(int numPax)
         {
             SimConnect.WriteLvar("FSDT_GSX_NUMPASSENGERS", numPax);
+            paxPlanned = numPax;
             Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Passenger Count set to {numPax}");
             if (Model.DisableCrew)
             {
