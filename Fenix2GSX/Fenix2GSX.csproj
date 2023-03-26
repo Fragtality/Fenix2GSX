@@ -9,7 +9,7 @@
     <ApplicationIcon>phoenix.ico</ApplicationIcon>
     <PlatformTarget>x64</PlatformTarget>
     <Title>Fenix2GSX</Title>
-    <Version>0.2.2</Version>
+    <Version>0.2.3</Version>
     <Authors>Fragtality</Authors>
     <Copyright>Copyright © 2023</Copyright>
     <Description>GSX Integration and Automation for the Fenix A320</Description>

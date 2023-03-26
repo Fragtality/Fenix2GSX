@@ -24,6 +24,8 @@ namespace Fenix2GSX
         private int cargoLast;
 
         public string flightPlanID = "0";
+        public bool enginesRunning = false;
+        public static readonly float weightConversion = 2.205f;
 
         public FenixContoller(ServiceModel model)
         { 
@@ -37,11 +39,15 @@ namespace Fenix2GSX
         {
             try
             {
+                float.TryParse(Interface.FenixGetVariable("aircraft.engine1.raw"), out float engine1);
+                float.TryParse(Interface.FenixGetVariable("aircraft.engine2.raw"), out float engine2);
+                enginesRunning = engine1 > 18.0f || engine2 > 18.0f;
+
                 float.TryParse(Interface.FenixGetVariable("aircraft.fuel.total.amount.kg"), out fuelCurrent);
                 float.TryParse(Interface.FenixGetVariable("aircraft.refuel.fuelTarget"), out fuelPlanned);
                 fuelUnits = Interface.FenixGetVariable("system.config.Units.Weight");
                 if (fuelUnits == "LBS")
-                    fuelPlanned /= 2.205f;
+                    fuelPlanned /= weightConversion;
 
                 string str = Interface.FenixGetVariable("fenix.efb.loadingStatus");
                 if (!string.IsNullOrWhiteSpace(str))
@@ -126,8 +132,10 @@ namespace Fenix2GSX
 
         public bool Refuel()
         {
-            if (fuelCurrent + Model.RefuelRate < fuelPlanned)
-                fuelCurrent += Model.RefuelRate;
+            float step = Model.GetFuelRateKGS();
+
+            if (fuelCurrent + step < fuelPlanned)
+                fuelCurrent += step;
             else
                 fuelCurrent = fuelPlanned;
 
@@ -135,11 +143,6 @@ namespace Fenix2GSX
 
             return fuelCurrent == fuelPlanned;
         }
-
-        //public void RefuelStop()
-        //{
-
-        //}
 
         public void BoardingStart()
         {

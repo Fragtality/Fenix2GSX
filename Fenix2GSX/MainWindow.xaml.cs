@@ -33,14 +33,23 @@ namespace Fenix2GSX
             chkDisableCrewBoarding.IsChecked = serviceModel.DisableCrew;
             chkAutoReposition.IsChecked = serviceModel.RepositionPlane;
             chkAutoConnect.IsChecked = serviceModel.AutoConnect;
-            //txtOperatorDelay.Text = Convert.ToString(serviceModel.OperatorDelay, CultureInfo.InvariantCulture);
             chkConnectPCA.IsChecked = serviceModel.ConnectPCA;
             chkPcaOnlyJetway.IsChecked = serviceModel.PcaOnlyJetways;
             chkAutoRefuel.IsChecked = serviceModel.AutoRefuel;
             chkCallCatering.IsChecked = serviceModel.CallCatering;
             chkAutoBoard.IsChecked = serviceModel.AutoBoarding;
             chkAutoDeboard.IsChecked = serviceModel.AutoDeboarding;
-            txtRefuelRate.Text = Convert.ToString(serviceModel.RefuelRate, CultureInfo.InvariantCulture);
+            txtRefuelRate.Text = serviceModel.RefuelRate.ToString(CultureInfo.InvariantCulture);
+            if (serviceModel.RefuelUnit == "KGS")
+            {
+                unitKGS.IsChecked = true;
+                unitLBS.IsChecked = false;
+            }
+            else
+            {
+                unitKGS.IsChecked = false;
+                unitLBS.IsChecked = true;
+            }
         }
 
         protected void UpdateLogArea()
@@ -160,16 +169,31 @@ namespace Fenix2GSX
             serviceModel.SetSetting("autoDeboarding", chkAutoDeboard.IsChecked.ToString().ToLower());
         }
 
-        //private void txtOperatorDelay_LostFocus(object sender, RoutedEventArgs e)
-        //{
-        //    if (float.TryParse(txtOperatorDelay.Text, CultureInfo.InvariantCulture, out _))
-        //        serviceModel.SetSetting("operatorDelay", Convert.ToString(txtOperatorDelay.Text, CultureInfo.InvariantCulture));
-        //}
-
         private void txtRefuelRate_LostFocus(object sender, RoutedEventArgs e)
         {
             if (float.TryParse(txtRefuelRate.Text, CultureInfo.InvariantCulture, out _))
-                serviceModel.SetSetting("refuelRateKGS", Convert.ToString(txtRefuelRate.Text, CultureInfo.InvariantCulture));
+                serviceModel.SetSetting("refuelRate", Convert.ToString(txtRefuelRate.Text, CultureInfo.InvariantCulture));
+        }
+
+        private void units_Click(object sender, RoutedEventArgs e)
+        {
+            if (!float.TryParse(txtRefuelRate.Text, CultureInfo.InvariantCulture, out float fuelRate))
+                return;
+
+            if (sender == unitKGS && serviceModel.RefuelUnit == "LBS")
+            {
+                fuelRate /= FenixContoller.weightConversion;
+                serviceModel.SetSetting("refuelRate", Convert.ToString(fuelRate, CultureInfo.InvariantCulture));
+                serviceModel.SetSetting("refuelUnit", "KGS");
+                txtRefuelRate.Text = Convert.ToString(fuelRate, CultureInfo.InvariantCulture);
+            }
+            else if (sender == unitLBS && serviceModel.RefuelUnit == "KGS")
+            {
+                fuelRate *= FenixContoller.weightConversion;
+                serviceModel.SetSetting("refuelRate", Convert.ToString(fuelRate, CultureInfo.InvariantCulture));
+                serviceModel.SetSetting("refuelUnit", "LBS");
+                txtRefuelRate.Text = Convert.ToString(fuelRate, CultureInfo.InvariantCulture);
+            }
         }
     }
 }

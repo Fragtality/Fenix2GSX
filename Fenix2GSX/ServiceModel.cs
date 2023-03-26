@@ -28,7 +28,8 @@ namespace Fenix2GSX
         public bool AutoBoarding { get; set; }
         public bool AutoDeboarding { get; set; }
         public float RefuelRate { get; set; }
-
+        public string RefuelUnit { get; set; }
+        
         protected Configuration AppConfiguration;
 
         public ServiceModel()
@@ -55,7 +56,8 @@ namespace Fenix2GSX
             CallCatering = Convert.ToBoolean(settings["callCatering"].Value);
             AutoBoarding = Convert.ToBoolean(settings["autoBoarding"].Value);
             AutoDeboarding = Convert.ToBoolean(settings["autoDeboarding"].Value);
-            RefuelRate = Convert.ToSingle(settings["refuelRateKGS"].Value);
+            RefuelRate = Convert.ToSingle(settings["refuelRate"].Value, CultureInfo.InvariantCulture);
+            RefuelUnit = Convert.ToString(settings["refuelUnit"].Value);
         }
 
         protected void SaveConfiguration()
@@ -77,6 +79,14 @@ namespace Fenix2GSX
                 SaveConfiguration();
                 LoadConfiguration();
             }
+        }
+
+        public float GetFuelRateKGS()
+        {
+            if (RefuelUnit == "KGS")
+                return RefuelRate;
+            else
+                return RefuelRate / FenixContoller.weightConversion;
         }
     }
 }
