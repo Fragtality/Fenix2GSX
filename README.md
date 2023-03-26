@@ -23,20 +23,21 @@ It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/
 * **repositionPlane**			- The Plane will be repositioned via GSX when you start your Session.
 * **autoConnect**		- Automatically connect Jetway/Stairs on Startup and on Arrival.
 * **connectPCA**" 		-  The Preconditioned Air will be connected (and disconnected) on Startup and on Arrival.
-* **pcaOnlyJetway**" 		-  The Preconditioned Air only connected on Jetways.
+* **pcaOnlyJetway** 		-  The Preconditioned Air only connected on Jetways.
 * **autoRefuel**		- Call Refueling automatically as soon as an Flightplan was imported on the EFB.
 * **callCatering**	- Catering will be called when Refueling is called.
-* **autoBoarding**" 		-  Automatically start Boarding when Refueling and Catering (if configured) are finished.
-* **autoDeboarding**" 			-  Automaticall start Deboarding on Arrival.
-* **refuelRateKGS**" 			-  The Speed at which the Tanks are filled, defaults to 15kg per Second.
+* **autoBoarding** 		-  Automatically start Boarding when Refueling and Catering (if configured) are finished.
+* **autoDeboarding** 			-  Automaticall start Deboarding on Arrival.
+* **refuelRate**" 			-  The Speed at which the Tanks are filled, defaults to 28 (kg per Second).
+* **refuelUnit**" 			-  The Unit of refuelRate - either KGS or LBS.
 
 <br/><br/>
 ## Usage
 1) Create your SB Flightplan and start MSFS as you normally would. Depending on your Configuration, start the Tool before MSFS or when MSFS is in the Main Menu.
 2) When your Session is loaded (Ready to Fly was pressed), wait for the Repositioning and Jetway/Stair Call to happen (if configured).
 3) Import your Flightplan on the EFB (wherever you're using it from, does not need to be the EFB in the VC). Refueling and Catering will be called (if configured).
-4) When Refueling and Boarding are finished (whoever called it), you will receive your Final Loadsheet after 90-150s. The left Forward Door will be closed when this happens (if not already closed by GSX).
-5) When Parking Brake is set, External Power disconnected (on the Overhead) and Beacon Light is On, the Tool will remove all Ground-Equipment: Jetway is disconnected, GPU and PCA (if configured) are removed, Chocks are removed.
+4) When Refueling and Boarding are finished (whoever called it), you will receive your Final Loadsheet after 90-150s. The left Forward Door will be closed when this happens (if not already closed by GSX). Also when both Services are finished and the APU is Avail and the APU Bleed is switched ON: the PCA will be removed (if configured to connect)
+5) When Parking Brake is set, External Power disconnected (on the Overhead) and Beacon Light is On, the Tool will remove all Ground-Equipment: Jetway is disconnected, GPU and PCA (to be safe) are removed, Chocks are removed.
 6) Happy Flight!
 7) When you arrive (on your preselected Gate), the Jetway/Stairs will automatically connect when the Engines are Off and the Parking Brake is set (if configured).
 8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, you can dismiss it if you want. *DO NOT* generate a new Flightplan in SimBrief until Deboarding has finished!
