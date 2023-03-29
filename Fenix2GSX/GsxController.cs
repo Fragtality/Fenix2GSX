@@ -519,7 +519,8 @@ namespace Fenix2GSX
                         SimConnect.WriteLvar("FSDT_GSX_NUMPASSENGERS", paxPlanned);
                     }
 
-                    if (FenixController.Deboarding((int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_DEBOARDING_TOTAL"), (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_CARGO_PERCENT")) || deboard_state == 6 || deboard_state == 1)
+                    int paxCurrent = (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS") - (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_DEBOARDING_TOTAL");
+                    if (FenixController.Deboarding(paxCurrent, (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_CARGO_PERCENT")) || deboard_state == 6 || deboard_state == 1)
                     {
                         deboarding = false;
                         Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Deboarding finished (GSX State {deboard_state})");

@@ -176,9 +176,20 @@ namespace Fenix2GSX
             if (num <= 0)
                 return;
 
-            for (int i = paxLast; i < paxLast + num && i < GetPaxPlanned(); i++)
+            if (onboard)
             {
-                paxCurrent[paxSeats[i]] = onboard;
+                for (int i = paxLast; i < paxLast + num && i < GetPaxPlanned(); i++)
+                {
+                    paxCurrent[paxSeats[i]] = onboard;
+                }
+            }
+            else
+            {
+                int n = GetPaxPlanned() - paxLast;
+                for (int i = n; i < n + num; i++)
+                {
+                    paxCurrent[paxSeats[i]] = onboard;
+                }
             }
 
             SendSeatString();
@@ -229,9 +240,9 @@ namespace Fenix2GSX
 
         public void DeboardingStart()
         {
-            paxLast = 0;
+            paxLast = GetPaxPlanned();
             cargoLast = 100;
-            paxSeats = new int[GetPaxPlanned()];
+            paxSeats = new int[paxLast];
             int n = 0;
             for (int i = 0; i < paxPlanned.Length; i++)
             {
@@ -245,7 +256,7 @@ namespace Fenix2GSX
 
         public bool Deboarding(int paxCurrent, int cargoCurrent)
         {
-            ChangePassengers(paxCurrent - paxLast, false);
+            ChangePassengers(paxLast - paxCurrent, false);
             paxLast = paxCurrent;
 
             cargoCurrent = 100 - cargoCurrent;
