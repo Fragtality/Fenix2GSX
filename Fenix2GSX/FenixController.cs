@@ -186,9 +186,14 @@ namespace Fenix2GSX
             else
             {
                 int n = GetPaxPlanned() - paxLast;
+                Logger.Log(LogLevel.Debug, "FenixContoller:ChangePassengers", $"(n {n})");
                 for (int i = n; i < n + num; i++)
                 {
-                    paxCurrent[paxSeats[i]] = onboard;
+                    Logger.Log(LogLevel.Debug, "FenixContoller:ChangePassengers", $"(i {i}) (seatslen {paxSeats.Length}) (curlen {paxCurrent.Length}) (num {num}) (paxlast {paxLast}) (planned {GetPaxPlanned()})");
+                    if (i < paxSeats.Length && paxSeats[i] < paxCurrent.Length)
+                        paxCurrent[paxSeats[i]] = onboard;
+                    else
+                        Logger.Log(LogLevel.Debug, "FenixContoller:ChangePassengers", $"invalid index (i {i}) (seatslen {paxSeats.Length}) (curlen {paxCurrent.Length}) (num {num}) (paxlast {paxLast}) (planned {GetPaxPlanned()})");
                 }
             }
 
@@ -217,7 +222,7 @@ namespace Fenix2GSX
                         seatString += ",false";
                 }
             }
-
+            Logger.Log(LogLevel.Debug, "FenixContoller:SendSeatString", seatString);
             Interface.FenixPost(FenixInterface.MsgMutation("string", "aircraft.passengers.seatOccupation.string", seatString));
         }
 

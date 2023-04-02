@@ -440,6 +440,7 @@ namespace Fenix2GSX
                 if (state == FlightState.FLIGHT && simOnGround)
                 {
                     state = FlightState.TAXIIN;
+                    //FenixController.Update(true);
                     Logger.Log(LogLevel.Information, "GsxController:RunServices", $"State Change: Flight -> Taxi-In (Waiting for Engines stopped and Beacon off)");
 
                     Interval = 2500;
@@ -520,6 +521,7 @@ namespace Fenix2GSX
                     }
 
                     int paxCurrent = (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS") - (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_DEBOARDING_TOTAL");
+                    Logger.Log(LogLevel.Debug, "FenixContoller:ChangePassengers", $"(paxCurrent {paxCurrent})");
                     if (FenixController.Deboarding(paxCurrent, (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_CARGO_PERCENT")) || deboard_state == 6 || deboard_state == 1)
                     {
                         deboarding = false;
