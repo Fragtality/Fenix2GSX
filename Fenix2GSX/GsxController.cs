@@ -94,6 +94,8 @@ namespace Fenix2GSX
             {
                 SimConnect.SubscribeLvar("I_ASP_INT_REC");
                 SimConnect.SubscribeLvar("A_ASP_INT_VOLUME");
+                SimConnect.SubscribeLvar("I_FCU_TRACK_FPA_MODE");
+                SimConnect.SubscribeLvar("I_FCU_HEADING_VS_MODE");
 
                 MMDeviceEnumerator deviceEnumerator = new(Guid.NewGuid());
                 var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
@@ -137,9 +139,14 @@ namespace Fenix2GSX
             if (!Model.GsxVolumeControl || gsxAudioSession == null)
                 return;
 
+            if (!(SimConnect.ReadLvar("I_FCU_TRACK_FPA_MODE") == 1 || SimConnect.ReadLvar("I_FCU_HEADING_VS_MODE") == 1))
+            {
+                ResetAudio();
+                return;
+            }
+
             float volume = SimConnect.ReadLvar("A_ASP_INT_VOLUME");
             int muted = (int)SimConnect.ReadLvar("I_ASP_INT_REC");
-
             if (volume >= 0 && volume != gsxAudioVolume)
             {
                 gsxAudioSession.SimpleAudioVolume.MasterVolume = volume;
@@ -521,7 +528,6 @@ namespace Fenix2GSX
                     }
 
                     int paxCurrent = (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS") - (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_DEBOARDING_TOTAL");
-                    Logger.Log(LogLevel.Debug, "FenixContoller:ChangePassengers", $"(paxCurrent {paxCurrent})");
                     if (FenixController.Deboarding(paxCurrent, (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_CARGO_PERCENT")) || deboard_state == 6 || deboard_state == 1)
                     {
                         deboarding = false;
