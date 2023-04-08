@@ -39,6 +39,7 @@ namespace Fenix2GSX
             chkCallCatering.IsChecked = serviceModel.CallCatering;
             chkAutoBoard.IsChecked = serviceModel.AutoBoarding;
             chkAutoDeboard.IsChecked = serviceModel.AutoDeboarding;
+            txtRepositionDelay.Text = serviceModel.RepositionDelay.ToString(CultureInfo.InvariantCulture);
             txtRefuelRate.Text = serviceModel.RefuelRate.ToString(CultureInfo.InvariantCulture);
             if (serviceModel.RefuelUnit == "KGS")
             {
@@ -71,7 +72,7 @@ namespace Fenix2GSX
             else
                 lblConnStatMSFS.Foreground = new SolidColorBrush(Colors.Red);
 
-            if (IPCManager.SimConnect.IsReady)
+            if (IPCManager.SimConnect != null && IPCManager.SimConnect.IsReady)
                 lblConnStatSimConnect.Foreground = new SolidColorBrush(Colors.DarkGreen);
             else
                 lblConnStatSimConnect.Foreground = new SolidColorBrush(Colors.Red);
@@ -167,6 +168,12 @@ namespace Fenix2GSX
         private void chkAutoDeboard_Click(object sender, RoutedEventArgs e)
         {
             serviceModel.SetSetting("autoDeboarding", chkAutoDeboard.IsChecked.ToString().ToLower());
+        }
+
+        private void txtRepositionDelay_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (float.TryParse(txtRepositionDelay.Text, CultureInfo.InvariantCulture, out _))
+                serviceModel.SetSetting("repositionDelay", Convert.ToString(txtRepositionDelay.Text, CultureInfo.InvariantCulture));
         }
 
         private void txtRefuelRate_LostFocus(object sender, RoutedEventArgs e)

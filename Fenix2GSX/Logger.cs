@@ -43,7 +43,8 @@ namespace Fenix2GSX
                     Serilog.Log.Logger.Debug(entry);
                     break;
             }
-            MessageQueue.Enqueue(message);
+            if (level != LogLevel.Debug)
+                MessageQueue.Enqueue(message);
         }
     }
 }

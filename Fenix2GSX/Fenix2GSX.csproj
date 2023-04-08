@@ -32,10 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="111.2.20" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="111.2.70" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
     <PackageReference Include="CoreAudio" Version="1.27.0" />
-    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.0.104" />
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.0.108" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Serilog" Version="2.12.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
@@ -54,6 +54,18 @@
     <None Update="SimConnect.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="111.2.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="111.2.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="111.2.7" />
   </ItemGroup>
 
 </Project>

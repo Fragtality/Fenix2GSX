@@ -173,40 +173,29 @@ namespace Fenix2GSX
 
         private void BoardPassengers(int num)
         {
-            if (num <= 0)
+            if (num < 0)
             {
-                Logger.Log(LogLevel.Warning, "FenixContoller:BoardPassengers", $"Passenger Num was below 0!");
+                Logger.Log(LogLevel.Debug, "FenixContoller:BoardPassengers", $"Passenger Num was below 0!");
                 return;
             }
 
-            //if (onboard)
-            //{
-                for (int i = paxLast; i < paxLast + num && i < GetPaxPlanned(); i++)
-                {
-                    paxCurrent[paxSeats[i]] = true;
-                }
-            //}
-            //else
-            //{
-            //    int n = GetPaxPlanned() - paxLast;
-            //    Logger.Log(LogLevel.Debug, "FenixContoller:ChangePassengers", $"(n {n})");
-            //    for (int i = n; i < n + num; i++)
-            //    {
-            //        Logger.Log(LogLevel.Debug, "FenixContoller:ChangePassengers", $"(i {i}) (seatslen {paxSeats.Length}) (curlen {paxCurrent.Length}) (num {num}) (paxlast {paxLast}) (planned {GetPaxPlanned()})");
-            //        if (i < paxSeats.Length && paxSeats[i] < paxCurrent.Length)
-            //            paxCurrent[paxSeats[i]] = onboard;
-            //        else
-            //            Logger.Log(LogLevel.Debug, "FenixContoller:ChangePassengers", $"invalid index (i {i}) (seatslen {paxSeats.Length}) (curlen {paxCurrent.Length}) (num {num}) (paxlast {paxLast}) (planned {GetPaxPlanned()})");
-            //    }
-            //}
+            for (int i = paxLast; i < paxLast + num && i < GetPaxPlanned(); i++)
+            {
+                paxCurrent[paxSeats[i]] = true;
+            }
 
-            SendSeatString();
+            if (num > 0)
+                SendSeatString();
         }
 
-        private void SendSeatString()
+        private void SendSeatString(bool force = false)
         {
             string seatString = "";
             bool first = true;
+
+            if (GetPaxCurrent() == 0 && !force)
+                return;
+
             foreach (var pax in paxCurrent)
             {
                 if (first)
@@ -248,43 +237,40 @@ namespace Fenix2GSX
 
         public void DeboardingStart()
         {
+            Logger.Log(LogLevel.Debug, "FenixContoller:DeboardingStart", $"(planned {GetPaxPlanned()}) (current {GetPaxCurrent()})");
             paxLast = GetPaxPlanned();
-            cargoLast = 100;
-            paxSeats = new int[paxLast];
-            int n = 0;
-            for (int i = 0; i < paxPlanned.Length; i++)
-            {
-                if (paxPlanned[i])
-                {
-                    paxSeats[n] = i;
-                    n++;
-                }
-            }
+            if (GetPaxCurrent() != GetPaxPlanned())
+                paxCurrent = paxPlanned;
+            cargoLast = 100;            
         }
 
         private void DeboardPassengers(int num)
         {
-            if (num <= 0)
+            if (num < 0)
             {
-                Logger.Log(LogLevel.Warning, "FenixContoller:DeboardPassengers", $"Passenger Num was below 0!");
+                Logger.Log(LogLevel.Debug, "FenixContoller:DeboardPassengers", $"Passenger Num was below 0!");
                 return;
             }
+            else if (num > 15)
+            {
+                Logger.Log(LogLevel.Debug, "FenixContoller:DeboardPassengers", $"Passenger Num was above 15!");
+                return;
+            }
+            else
+                Logger.Log(LogLevel.Debug, "FenixContoller:DeboardPassengers", $"(num {num}) (current {GetPaxCurrent()}) (planned ({GetPaxPlanned()}))");
 
             int n = 0;
-            while (n < num)
+            for (int i = 0; i < paxCurrent.Length && n < num; i++)
             {
-                for (int i = 0; i < paxCurrent.Length; i++)
+                if (paxCurrent[i])
                 {
-                    if (paxCurrent[i])
-                    {
-                        paxCurrent[i] = false;
-                        break;
-                    }
+                    paxCurrent[i] = false;
+                    n++;
                 }
-                n++;
             }
 
-            SendSeatString();
+            if (n > 0)
+                SendSeatString();
         }
 
         public bool Deboarding(int paxCurrent, int cargoCurrent)
@@ -304,7 +290,9 @@ namespace Fenix2GSX
             ChangeCargo(0);
             for (int i = 0; i < paxCurrent.Length; i++)
                 paxCurrent[i] = false;
-            SendSeatString();
+            Logger.Log(LogLevel.Debug, "FenixController:DeboardingStop", "Sending SeatString");
+            SendSeatString(true);
+            paxCurrent = new bool[162];
             paxSeats = null;
         }
     }

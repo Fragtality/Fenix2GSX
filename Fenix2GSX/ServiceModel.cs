@@ -19,6 +19,7 @@ namespace Fenix2GSX
         public bool GsxVolumeControl { get; set; }
         public bool DisableCrew { get; set; }
         public bool RepositionPlane { get; set; }
+        public float RepositionDelay { get; set; }
         public bool AutoConnect { get; set; }
         public float OperatorDelay { get; set; }
         public bool ConnectPCA { get; set; }
@@ -48,6 +49,7 @@ namespace Fenix2GSX
             GsxVolumeControl = Convert.ToBoolean(settings["gsxVolumeControl"].Value);
             DisableCrew = Convert.ToBoolean(settings["disableCrew"].Value);
             RepositionPlane = Convert.ToBoolean(settings["repositionPlane"].Value);
+            RepositionDelay = Convert.ToSingle(settings["repositionDelay"].Value, CultureInfo.InvariantCulture);
             AutoConnect = Convert.ToBoolean(settings["autoConnect"].Value);
             OperatorDelay = Convert.ToSingle(settings["operatorDelay"].Value, CultureInfo.InvariantCulture);
             ConnectPCA = Convert.ToBoolean(settings["connectPCA"].Value);

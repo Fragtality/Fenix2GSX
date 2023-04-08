@@ -185,9 +185,9 @@ namespace Fenix2GSX
 
                 if (Model.RepositionPlane && !planePositioned)
                 {
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Waiting 5s before Repositioning ...");
+                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Waiting {Model.RepositionDelay}s before Repositioning ...");
                     FenixController.SetServiceChocks(true);
-                    Thread.Sleep(5000);
+                    Thread.Sleep((int)(Model.RepositionDelay * 1000.0f));
                     Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Repositioning Plane");
                     MenuOpen();
                     MenuItem(10);
