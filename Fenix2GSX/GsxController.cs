@@ -401,8 +401,8 @@ namespace Fenix2GSX
                     if (equipmentRemoved)
                     {
                         Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Preparing for Pushback - removing Equipment");
-                        //WORKAROUND
-                        if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2)
+                        int departState = (int)SimConnect.ReadLvar("FSDT_GSX_DEPARTURE_STATE");
+                        if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2 && departState < 4)
                         {
                             MenuOpen();
                             Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Removing Jetway");
@@ -645,10 +645,10 @@ namespace Fenix2GSX
                 string[] lines = File.ReadLines(menuFile).ToArray();
                 if (lines.Length > 1)
                 {
-                    if (lines[1] != "Request Deboarding")
-                        result = 1;
-                    else
+                    if (lines[1] == "Request Deboarding" || string.IsNullOrEmpty(lines[1]))
                         result = 0;
+                    else
+                        result = 1;
                 }
             }
 

@@ -178,13 +178,22 @@ namespace Fenix2GSX
                 Logger.Log(LogLevel.Debug, "FenixContoller:BoardPassengers", $"Passenger Num was below 0!");
                 return;
             }
+            else if (num > 15)
+            {
+                Logger.Log(LogLevel.Debug, "FenixContoller:BoardPassengers", $"Passenger Num was above 15!");
+                return;
+            }
+            else
+                Logger.Log(LogLevel.Debug, "FenixContoller:BoardPassengers", $"(num {num}) (current {GetPaxCurrent()}) (planned ({GetPaxPlanned()}))");
 
+            int n = 0;
             for (int i = paxLast; i < paxLast + num && i < GetPaxPlanned(); i++)
             {
                 paxCurrent[paxSeats[i]] = true;
+                n++;
             }
 
-            if (num > 0)
+            if (n > 0)
                 SendSeatString();
         }
 
