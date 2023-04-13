@@ -1,5 +1,13 @@
 # Fenix2GSX
-Full GSX Integration and Automation for the Fenix A320!
+<img src="img/icon.png">
+Full and proper GSX Integration and Automation for the Fenix A320!
+- Calling Refuel will fill the Tanks to the planned Fuel (or more correctly GSX and Fenix are "synched")
+- Calling Boarding will load Passenger and Cargo, as does Deboarding for unloading (or more correctly GSX and Fenix are "synched")
+- Ground Equipment (GPU, Chocks, PCA) is automatically set or removed
+- All Service Calls except Push-Back and Gate-Selection can be automated
+- GSX Audio can be controlled via the INT-Knob
+- ATC Volume can be controlled via the VHF1-Knob (Application configurable)
+
 <br/><br/>
 
 ## Requirements
@@ -11,36 +19,50 @@ Full GSX Integration and Automation for the Fenix A320!
 <br/><br/>
 ## Installation
 Extract it anywhere you want, but do not use Application-Folders, User-Folders or even C:\\ <br/>
-It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/or setting an Exception helps.
+It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/or setting an Exception helps.<br/><br/>
+
+If you own FSUIPC, you can start it automatically through that. Add this to your FSUIPC7.ini:
+```
+[Programs]
+RunIf1=READY,KILL,X:\PATH\YOU\USED\Fenix2GSX.exe
+```
+The ini-File is in the Folder where FSUIPC was installed to, remember to change the Path to the Binary. If there are multiple RunIf-Entries, make sure they are numbered uniquely and that the [Programs] Section only exists once.<br/>
+When starting it manually (or by other means), either start it before MSFS or when MSFS is in the Main Menu.
 
 <br/><br/>
 ## Configuration
 **Fenix**: Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/><br/>
-**Fenix2GSX**: Change the Configuration to your Needs, depending on how much Automation you want. The Settings are available in the GUI, which is opened by double-clicking the SystemTray Icon of that Tool. But you can also change the Settings in the Fenix2GSX.dll.config File:
-* **waitForConnect**		- The Binary will wait until MSFS is started and SimConnect is available. Set it to true, if you want to start the Binary before MSFS. Else start it in the Main Menu.
-* **gsxVolumeControl**			- The GSX Volume is controlled via the INT Knob on ACP1.
-* **disableCrew**		- Disable Crew boarding and deboarding.
-* **repositionPlane**			- The Plane will be repositioned via GSX when you start your Session.
-* **autoConnect**		- Automatically connect Jetway/Stairs on Startup and on Arrival.
-* **connectPCA**" 		-  The Preconditioned Air will be connected (and disconnected) on Startup and on Arrival.
-* **pcaOnlyJetway** 		-  The Preconditioned Air only connected on Jetways.
-* **autoRefuel**		- Call Refueling automatically as soon as an Flightplan was imported on the EFB.
-* **callCatering**	- Catering will be called when Refueling is called.
-* **autoBoarding** 		-  Automatically start Boarding when Refueling and Catering (if configured) are finished.
-* **autoDeboarding** 			-  Automaticall start Deboarding on Arrival.
-* **refuelRate**" 			-  The Speed at which the Tanks are filled, defaults to 28 (kg per Second).
+
+**Fenix2GSX**: The Configuration is done through the UI, open it by clicking on the System-Tray/Notification-Icon. They are stored persistently in the *Fenix2GSX.dll.config* File, so you only have to set it once :)
+<img src="img/ui.jpg">
+<br/><br/>
+
+* **waitForConnect**		- The Binary will wait until MSFS is started and SimConnect is available. Default *"true"*
+* **gsxVolumeControl**			- The GSX Volume is controlled via the INT-Knob on ACP1. Default *"true"*
+* **repositionPlane**			- The Plane will be repositioned via GSX when you start your Session (unless starting with Engines running). Default *"true"*
+* **autoConnect**		- Automatically connect Jetway/Stairs on Startup and on Arrival. Operator Selection is done automatically if needed. Default *"true"*
+* **connectPCA**" 		-  The Preconditioned Air will be connected on Startup and on Arrival (and disconnected on Depature). Default *"true"*
+* **pcaOnlyJetway** 		-  The Preconditioned Air will only be connected when a Jetway is available. Default *"true"*
+* **disableCrew**		- Disable Crew boarding and deboarding and therefore supress the Pop-Up/Question. Default *"true"*
+* **autoRefuel**		- Call Refueling automatically as soon as a Flightplan was imported in the EFB. Default *"true"*
+* **callCatering**	- Catering will be called when Refueling is automatically called. Default *"true"*
+* **autoBoarding** 		-  Automatically start Boarding when Refueling and Catering (if configured) are finished. Default *"true"*
+* **autoDeboarding** 			-  Automatically start Deboarding on Arrival when the Beacon-Light is switched off (and Engines stopped). Default *"true"*
+* **repositionDelay**			-  The Delay in Seconds, before the Plane will be repositioned (to give the Sim/GSX time to load). Default *"3"*
+* **refuelRate**" 			-  The Speed at which the Tanks are filled, defaults to 28 kg per Second (~62 lbs / s).
 * **refuelUnit**" 			-  The Unit of refuelRate - either KGS or LBS.
+* **vhf1VolumeApp** 			- The Name of the Application's Binary (without .exe Extension) which will be controlled through the VHF1-Knob on ACP1. The App must be already running when Fenix2GSX starts. Defaults *"vPilot"*
 
 <br/><br/>
-## Usage
+## General Usage
 1) Create your SB Flightplan and start MSFS as you normally would. Depending on your Configuration, start the Tool before MSFS or when MSFS is in the Main Menu.
 2) When your Session is loaded (Ready to Fly was pressed), wait for the Repositioning and Jetway/Stair Call to happen (if configured).
-3) Import your Flightplan on the EFB (wherever you're using it from, does not need to be the EFB in the VC). Refueling and Catering will be called (if configured).
+3) Import your Flightplan on the EFB (wherever you're using it from, does not need to be the EFB in the VC). Refueling and Catering will be called (if configured). Always import a Flightplan on the EFB, regardless of Configuration.
 4) When Refueling and Boarding are finished (whoever called it), you will receive your Final Loadsheet after 90-150s. The left Forward Door will be closed when this happens (if not already closed by GSX). Also when both Services are finished and the APU is Avail and the APU Bleed is switched ON: the PCA will be removed (if configured to connect)
-5) When Parking Brake is set, External Power disconnected (on the Overhead) and Beacon Light is On, the Tool will remove all Ground-Equipment: Jetway is disconnected, GPU and PCA (to be safe) are removed, Chocks are removed.
+5) When the Parking Brake is set, External Power is disconnected (on the Overhead) and Beacon Light is On, the Tool will remove all Ground-Equipment: Jetway/Stairs (if not already removed) and GPU, PCA & Chocks (always, to be safe).
 6) Happy Flight!
-7) When you arrive (on your preselected Gate), the Jetway/Stairs will automatically connect when the Engines are Off and the Parking Brake is set (if configured).
+7) When you arrive (pre-select your Gate), the Jetway/Stairs will automatically connect as soon as the Engines are Off and the Parking Brake is set (if configured).
 8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, you can dismiss it if you want. *DO NOT* generate a new Flightplan in SimBrief until Deboarding has finished!
-9) It works with Turn-Arounds! As soon as you (re)import a new Flightplan it will start over.
+9) It works with Turn-Arounds! As soon as you (re)import a new Flightplan the Cycle starts over.
 <br/>
-If you set every Option for automatic Service Calls, you can also disable GSX in the Toolbar. The Services are still called, but you won't see the Menu. You should open it for Pushback though :sweat_smile:
+If you set every Option for automatic Service Calls, I'd recommend to disable the GSX Menu in the Toolbar (Icon not white). The Services are still called, but you won't see the Menu popping-up. So Push-Back, De-Ice and Gate-Selection are the only Situations where you need to open it.
