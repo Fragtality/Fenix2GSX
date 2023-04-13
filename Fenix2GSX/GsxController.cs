@@ -1,8 +1,8 @@
 ﻿using CoreAudio;
 using Microsoft.Win32;
 using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -55,6 +55,9 @@ namespace Fenix2GSX
         private AudioSessionControl2 gsxAudioSession = null;
         private float gsxAudioVolume = -1;
         private int gsxAudioMute = -1;
+        private AudioSessionControl2 vhf1AudioSession = null;
+        private float vhf1AudioVolume = -1;
+        private int vhf1AudioMute = -1;
 
         public int Interval { get; set; } = 1000;
 
@@ -81,12 +84,16 @@ namespace Fenix2GSX
             SimConnect.SubscribeLvar("FSDT_VAR_EnginesStopped");
             SimConnect.SubscribeLvar("FSDT_GSX_COUATL_STARTED");
             SimConnect.SubscribeLvar("FSDT_GSX_JETWAY");
+            SimConnect.SubscribeLvar("FSDT_GSX_OPERATEJETWAYS_STATE");
             SimConnect.SubscribeLvar("FSDT_GSX_STAIRS");
+            SimConnect.SubscribeLvar("FSDT_GSX_OPERATESTAIRS_STATE");
             SimConnect.SubscribeLvar("S_MIP_PARKING_BRAKE");
             SimConnect.SubscribeLvar("S_OH_EXT_LT_BEACON");
             SimConnect.SubscribeLvar("I_OH_ELEC_EXT_PWR_L");
             SimConnect.SubscribeLvar("I_OH_ELEC_APU_START_U");
             SimConnect.SubscribeLvar("S_OH_PNEUMATIC_APU_BLEED");
+            SimConnect.SubscribeLvar("I_FCU_TRACK_FPA_MODE");
+            SimConnect.SubscribeLvar("I_FCU_HEADING_VS_MODE");
 
             FenixController = new(Model);
 
@@ -94,8 +101,6 @@ namespace Fenix2GSX
             {
                 SimConnect.SubscribeLvar("I_ASP_INT_REC");
                 SimConnect.SubscribeLvar("A_ASP_INT_VOLUME");
-                SimConnect.SubscribeLvar("I_FCU_TRACK_FPA_MODE");
-                SimConnect.SubscribeLvar("I_FCU_HEADING_VS_MODE");
 
                 MMDeviceEnumerator deviceEnumerator = new(Guid.NewGuid());
                 var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
@@ -117,6 +122,31 @@ namespace Fenix2GSX
                 }
             }
 
+            if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp))
+            {
+                SimConnect.SubscribeLvar("I_ASP_VHF_1_REC");
+                SimConnect.SubscribeLvar("A_ASP_VHF_1_VOLUME");
+
+                MMDeviceEnumerator deviceEnumerator = new(Guid.NewGuid());
+                var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+
+                foreach (var device in devices)
+                {
+                    foreach (var session in device.AudioSessionManager2.Sessions)
+                    {
+                        Process p = Process.GetProcessById((int)session.ProcessID);
+                        if (p.ProcessName == Model.Vhf1VolumeApp)
+                        {
+                            vhf1AudioSession = session;
+                            break;
+                        }
+                    }
+
+                    if (vhf1AudioSession != null)
+                        break;
+                }
+            }
+
             string regPath = (string)Registry.GetValue(registryPath, registryValue, null) + pathMenuFile;
             if (Path.Exists(regPath))
                 menuFile = regPath;
@@ -132,31 +162,60 @@ namespace Fenix2GSX
                 gsxAudioSession.SimpleAudioVolume.MasterVolume = 1.0f;
                 gsxAudioSession.SimpleAudioVolume.Mute = false;
             }
+
+            if (vhf1AudioSession != null)
+            {
+                vhf1AudioSession.SimpleAudioVolume.MasterVolume = 1.0f;
+                vhf1AudioSession.SimpleAudioVolume.Mute = false;
+            }
         }
 
         public void ControlAudio()
         {
-            if (!Model.GsxVolumeControl || gsxAudioSession == null)
-                return;
-
-            if (!(SimConnect.ReadLvar("I_FCU_TRACK_FPA_MODE") == 1 || SimConnect.ReadLvar("I_FCU_HEADING_VS_MODE") == 1))
+            if (Model.GsxVolumeControl && gsxAudioSession != null)
             {
-                ResetAudio();
-                return;
+                if (!(SimConnect.ReadLvar("I_FCU_TRACK_FPA_MODE") == 1 || SimConnect.ReadLvar("I_FCU_HEADING_VS_MODE") == 1))
+                {
+                    ResetAudio();
+                    return;
+                }
+
+                float volume = SimConnect.ReadLvar("A_ASP_INT_VOLUME");
+                int muted = (int)SimConnect.ReadLvar("I_ASP_INT_REC");
+                if (volume >= 0 && volume != gsxAudioVolume)
+                {
+                    gsxAudioSession.SimpleAudioVolume.MasterVolume = volume;
+                    gsxAudioVolume = volume;
+                }
+
+                if (muted >= 0 && muted != gsxAudioMute)
+                {
+                    gsxAudioSession.SimpleAudioVolume.Mute = muted == 0;
+                    gsxAudioMute = muted;
+                }
             }
 
-            float volume = SimConnect.ReadLvar("A_ASP_INT_VOLUME");
-            int muted = (int)SimConnect.ReadLvar("I_ASP_INT_REC");
-            if (volume >= 0 && volume != gsxAudioVolume)
+            if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession != null)
             {
-                gsxAudioSession.SimpleAudioVolume.MasterVolume = volume;
-                gsxAudioVolume = volume;
-            }
+                if (!Model.GsxVolumeControl && (!(SimConnect.ReadLvar("I_FCU_TRACK_FPA_MODE") == 1 || SimConnect.ReadLvar("I_FCU_HEADING_VS_MODE") == 1)))
+                {
+                    ResetAudio();
+                    return;
+                }
 
-            if (muted >= 0 && muted != gsxAudioMute)
-            {
-                gsxAudioSession.SimpleAudioVolume.Mute = muted == 0;
-                gsxAudioMute = muted;
+                float volume = SimConnect.ReadLvar("A_ASP_VHF_1_VOLUME");
+                int muted = (int)SimConnect.ReadLvar("I_ASP_VHF_1_REC");
+                if (volume >= 0 && volume != vhf1AudioVolume)
+                {
+                    vhf1AudioSession.SimpleAudioVolume.MasterVolume = volume;
+                    vhf1AudioVolume = volume;
+                }
+
+                if (muted >= 0 && muted != vhf1AudioMute)
+                {
+                    vhf1AudioSession.SimpleAudioVolume.Mute = muted == 0;
+                    vhf1AudioMute = muted;
+                }
             }
         }
 
@@ -402,7 +461,7 @@ namespace Fenix2GSX
                     {
                         Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Preparing for Pushback - removing Equipment");
                         int departState = (int)SimConnect.ReadLvar("FSDT_GSX_DEPARTURE_STATE");
-                        if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2 && departState < 4)
+                        if (departState < 4 && SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2 && SimConnect.ReadLvar("FSDT_GSX_JETWAY") == 5 && SimConnect.ReadLvar("FSDT_GSX_OPERATEJETWAYS_STATE") < 3)
                         {
                             MenuOpen();
                             Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Removing Jetway");
@@ -595,13 +654,13 @@ namespace Fenix2GSX
         {
             MenuOpen();
 
-            if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2)
+            if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2 && SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 5 && SimConnect.ReadLvar("FSDT_GSX_OPERATEJETWAYS_STATE") < 3)
             {
                 Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Jetway");
                 MenuItem(6);
                 OperatorSelection();
 
-                if (SimConnect.ReadLvar("FSDT_GSX_STAIRS") != 2)
+                if (SimConnect.ReadLvar("FSDT_GSX_STAIRS") != 2 && SimConnect.ReadLvar("FSDT_GSX_STAIRS") != 5 && SimConnect.ReadLvar("FSDT_GSX_OPERATESTAIRS_STATE") < 3)
                 {
                     Thread.Sleep(1500);
                     MenuOpen();
@@ -609,7 +668,7 @@ namespace Fenix2GSX
                     MenuItem(7);
                 }
             }
-            else
+            else if (SimConnect.ReadLvar("FSDT_GSX_STAIRS") != 5 && SimConnect.ReadLvar("FSDT_GSX_OPERATESTAIRS_STATE") < 3)
             {
                 Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Stairs");
                 MenuItem(7);

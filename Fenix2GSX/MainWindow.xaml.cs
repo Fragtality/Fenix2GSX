@@ -51,6 +51,7 @@ namespace Fenix2GSX
                 unitKGS.IsChecked = false;
                 unitLBS.IsChecked = true;
             }
+            txtVhf1VolumeApp.Text = serviceModel.Vhf1VolumeApp;
         }
 
         protected void UpdateLogArea()
@@ -58,7 +59,7 @@ namespace Fenix2GSX
             while (Logger.MessageQueue.Count > 0)
             {
                 
-                if (lineCounter > 3)
+                if (lineCounter > 4)
                     txtLogMessages.Text = txtLogMessages.Text[(txtLogMessages.Text.IndexOf('\n') + 1)..];
                 txtLogMessages.Text += Logger.MessageQueue.Dequeue().ToString() + "\n";
                 lineCounter++;
@@ -180,6 +181,12 @@ namespace Fenix2GSX
         {
             if (float.TryParse(txtRefuelRate.Text, CultureInfo.InvariantCulture, out _))
                 serviceModel.SetSetting("refuelRate", Convert.ToString(txtRefuelRate.Text, CultureInfo.InvariantCulture));
+        }
+
+        private void txtVhf1VolumeApp_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtVhf1VolumeApp.Text))
+                serviceModel.SetSetting("vhf1VolumeApp", txtVhf1VolumeApp.Text);
         }
 
         private void units_Click(object sender, RoutedEventArgs e)

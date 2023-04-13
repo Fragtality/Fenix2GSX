@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Fenix2GSX"
         mc:Ignorable="d"
-        Title="Fenix2GSX" Height="577" Width="486" ResizeMode="NoResize" IsVisibleChanged="Window_IsVisibleChanged" Closing="Window_Closing">
+        Title="Fenix2GSX" Height="600" Width="516" ResizeMode="NoResize" IsVisibleChanged="Window_IsVisibleChanged" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="64"/>
-            <RowDefinition Height="352" />
+            <RowDefinition Height="384" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -37,14 +37,19 @@
                 <CheckBox Name="chkAutoDeboard" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoDeboard_Click">Automatically start Deboarding on Arrival</CheckBox>
                 <StackPanel Orientation="Horizontal" Margin="5,8,8,8" VerticalAlignment="Center" Height="26">
                     <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">Reposition Delay</Label>
-                    <TextBox Name="txtRepositionDelay" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtRepositionDelay_LostFocus"></TextBox>
+                    <TextBox Name="txtRepositionDelay" Margin="2,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtRepositionDelay_LostFocus"></TextBox>
                     <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">s</Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5,0,8,8" VerticalAlignment="Center" Height="26">
                     <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">Refuel Rate</Label>
-                    <TextBox Name="txtRefuelRate" Margin="29,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtRefuelRate_LostFocus"></TextBox>
+                    <TextBox Name="txtRefuelRate" Margin="31,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtRefuelRate_LostFocus"></TextBox>
                     <RadioButton Name="unitKGS" Margin="5,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" Click="units_Click">kg/s</RadioButton>
                     <RadioButton Name="unitLBS" Margin="8,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" Click="units_Click">lbs/s</RadioButton>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,0,8,8" VerticalAlignment="Center" Height="26">
+                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">VHF1 App Name</Label>
+                    <TextBox Name="txtVhf1VolumeApp" Margin="2,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtVhf1VolumeApp_LostFocus"></TextBox>
+                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center"> (Volume controlled via VHF1 on ACP1. Needs Restart.)</Label>
                 </StackPanel>
             </StackPanel>
         </Border>

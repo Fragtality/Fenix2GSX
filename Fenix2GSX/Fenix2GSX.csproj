@@ -9,7 +9,7 @@
     <ApplicationIcon>phoenix.ico</ApplicationIcon>
     <PlatformTarget>x64</PlatformTarget>
     <Title>Fenix2GSX</Title>
-    <Version>0.2.6</Version>
+    <Version>0.2.7</Version>
     <Authors>Fragtality</Authors>
     <Copyright>Copyright © 2023</Copyright>
     <Description>GSX Integration and Automation for the Fenix A320</Description>
@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="111.2.70" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="112.2.70" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
     <PackageReference Include="CoreAudio" Version="1.27.0" />
     <PackageReference Include="H.NotifyIcon.Wpf" Version="2.0.108" />
@@ -57,15 +57,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="111.2.7" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-arm64" Version="112.2.7" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="111.2.7" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x64" Version="112.2.7" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="111.2.7" />
+    <PackageReference Update="chromiumembeddedframework.runtime.win-x86" Version="112.2.7" />
   </ItemGroup>
 
 </Project>

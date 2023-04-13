@@ -17,6 +17,7 @@ namespace Fenix2GSX
         public bool WaitForConnect { get; set; }
         public bool TestArrival { get; set; }
         public bool GsxVolumeControl { get; set; }
+        public string Vhf1VolumeApp { get; set; }
         public bool DisableCrew { get; set; }
         public bool RepositionPlane { get; set; }
         public float RepositionDelay { get; set; }
@@ -47,6 +48,7 @@ namespace Fenix2GSX
             WaitForConnect = Convert.ToBoolean(settings["waitForConnect"].Value);
             TestArrival = Convert.ToBoolean(settings["testArrival"].Value);
             GsxVolumeControl = Convert.ToBoolean(settings["gsxVolumeControl"].Value);
+            Vhf1VolumeApp = Convert.ToString(settings["vhf1VolumeApp"].Value);
             DisableCrew = Convert.ToBoolean(settings["disableCrew"].Value);
             RepositionPlane = Convert.ToBoolean(settings["repositionPlane"].Value);
             RepositionDelay = Convert.ToSingle(settings["repositionDelay"].Value, CultureInfo.InvariantCulture);
