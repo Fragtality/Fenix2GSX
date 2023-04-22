@@ -194,7 +194,7 @@ namespace Fenix2GSX
                         CreateDataAreaClientChannel();
                         isMobiConnected = true;
                         SendClientWasmCmd("MF.SimVars.Clear");
-                        SendClientWasmCmd("MF.Config.MAX_VARS_PER_FRAME.Set.30");
+                        SendClientWasmCmd("MF.Config.MAX_VARS_PER_FRAME.Set.15");
                         Logger.Log(LogLevel.Information, "MobiSimConnect:SimConnect_OnClientData", $"MobiFlight WASM Client Connection opened");
                     }
                 }

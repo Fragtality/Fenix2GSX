@@ -125,9 +125,14 @@ namespace Fenix2GSX
         {
             if (fuelCurrent > fuelPlanned)
             {
+                Logger.Log(LogLevel.Information, "FenixController:RefuelStart", $"Current Fuel higher than planned - Resetting to 3000kg");
                 Interface.FenixPost(FenixInterface.MsgMutation("float", "aircraft.fuel.total.amount.kg", 3000.0f));
                 fuelCurrent = 3000;
             }
+
+            Interface.FenixPost(FenixInterface.MsgMutation("float", "aircraft.refuel.refuelingRate", 0.0f));
+            Interface.FenixPost(FenixInterface.MsgMutation("bool", "aircraft.refuel.refuelingPower", true));
+            Interface.FenixPost(FenixInterface.MsgMutation("float", "aircraft.refuel.fuelTarget", fuelPlanned));
         }
 
         public bool Refuel()
@@ -142,6 +147,11 @@ namespace Fenix2GSX
             Interface.FenixPost(FenixInterface.MsgMutation("float", "aircraft.fuel.total.amount.kg", fuelCurrent));
 
             return fuelCurrent == fuelPlanned;
+        }
+
+        public void RefuelStop()
+        {
+            Interface.FenixPost(FenixInterface.MsgMutation("bool", "aircraft.refuel.refuelingPower", false));
         }
 
         public void BoardingStart()
@@ -303,6 +313,18 @@ namespace Fenix2GSX
             SendSeatString(true);
             paxCurrent = new bool[162];
             paxSeats = null;
+        }
+
+        public void PushStart()
+        {
+            Interface.FenixPost(FenixInterface.MsgMutation("int", "groundservice.pushback", 0));
+            Interface.FenixPost(FenixInterface.MsgMutation("bool", "groundservice.pushback.wait", true));
+        }
+
+        public void PushStop()
+        {
+            Interface.FenixPost(FenixInterface.MsgMutation("int", "groundservice.pushback", 3));
+            Interface.FenixPost(FenixInterface.MsgMutation("bool", "groundservice.pushback.wait", false));
         }
     }
 }

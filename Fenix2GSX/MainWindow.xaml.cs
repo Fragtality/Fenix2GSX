@@ -173,11 +173,37 @@ namespace Fenix2GSX
 
         private void txtRepositionDelay_LostFocus(object sender, RoutedEventArgs e)
         {
+            txtRepositionDelay_Set();
+        }
+
+        private void txtRepositionDelay_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != System.Windows.Input.Key.Enter || e.Key != System.Windows.Input.Key.Return)
+                return;
+
+            txtRepositionDelay_Set();
+        }
+
+        private void txtRepositionDelay_Set()
+        {
             if (float.TryParse(txtRepositionDelay.Text, CultureInfo.InvariantCulture, out _))
                 serviceModel.SetSetting("repositionDelay", Convert.ToString(txtRepositionDelay.Text, CultureInfo.InvariantCulture));
         }
 
         private void txtRefuelRate_LostFocus(object sender, RoutedEventArgs e)
+        {
+            txtRefuelRate_Set();
+        }
+
+        private void txtRefuelRate_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != System.Windows.Input.Key.Enter || e.Key != System.Windows.Input.Key.Return)
+                return;
+
+            txtRefuelRate_Set();
+        }
+
+        private void txtRefuelRate_Set()
         {
             if (float.TryParse(txtRefuelRate.Text, CultureInfo.InvariantCulture, out _))
                 serviceModel.SetSetting("refuelRate", Convert.ToString(txtRefuelRate.Text, CultureInfo.InvariantCulture));
@@ -185,7 +211,20 @@ namespace Fenix2GSX
 
         private void txtVhf1VolumeApp_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtVhf1VolumeApp.Text))
+            txtVhf1VolumeApp_Set();
+        }
+
+        private void txtVhf1VolumeApp_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != System.Windows.Input.Key.Enter || e.Key != System.Windows.Input.Key.Return)
+                return;
+
+            txtVhf1VolumeApp_Set();
+        }
+
+        private void txtVhf1VolumeApp_Set()
+        {
+            if (txtVhf1VolumeApp?.Text != null)
                 serviceModel.SetSetting("vhf1VolumeApp", txtVhf1VolumeApp.Text);
         }
 
@@ -208,6 +247,6 @@ namespace Fenix2GSX
                 serviceModel.SetSetting("refuelUnit", "LBS");
                 txtRefuelRate.Text = Convert.ToString(fuelRate, CultureInfo.InvariantCulture);
             }
-        }
+        }     
     }
 }

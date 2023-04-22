@@ -33,6 +33,10 @@ namespace Fenix2GSX
             {
                 return string.Format(CultureInfo.InvariantCulture.NumberFormat, "{{\"query\": \"mutation ($variableName: String!, $variableValue: Float!) {{dataRef {{ writeFloat(name: $variableName, value: $variableValue) }} }}\", \"variables\": {{ \"variableName\": \"{0}\", \"variableValue\": {1:F8} }} }}", name, (float)value);
             }
+            else if (writeType == "int")
+            {
+                return string.Format("{{\"query\": \"mutation ($variableName: String!) {{dataRef {{ writeInt(name: $variableName, value: {0}) }} }}\", \"variables\": {{ \"variableName\": \"{1}\" }} }}", ((int)value).ToString(), name);
+            }
             else if (writeType == "string")
             {
                 return string.Format("{{\"query\": \"mutation ($variableName: String!, $variableValue: String!) {{dataRef {{ writeString(name: $variableName, value: $variableValue) }} }}\", \"variables\": {{ \"variableName\": \"{0}\", \"variableValue\": \"{1}\" }} }}", name, value);

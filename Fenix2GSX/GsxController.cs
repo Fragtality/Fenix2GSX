@@ -24,6 +24,7 @@ namespace Fenix2GSX
         private readonly string pathMenuFile = @"\MSFS\fsdreamteam-gsx-pro\html_ui\InGamePanels\FSDT_GSX_Panel\menu";
         private readonly string registryPath = @"HKEY_CURRENT_USER\SOFTWARE\FSDreamTeam";
         private readonly string registryValue = @"root";
+        private readonly string gsxProcess = "Couatl64_MSFS";
         private string menuFile = "";
 
         private FlightState state = FlightState.PREP;
@@ -41,6 +42,9 @@ namespace Fenix2GSX
         private bool boardFinished = false;
         private bool finalLoadsheetSend = false;
         private bool equipmentRemoved = false;
+        private bool pushRunning = false;
+        private bool pushFinished = true; //DISABLED - GSX Variable not working
+        private bool pushNwsDisco = false;
         private bool pcaRemoved = false;
         private bool deboarding = false;
         private int delayCounter = 0;
@@ -48,6 +52,7 @@ namespace Fenix2GSX
         private string flightPlanID = "0";
         private int paxPlanned = 0;
         private bool firstRun = true;
+        private string lastVhf1App;
 
         private MobiSimConnect SimConnect;
         private FenixContoller FenixController;
@@ -87,6 +92,7 @@ namespace Fenix2GSX
             SimConnect.SubscribeLvar("FSDT_GSX_OPERATEJETWAYS_STATE");
             SimConnect.SubscribeLvar("FSDT_GSX_STAIRS");
             SimConnect.SubscribeLvar("FSDT_GSX_OPERATESTAIRS_STATE");
+            SimConnect.SubscribeLvar("FSDT_GSX_BYPASS_PIN");
             SimConnect.SubscribeLvar("S_MIP_PARKING_BRAKE");
             SimConnect.SubscribeLvar("S_OH_EXT_LT_BEACON");
             SimConnect.SubscribeLvar("I_OH_ELEC_EXT_PWR_L");
@@ -94,14 +100,31 @@ namespace Fenix2GSX
             SimConnect.SubscribeLvar("S_OH_PNEUMATIC_APU_BLEED");
             SimConnect.SubscribeLvar("I_FCU_TRACK_FPA_MODE");
             SimConnect.SubscribeLvar("I_FCU_HEADING_VS_MODE");
+            SimConnect.SubscribeLvar("I_ASP_INT_REC");
+            SimConnect.SubscribeLvar("A_ASP_INT_VOLUME");
+            SimConnect.SubscribeLvar("I_ASP_VHF_1_REC");
+            SimConnect.SubscribeLvar("A_ASP_VHF_1_VOLUME");
+            SimConnect.SubscribeLvar("A_FC_THROTTLE_LEFT_INPUT");
+            SimConnect.SubscribeLvar("A_FC_THROTTLE_RIGHT_INPUT");
+            SimConnect.SubscribeSimVar("GPS GROUND SPEED", "Meters per second");
 
             FenixController = new(Model);
 
-            if (Model.GsxVolumeControl)
-            {
-                SimConnect.SubscribeLvar("I_ASP_INT_REC");
-                SimConnect.SubscribeLvar("A_ASP_INT_VOLUME");
+            if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp))
+                lastVhf1App = Model.Vhf1VolumeApp;
 
+            string regPath = (string)Registry.GetValue(registryPath, registryValue, null) + pathMenuFile;
+            if (Path.Exists(regPath))
+                menuFile = regPath;
+
+            if (Model.TestArrival)
+                FenixController.Update(true);
+        }
+
+        private void GetAudioSessions()
+        {
+            if (gsxAudioSession == null)
+            {
                 MMDeviceEnumerator deviceEnumerator = new(Guid.NewGuid());
                 var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
 
@@ -110,9 +133,10 @@ namespace Fenix2GSX
                     foreach (var session in device.AudioSessionManager2.Sessions)
                     {
                         Process p = Process.GetProcessById((int)session.ProcessID);
-                        if (p.ProcessName == "Couatl64_MSFS")
+                        if (p.ProcessName == gsxProcess)
                         {
                             gsxAudioSession = session;
+                            Logger.Log(LogLevel.Information, "GsxController:GetAudioSessions", $"Found Audio Session for GSX");
                             break;
                         }
                     }
@@ -122,11 +146,8 @@ namespace Fenix2GSX
                 }
             }
 
-            if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp))
+            if (vhf1AudioSession == null)
             {
-                SimConnect.SubscribeLvar("I_ASP_VHF_1_REC");
-                SimConnect.SubscribeLvar("A_ASP_VHF_1_VOLUME");
-
                 MMDeviceEnumerator deviceEnumerator = new(Guid.NewGuid());
                 var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
 
@@ -138,6 +159,7 @@ namespace Fenix2GSX
                         if (p.ProcessName == Model.Vhf1VolumeApp)
                         {
                             vhf1AudioSession = session;
+                            Logger.Log(LogLevel.Information, "GsxController:GetAudioSessions", $"Found Audio Session for {Model.Vhf1VolumeApp}");
                             break;
                         }
                     }
@@ -146,40 +168,36 @@ namespace Fenix2GSX
                         break;
                 }
             }
-
-            string regPath = (string)Registry.GetValue(registryPath, registryValue, null) + pathMenuFile;
-            if (Path.Exists(regPath))
-                menuFile = regPath;
-
-            if (Model.TestArrival)
-                FenixController.Update(true);
         }
 
         public void ResetAudio()
         {
-            if (gsxAudioSession != null)
+            if (gsxAudioSession != null && (gsxAudioSession.SimpleAudioVolume.MasterVolume != 1.0f || gsxAudioSession.SimpleAudioVolume.Mute))
             {
                 gsxAudioSession.SimpleAudioVolume.MasterVolume = 1.0f;
                 gsxAudioSession.SimpleAudioVolume.Mute = false;
+                Logger.Log(LogLevel.Information, "GsxController:ResetAudio", $"Audio resetted for GSX");
             }
 
-            if (vhf1AudioSession != null)
+            if (vhf1AudioSession != null && (vhf1AudioSession.SimpleAudioVolume.MasterVolume != 1.0f || vhf1AudioSession.SimpleAudioVolume.Mute))
             {
                 vhf1AudioSession.SimpleAudioVolume.MasterVolume = 1.0f;
                 vhf1AudioSession.SimpleAudioVolume.Mute = false;
+                Logger.Log(LogLevel.Information, "GsxController:ResetAudio", $"Audio resetted for {Model.Vhf1VolumeApp}");
             }
         }
 
         public void ControlAudio()
         {
+            if (SimConnect.ReadLvar("I_FCU_TRACK_FPA_MODE") == 0 && SimConnect.ReadLvar("I_FCU_HEADING_VS_MODE") == 0)
+            {
+                if (Model.GsxVolumeControl || !string.IsNullOrEmpty(Model.Vhf1VolumeApp))
+                    ResetAudio();
+                return;
+            }
+
             if (Model.GsxVolumeControl && gsxAudioSession != null)
             {
-                if (!(SimConnect.ReadLvar("I_FCU_TRACK_FPA_MODE") == 1 || SimConnect.ReadLvar("I_FCU_HEADING_VS_MODE") == 1))
-                {
-                    ResetAudio();
-                    return;
-                }
-
                 float volume = SimConnect.ReadLvar("A_ASP_INT_VOLUME");
                 int muted = (int)SimConnect.ReadLvar("I_ASP_INT_REC");
                 if (volume >= 0 && volume != gsxAudioVolume)
@@ -194,15 +212,22 @@ namespace Fenix2GSX
                     gsxAudioMute = muted;
                 }
             }
+            else if (Model.GsxVolumeControl && gsxAudioSession == null)
+            {
+                GetAudioSessions();
+                gsxAudioVolume = -1;
+                gsxAudioMute = -1;
+            }
+            else if (!Model.GsxVolumeControl && gsxAudioSession != null)
+            {
+                gsxAudioSession = null;
+                gsxAudioVolume = -1;
+                gsxAudioMute = -1;
+                Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for GSX (Setting disabled)");
+            }
 
             if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession != null)
             {
-                if (!Model.GsxVolumeControl && (!(SimConnect.ReadLvar("I_FCU_TRACK_FPA_MODE") == 1 || SimConnect.ReadLvar("I_FCU_HEADING_VS_MODE") == 1)))
-                {
-                    ResetAudio();
-                    return;
-                }
-
                 float volume = SimConnect.ReadLvar("A_ASP_VHF_1_VOLUME");
                 int muted = (int)SimConnect.ReadLvar("I_ASP_VHF_1_REC");
                 if (volume >= 0 && volume != vhf1AudioVolume)
@@ -216,6 +241,43 @@ namespace Fenix2GSX
                     vhf1AudioSession.SimpleAudioVolume.Mute = muted == 0;
                     vhf1AudioMute = muted;
                 }
+            }
+            else if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession == null)
+            {
+                GetAudioSessions();
+                vhf1AudioVolume = -1;
+                vhf1AudioMute = -1;
+            }
+            
+            if (lastVhf1App != Model.Vhf1VolumeApp)
+            {
+                if (vhf1AudioSession != null)
+                {
+                    vhf1AudioSession.SimpleAudioVolume.MasterVolume = 1.0f;
+                    vhf1AudioSession.SimpleAudioVolume.Mute = false;
+                    vhf1AudioSession = null;
+                    vhf1AudioVolume = -1;
+                    vhf1AudioMute = -1;
+                    Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for {lastVhf1App} (App changed)");
+                }
+                GetAudioSessions();
+            }
+            lastVhf1App = Model.Vhf1VolumeApp;
+
+            if (Model.GsxVolumeControl && gsxAudioSession != null && !IPCManager.IsProcessRunning(gsxProcess))
+            {
+                gsxAudioSession = null;
+                gsxAudioVolume = -1;
+                gsxAudioMute = -1;
+                Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for GSX (App not running)");
+            }
+
+            if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession != null && !IPCManager.IsProcessRunning(Model.Vhf1VolumeApp))
+            {
+                vhf1AudioSession = null;
+                vhf1AudioVolume = -1;
+                vhf1AudioMute = -1;
+                Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for {Model.Vhf1VolumeApp} (App not running)");
             }
         }
 
@@ -250,7 +312,6 @@ namespace Fenix2GSX
                     Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Repositioning Plane");
                     MenuOpen();
                     MenuItem(10);
-                    Thread.Sleep(1500);
                     MenuItem(1);
                     planePositioned = true;
                     Thread.Sleep(1500);
@@ -314,108 +375,7 @@ namespace Fenix2GSX
             int cateringState = (int)SimConnect.ReadLvar("FSDT_GSX_CATERING_STATE");
             if (state == FlightState.DEPATURE && (!refuelFinished || !boardFinished))
             {
-                Interval = 1000;
-                if (Model.AutoRefuel)
-                {
-                    if (!refuelRequested && refuelState != 6)
-                    {
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Refuel Service");
-                        MenuOpen();
-                        MenuItem(3);
-                        refuelRequested = true;
-                        return;
-                    }
-
-                    if (Model.CallCatering && !cateringRequested && cateringState != 6)
-                    {
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Catering Service");
-                        MenuOpen();
-                        MenuItem(2);
-                        OperatorSelection();
-                        cateringRequested = true;
-                        return;
-                    }
-                }
-
-                if (!cateringFinished && cateringState == 6)
-                {
-                    cateringFinished = true;
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Catering finished");
-                }
-
-                if (Model.AutoBoarding)
-                {
-                    if (!boardingRequested && refuelFinished && ((Model.CallCatering && cateringFinished) || !Model.CallCatering))
-                    {
-                        if (delayCounter == 0)
-                            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Waiting 90s before calling Boarding");
-
-                        if (delayCounter < 90)
-                            delayCounter++;
-                        else
-                        {
-                            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Boarding Service");
-                            SetPassengers(FenixController.GetPaxPlanned());
-                            MenuOpen();
-                            MenuItem(4);
-                            delayCounter = 0;
-                            boardingRequested = true;
-                        }
-                        return;
-                    }
-                }
-
-                if (!refueling && !refuelFinished && refuelState == 5)
-                {
-                    refueling = true;
-                    refuelPaused = true;
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Fuel Service active");
-                    FenixController.RefuelStart();
-                }
-                else if (refueling)
-                {
-                    if (SimConnect.ReadLvar("FSDT_GSX_FUELHOSE_CONNECTED") == 1)
-                    {
-                        if (refuelPaused)
-                        {
-                            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Fuel Hose connected - refueling");
-                            refuelPaused = false;
-                        }
-
-                        if (FenixController.Refuel())
-                        {
-                            refueling = false;
-                            refuelFinished = true;
-                            refuelPaused = false;
-                            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Refuel completed");
-                        }
-                    }
-                    else
-                    {
-                        if (!refuelPaused && !refuelFinished)
-                        {
-                            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Fuel Hose disconnected - waiting for next Truck");
-                            refuelPaused = true;
-                        }
-                    }
-                }
-
-                if (!boarding && !boardFinished && SimConnect.ReadLvar("FSDT_GSX_BOARDING_STATE") >= 4)
-                {
-                    boarding = true;
-                    FenixController.BoardingStart();
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Boarding Service active");
-                }
-                else if (boarding)
-                {
-                    if (FenixController.Boarding((int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_BOARDING_TOTAL"), (int)SimConnect.ReadLvar("FSDT_GSX_BOARDING_CARGO_PERCENT")) || SimConnect.ReadLvar("FSDT_GSX_BOARDING_STATE") == 6)
-                    {
-                        boarding = false;
-                        boardFinished = true;
-                        FenixController.BoardingStop();
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Boarding completed");
-                    }
-                }
+                RunLoadingServices(refuelState, cateringState);
 
                 return;
             }
@@ -423,63 +383,7 @@ namespace Fenix2GSX
             //DEPATURE - Loadsheet & Ground-Equipment
             if (state == FlightState.DEPATURE && refuelFinished && boardFinished)
             {
-                if (Model.ConnectPCA && !pcaRemoved)
-                {
-                    if (IPCManager.SimConnect.ReadLvar("I_OH_ELEC_APU_START_U") != 0 && IPCManager.SimConnect.ReadLvar("S_OH_PNEUMATIC_APU_BLEED") != 0)
-                    {
-                        FenixController.SetServicePCA(false);
-                        pcaRemoved = true;
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"APU Bleed enabled - removing PCA");
-                    }
-                }
-
-                if (!finalLoadsheetSend)
-                {
-                    if (delay == 0)
-                    {
-                        delay = new Random().Next(90, 150);
-                        delayCounter = 0;
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Sending Final Loadsheet in {delay}s");
-                    }
-
-                    if (delayCounter < delay)
-                    {
-                        delayCounter++;
-                        return;
-                    }
-                    else
-                    {
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Sending Final Loadsheet");
-                        FenixController.TriggerFinal();
-                        finalLoadsheetSend = true;
-                    }
-                }
-                else if (!equipmentRemoved)
-                {
-                    equipmentRemoved = SimConnect.ReadLvar("S_MIP_PARKING_BRAKE") == 1 && SimConnect.ReadLvar("S_OH_EXT_LT_BEACON") == 1 && SimConnect.ReadLvar("I_OH_ELEC_EXT_PWR_L") == 0;
-                    if (equipmentRemoved)
-                    {
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Preparing for Pushback - removing Equipment");
-                        int departState = (int)SimConnect.ReadLvar("FSDT_GSX_DEPARTURE_STATE");
-                        if (departState < 4 && SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2 && SimConnect.ReadLvar("FSDT_GSX_JETWAY") == 5 && SimConnect.ReadLvar("FSDT_GSX_OPERATEJETWAYS_STATE") < 3)
-                        {
-                            MenuOpen();
-                            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Removing Jetway");
-                            MenuItem(6);
-                        }
-                        FenixController.SetServiceChocks(false);
-                        FenixController.SetServicePCA(false);
-                        FenixController.SetServiceGPU(false);
-                    }
-                }
-                else //DEPARTURE -> TAXIOUT
-                {
-                    state = FlightState.TAXIOUT;
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"State Change: Depature -> Taxi-Out");
-                    delay = 0;
-                    delayCounter = 0;
-                    Interval = 60000;
-                }
+                RunDepatureServices();
 
                 return;
             }
@@ -506,7 +410,6 @@ namespace Fenix2GSX
                 if (state == FlightState.FLIGHT && simOnGround)
                 {
                     state = FlightState.TAXIIN;
-                    //FenixController.Update(true);
                     Logger.Log(LogLevel.Information, "GsxController:RunServices", $"State Change: Flight -> Taxi-In (Waiting for Engines stopped and Beacon off)");
 
                     Interval = 2500;
@@ -523,46 +426,7 @@ namespace Fenix2GSX
             int deboard_state = (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_STATE");
             if (state == FlightState.TAXIIN && SimConnect.ReadLvar("FSDT_VAR_EnginesStopped") == 1 && SimConnect.ReadLvar("S_MIP_PARKING_BRAKE") == 1)
             {
-                if (SimConnect.ReadLvar("FSDT_GSX_COUATL_STARTED") != 1)
-                {
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Couatl Engine not running");
-                    return;
-                }
-
-                if (Model.AutoConnect && !connectCalled)
-                {
-                    CallJetwayStairs();
-                    connectCalled = true;
-                    return;
-                }
-
-                if (SimConnect.ReadLvar("S_OH_EXT_LT_BEACON") == 1)
-                    return;
-
-                if (Model.ConnectPCA && !pcaCalled && (!Model.PcaOnlyJetways || (Model.PcaOnlyJetways && SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2)))
-                {
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Connecting PCA");
-                    FenixController.SetServicePCA(true);
-                    pcaCalled = true;
-                }
-
-                Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Setting GPU and Chocks");
-                FenixController.SetServiceChocks(true);
-                FenixController.SetServiceGPU(true);
-                SetPassengers(FenixController.GetPaxPlanned());
-
-                state = FlightState.ARRIVAL;
-                Logger.Log(LogLevel.Information, "GsxController:RunServices", $"State Change: Taxi-In -> Arrival (Waiting for Deboarding)");
-
-                if (Model.AutoDeboarding && deboard_state < 4)
-                {
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Deboarding Service");
-                    SetPassengers(FenixController.GetPaxPlanned());
-                    MenuOpen();
-                    MenuItem(1);
-                    if (!Model.AutoConnect)
-                        OperatorSelection();
-                }
+                RunArrivalServices(deboard_state);
 
                 return;
             }
@@ -570,34 +434,7 @@ namespace Fenix2GSX
             //ARRIVAL - Deboarding
             if (state == FlightState.ARRIVAL && deboard_state >= 4)
             {
-                if (!deboarding)
-                {
-                    deboarding = true;
-                    FenixController.DeboardingStart();
-                    Interval = 1000;
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Deboarding Service active");
-                    return;
-                }
-                else if (deboarding)
-                {
-                    if (SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS") != paxPlanned)
-                    {
-                        Logger.Log(LogLevel.Warning, "GsxController:RunServices", $"Passenger changed during Boarding! Trying to reset Number ...");
-                        SimConnect.WriteLvar("FSDT_GSX_NUMPASSENGERS", paxPlanned);
-                    }
-
-                    int paxCurrent = (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS") - (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_DEBOARDING_TOTAL");
-                    if (FenixController.Deboarding(paxCurrent, (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_CARGO_PERCENT")) || deboard_state == 6 || deboard_state == 1)
-                    {
-                        deboarding = false;
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Deboarding finished (GSX State {deboard_state})");
-                        FenixController.DeboardingStop();
-                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"State Change: Arrival -> Turn-Around (Waiting for new Flightplan)");
-                        state = FlightState.TURNAROUND;
-                        Interval = 10000;
-                        return;
-                    }
-                }
+                RunDeboardingService(deboard_state);
             }
 
             //Pre-Flight - Turn-Around
@@ -621,6 +458,9 @@ namespace Fenix2GSX
                     boardFinished = false;
                     finalLoadsheetSend = false;
                     equipmentRemoved = false;
+                    pushRunning = false;
+                    pushFinished = true; //DISABLED
+                    pushNwsDisco = false;
                     pcaRemoved = false;
                     deboarding = false;
                     delayCounter = 0;
@@ -632,11 +472,292 @@ namespace Fenix2GSX
             }
         }
 
+        private void RunLoadingServices(int refuelState, int cateringState)
+        {
+            Interval = 1000;
+            if (Model.AutoRefuel)
+            {
+                if (!refuelRequested && refuelState != 6)
+                {
+                    Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Calling Refuel Service");
+                    MenuOpen();
+                    MenuItem(3);
+                    refuelRequested = true;
+                    return;
+                }
+
+                if (Model.CallCatering && !cateringRequested && cateringState != 6)
+                {
+                    Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Calling Catering Service");
+                    MenuOpen();
+                    MenuItem(2);
+                    OperatorSelection();
+                    cateringRequested = true;
+                    return;
+                }
+            }
+
+            if (!cateringFinished && cateringState == 6)
+            {
+                cateringFinished = true;
+                Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Catering finished");
+            }
+
+            if (Model.AutoBoarding)
+            {
+                if (!boardingRequested && refuelFinished && ((Model.CallCatering && cateringFinished) || !Model.CallCatering))
+                {
+                    if (delayCounter == 0)
+                        Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Waiting 90s before calling Boarding");
+
+                    if (delayCounter < 90)
+                        delayCounter++;
+                    else
+                    {
+                        Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Calling Boarding Service");
+                        SetPassengers(FenixController.GetPaxPlanned());
+                        MenuOpen();
+                        MenuItem(4);
+                        delayCounter = 0;
+                        boardingRequested = true;
+                    }
+                    return;
+                }
+            }
+
+            if (!refueling && !refuelFinished && refuelState == 5)
+            {
+                refueling = true;
+                refuelPaused = true;
+                Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Fuel Service active");
+                FenixController.RefuelStart();
+            }
+            else if (refueling)
+            {
+                if (SimConnect.ReadLvar("FSDT_GSX_FUELHOSE_CONNECTED") == 1)
+                {
+                    if (refuelPaused)
+                    {
+                        Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Fuel Hose connected - refueling");
+                        refuelPaused = false;
+                    }
+
+                    if (FenixController.Refuel())
+                    {
+                        refueling = false;
+                        refuelFinished = true;
+                        refuelPaused = false;
+                        FenixController.RefuelStop();
+                        Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Refuel completed");
+                    }
+                }
+                else
+                {
+                    if (!refuelPaused && !refuelFinished)
+                    {
+                        Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Fuel Hose disconnected - waiting for next Truck");
+                        refuelPaused = true;
+                    }
+                }
+            }
+
+            if (!boarding && !boardFinished && SimConnect.ReadLvar("FSDT_GSX_BOARDING_STATE") >= 4)
+            {
+                boarding = true;
+                FenixController.BoardingStart();
+                Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Boarding Service active");
+            }
+            else if (boarding)
+            {
+                if (FenixController.Boarding((int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_BOARDING_TOTAL"), (int)SimConnect.ReadLvar("FSDT_GSX_BOARDING_CARGO_PERCENT")) || SimConnect.ReadLvar("FSDT_GSX_BOARDING_STATE") == 6)
+                {
+                    boarding = false;
+                    boardFinished = true;
+                    FenixController.BoardingStop();
+                    Logger.Log(LogLevel.Information, "GsxController:RunLoadingServices", $"Boarding completed");
+                }
+            }
+        }
+
+        private void RunDepatureServices()
+        {
+            if (Model.ConnectPCA && !pcaRemoved)
+            {
+                if (IPCManager.SimConnect.ReadLvar("I_OH_ELEC_APU_START_U") != 0 && IPCManager.SimConnect.ReadLvar("S_OH_PNEUMATIC_APU_BLEED") != 0)
+                {
+                    FenixController.SetServicePCA(false);
+                    pcaRemoved = true;
+                    Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"APU Bleed enabled - removing PCA");
+                }
+            }
+
+            int departState = (int)SimConnect.ReadLvar("FSDT_GSX_DEPARTURE_STATE");
+            if (!finalLoadsheetSend)
+            {
+                if (delay == 0)
+                {
+                    delay = new Random().Next(90, 150);
+                    delayCounter = 0;
+                    Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"Sending Final Loadsheet in {delay}s");
+                }
+
+                if (delayCounter < delay)
+                {
+                    delayCounter++;
+                    return;
+                }
+                else
+                {
+                    Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"Sending Final Loadsheet");
+                    FenixController.TriggerFinal();
+                    finalLoadsheetSend = true;
+                }
+            }
+            else if (!equipmentRemoved)
+            {
+                equipmentRemoved = SimConnect.ReadLvar("S_MIP_PARKING_BRAKE") == 1 && SimConnect.ReadLvar("S_OH_EXT_LT_BEACON") == 1 && SimConnect.ReadLvar("I_OH_ELEC_EXT_PWR_L") == 0;
+                if (equipmentRemoved)
+                {
+                    Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"Preparing for Pushback - removing Equipment");
+                    if (departState < 4 && SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2 && SimConnect.ReadLvar("FSDT_GSX_JETWAY") == 5 && SimConnect.ReadLvar("FSDT_GSX_OPERATEJETWAYS_STATE") < 3)
+                    {
+                        MenuOpen();
+                        Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"Removing Jetway");
+                        MenuItem(6);
+                    }
+                    FenixController.SetServiceChocks(false);
+                    FenixController.SetServicePCA(false);
+                    FenixController.SetServiceGPU(false);
+                }
+            }
+            else if (!pushFinished)
+            {
+                double gs = SimConnect.ReadSimVar("GPS GROUND SPEED", "Meters per second") * 0.00002966071308045356;
+                if (!pushRunning && gs > 1.5 && (SimConnect.ReadLvar("A_FC_THROTTLE_LEFT_INPUT") > 2.05 || SimConnect.ReadLvar("A_FC_THROTTLE_RIGHT_INPUT") > 2.05))
+                {
+                    Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"Push-Back was skipped");
+                    pushFinished = true;
+                    pushRunning = false;
+                    return;
+                }
+
+                if (!pushRunning && departState >= 4)
+                {
+                    Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"Push-Back Service is active");
+                    pushRunning = true;
+                }
+
+                if (pushRunning)
+                {
+                    bool gsxPinInserted = SimConnect.ReadLvar("FSDT_GSX_BYPASS_PIN") != 0;
+                    if (gsxPinInserted && !pushNwsDisco)
+                    {
+                        Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"By Pass Pin inserted");
+                        FenixController.PushStart();
+                        pushNwsDisco = true;
+                    }
+
+                    if (!gsxPinInserted && pushNwsDisco)
+                    {
+                        Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"By Pass Pin removed");
+                        FenixController.PushStop();
+                        pushNwsDisco = false;
+                        pushRunning = false;
+                        pushFinished = true;
+                    }
+                }
+            }
+            else //DEPARTURE -> TAXIOUT
+            {
+                state = FlightState.TAXIOUT;
+                Logger.Log(LogLevel.Information, "GsxController:RunDepatureServices", $"State Change: Depature -> Taxi-Out");
+                delay = 0;
+                delayCounter = 0;
+                Interval = 60000;
+            }
+        }
+        
+        private void RunArrivalServices(int deboard_state)
+        {
+            if (SimConnect.ReadLvar("FSDT_GSX_COUATL_STARTED") != 1)
+            {
+                Logger.Log(LogLevel.Information, "GsxController:RunArrivalServices", $"Couatl Engine not running");
+                return;
+            }
+
+            if (Model.AutoConnect && !connectCalled)
+            {
+                CallJetwayStairs();
+                connectCalled = true;
+                return;
+            }
+
+            if (SimConnect.ReadLvar("S_OH_EXT_LT_BEACON") == 1)
+                return;
+
+            if (Model.ConnectPCA && !pcaCalled && (!Model.PcaOnlyJetways || (Model.PcaOnlyJetways && SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2)))
+            {
+                Logger.Log(LogLevel.Information, "GsxController:RunArrivalServices", $"Connecting PCA");
+                FenixController.SetServicePCA(true);
+                pcaCalled = true;
+            }
+
+            Logger.Log(LogLevel.Information, "GsxController:RunArrivalServices", $"Setting GPU and Chocks");
+            FenixController.SetServiceChocks(true);
+            FenixController.SetServiceGPU(true);
+            SetPassengers(FenixController.GetPaxPlanned());
+
+            state = FlightState.ARRIVAL;
+            Logger.Log(LogLevel.Information, "GsxController:RunArrivalServices", $"State Change: Taxi-In -> Arrival (Waiting for Deboarding)");
+
+            if (Model.AutoDeboarding && deboard_state < 4)
+            {
+                Logger.Log(LogLevel.Information, "GsxController:RunArrivalServices", $"Calling Deboarding Service");
+                SetPassengers(FenixController.GetPaxPlanned());
+                MenuOpen();
+                MenuItem(1);
+                if (!Model.AutoConnect)
+                    OperatorSelection();
+            }
+        }
+
+        private void RunDeboardingService(int deboard_state)
+        {
+            if (!deboarding)
+            {
+                deboarding = true;
+                FenixController.DeboardingStart();
+                Interval = 1000;
+                Logger.Log(LogLevel.Information, "GsxController:RunDeboardingService", $"Deboarding Service active");
+                return;
+            }
+            else if (deboarding)
+            {
+                if (SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS") != paxPlanned)
+                {
+                    Logger.Log(LogLevel.Warning, "GsxController:RunDeboardingService", $"Passenger changed during Boarding! Trying to reset Number ...");
+                    SimConnect.WriteLvar("FSDT_GSX_NUMPASSENGERS", paxPlanned);
+                }
+
+                int paxCurrent = (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS") - (int)SimConnect.ReadLvar("FSDT_GSX_NUMPASSENGERS_DEBOARDING_TOTAL");
+                if (FenixController.Deboarding(paxCurrent, (int)SimConnect.ReadLvar("FSDT_GSX_DEBOARDING_CARGO_PERCENT")) || deboard_state == 6 || deboard_state == 1)
+                {
+                    deboarding = false;
+                    Logger.Log(LogLevel.Information, "GsxController:RunDeboardingService", $"Deboarding finished (GSX State {deboard_state})");
+                    FenixController.DeboardingStop();
+                    Logger.Log(LogLevel.Information, "GsxController:RunDeboardingService", $"State Change: Arrival -> Turn-Around (Waiting for new Flightplan)");
+                    state = FlightState.TURNAROUND;
+                    Interval = 10000;
+                    return;
+                }
+            }
+        }
+
         private void SetPassengers(int numPax)
         {
             SimConnect.WriteLvar("FSDT_GSX_NUMPASSENGERS", numPax);
             paxPlanned = numPax;
-            Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Passenger Count set to {numPax}");
+            Logger.Log(LogLevel.Information, "GsxController:SetPassengers", $"Passenger Count set to {numPax}");
             if (Model.DisableCrew)
             {
                 SimConnect.WriteLvar("FSDT_GSX_CREW_NOT_DEBOARDING", 1);
@@ -646,7 +767,7 @@ namespace Fenix2GSX
                 SimConnect.WriteLvar("FSDT_GSX_NUMCREW", 0);
                 SimConnect.WriteLvar("FSDT_GSX_NUMPILOTS", 0);
                 SimConnect.WriteLvar("FSDT_GSX_CREW_ON_BOARD", 1);
-                Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Crew Boarding disabled");
+                Logger.Log(LogLevel.Information, "GsxController:SetPassengers", $"Crew Boarding disabled");
             }
         }
 
@@ -656,7 +777,7 @@ namespace Fenix2GSX
 
             if (SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 2 && SimConnect.ReadLvar("FSDT_GSX_JETWAY") != 5 && SimConnect.ReadLvar("FSDT_GSX_OPERATEJETWAYS_STATE") < 3)
             {
-                Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Jetway");
+                Logger.Log(LogLevel.Information, "GsxController:CallJetwayStairs", $"Calling Jetway");
                 MenuItem(6);
                 OperatorSelection();
 
@@ -664,13 +785,13 @@ namespace Fenix2GSX
                 {
                     Thread.Sleep(1500);
                     MenuOpen();
-                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Stairs");
+                    Logger.Log(LogLevel.Information, "GsxController:CallJetwayStairs", $"Calling Stairs");
                     MenuItem(7);
                 }
             }
             else if (SimConnect.ReadLvar("FSDT_GSX_STAIRS") != 5 && SimConnect.ReadLvar("FSDT_GSX_OPERATESTAIRS_STATE") < 3)
             {
-                Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Calling Stairs");
+                Logger.Log(LogLevel.Information, "GsxController:CallJetwayStairs", $"Calling Stairs");
                 MenuItem(7);
                 OperatorSelection();
             }
@@ -678,7 +799,7 @@ namespace Fenix2GSX
 
         private void OperatorSelection()
         {
-            Thread.Sleep(1500);
+            Thread.Sleep(2000);
 
             int result = IsOperatorSelectionActive();
             if (result == -1)
@@ -699,15 +820,17 @@ namespace Fenix2GSX
         {
             int result = -1;
 
-            if (menuFile != "")
+            if (!string.IsNullOrEmpty(menuFile))
             {
                 string[] lines = File.ReadLines(menuFile).ToArray();
                 if (lines.Length > 1)
                 {
-                    if (lines[1] == "Request Deboarding" || string.IsNullOrEmpty(lines[1]))
-                        result = 0;
-                    else
+                    if (!string.IsNullOrEmpty(lines[0]) && (lines[0] == "Select handling operator" || lines[0] == "Select catering operator"))
                         result = 1;
+                    else if (string.IsNullOrEmpty(lines[0]))
+                        result = -1;
+                    else
+                        result = 0;
                 }
             }
 
@@ -719,17 +842,20 @@ namespace Fenix2GSX
 
             SimConnect.IsGsxMenuReady = false;
             SimConnect.WriteLvar("FSDT_GSX_MENU_OPEN", 1);
-            while (!SimConnect.IsGsxMenuReady) { }
         }
 
-        private void MenuItem(int index, bool waitForMenu = false)
+        private void MenuItem(int index, bool waitForMenu = true)
         {
             if (waitForMenu)
-            {
-                SimConnect.IsGsxMenuReady = false;
-                while (!SimConnect.IsGsxMenuReady) { }
-            }
+                MenuWaitReady();
+            SimConnect.IsGsxMenuReady = false;
             SimConnect.WriteLvar("FSDT_GSX_MENU_CHOICE", index - 1);
+        }
+
+        private void MenuWaitReady()
+        {
+            int counter = 0;
+            while (!SimConnect.IsGsxMenuReady && counter < 1000) { Thread.Sleep(100); counter++; }
         }
     }
 }

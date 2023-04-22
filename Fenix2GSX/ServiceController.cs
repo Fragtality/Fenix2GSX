@@ -118,7 +118,7 @@ namespace Fenix2GSX
             Logger.Log(LogLevel.Information, "ServiceController:ServiceLoop", "ServiceLoop ended");
             if (Model.GsxVolumeControl)
             {
-                Logger.Log(LogLevel.Information, "ServiceController:ServiceLoop", "Resetting GSX Audio");
+                Logger.Log(LogLevel.Information, "ServiceController:ServiceLoop", "Resetting GSX/VHF1 Audio");
                 gsxController.ResetAudio();
             }
         }
