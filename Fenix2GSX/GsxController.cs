@@ -123,7 +123,7 @@ namespace Fenix2GSX
 
         private void GetAudioSessions()
         {
-            if (gsxAudioSession == null)
+            if (Model.GsxVolumeControl && gsxAudioSession == null)
             {
                 MMDeviceEnumerator deviceEnumerator = new(Guid.NewGuid());
                 var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
@@ -146,7 +146,7 @@ namespace Fenix2GSX
                 }
             }
 
-            if (vhf1AudioSession == null)
+            if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession == null)
             {
                 MMDeviceEnumerator deviceEnumerator = new(Guid.NewGuid());
                 var devices = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
@@ -189,95 +189,114 @@ namespace Fenix2GSX
 
         public void ControlAudio()
         {
-            if (SimConnect.ReadLvar("I_FCU_TRACK_FPA_MODE") == 0 && SimConnect.ReadLvar("I_FCU_HEADING_VS_MODE") == 0)
+            try
             {
-                if (Model.GsxVolumeControl || !string.IsNullOrEmpty(Model.Vhf1VolumeApp))
-                    ResetAudio();
-                return;
-            }
-
-            if (Model.GsxVolumeControl && gsxAudioSession != null)
-            {
-                float volume = SimConnect.ReadLvar("A_ASP_INT_VOLUME");
-                int muted = (int)SimConnect.ReadLvar("I_ASP_INT_REC");
-                if (volume >= 0 && volume != gsxAudioVolume)
+                if (SimConnect.ReadLvar("I_FCU_TRACK_FPA_MODE") == 0 && SimConnect.ReadLvar("I_FCU_HEADING_VS_MODE") == 0)
                 {
-                    gsxAudioSession.SimpleAudioVolume.MasterVolume = volume;
-                    gsxAudioVolume = volume;
+                    if (Model.GsxVolumeControl || !string.IsNullOrEmpty(Model.Vhf1VolumeApp))
+                        ResetAudio();
+                    return;
                 }
 
-                if (muted >= 0 && muted != gsxAudioMute)
+                if (Model.GsxVolumeControl && gsxAudioSession != null)
                 {
-                    gsxAudioSession.SimpleAudioVolume.Mute = muted == 0;
-                    gsxAudioMute = muted;
-                }
-            }
-            else if (Model.GsxVolumeControl && gsxAudioSession == null)
-            {
-                GetAudioSessions();
-                gsxAudioVolume = -1;
-                gsxAudioMute = -1;
-            }
-            else if (!Model.GsxVolumeControl && gsxAudioSession != null)
-            {
-                gsxAudioSession = null;
-                gsxAudioVolume = -1;
-                gsxAudioMute = -1;
-                Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for GSX (Setting disabled)");
-            }
+                    float volume = SimConnect.ReadLvar("A_ASP_INT_VOLUME");
+                    int muted = (int)SimConnect.ReadLvar("I_ASP_INT_REC");
+                    if (volume >= 0 && volume != gsxAudioVolume)
+                    {
+                        gsxAudioSession.SimpleAudioVolume.MasterVolume = volume;
+                        gsxAudioVolume = volume;
+                    }
 
-            if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession != null)
-            {
-                float volume = SimConnect.ReadLvar("A_ASP_VHF_1_VOLUME");
-                int muted = (int)SimConnect.ReadLvar("I_ASP_VHF_1_REC");
-                if (volume >= 0 && volume != vhf1AudioVolume)
+                    if (muted >= 0 && muted != gsxAudioMute)
+                    {
+                        gsxAudioSession.SimpleAudioVolume.Mute = muted == 0;
+                        gsxAudioMute = muted;
+                    }
+                }
+                else if (Model.GsxVolumeControl && gsxAudioSession == null)
                 {
-                    vhf1AudioSession.SimpleAudioVolume.MasterVolume = volume;
-                    vhf1AudioVolume = volume;
+                    GetAudioSessions();
+                    gsxAudioVolume = -1;
+                    gsxAudioMute = -1;
+                }
+                else if (!Model.GsxVolumeControl && gsxAudioSession != null)
+                {
+                    gsxAudioSession.SimpleAudioVolume.MasterVolume = 1.0f;
+                    gsxAudioSession.SimpleAudioVolume.Mute = false;
+                    gsxAudioSession = null;
+                    gsxAudioVolume = -1;
+                    gsxAudioMute = -1;
+                    Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for GSX (Setting disabled)");
                 }
 
-                if (muted >= 0 && muted != vhf1AudioMute)
+                if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession != null)
                 {
-                    vhf1AudioSession.SimpleAudioVolume.Mute = muted == 0;
-                    vhf1AudioMute = muted;
+                    float volume = SimConnect.ReadLvar("A_ASP_VHF_1_VOLUME");
+                    int muted = (int)SimConnect.ReadLvar("I_ASP_VHF_1_REC");
+                    if (volume >= 0 && volume != vhf1AudioVolume)
+                    {
+                        vhf1AudioSession.SimpleAudioVolume.MasterVolume = volume;
+                        vhf1AudioVolume = volume;
+                    }
+
+                    if (muted >= 0 && muted != vhf1AudioMute)
+                    {
+                        vhf1AudioSession.SimpleAudioVolume.Mute = muted == 0;
+                        vhf1AudioMute = muted;
+                    }
                 }
-            }
-            else if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession == null)
-            {
-                GetAudioSessions();
-                vhf1AudioVolume = -1;
-                vhf1AudioMute = -1;
-            }
-            
-            if (lastVhf1App != Model.Vhf1VolumeApp)
-            {
-                if (vhf1AudioSession != null)
+                else if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession == null)
                 {
-                    vhf1AudioSession.SimpleAudioVolume.MasterVolume = 1.0f;
-                    vhf1AudioSession.SimpleAudioVolume.Mute = false;
+                    GetAudioSessions();
+                    vhf1AudioVolume = -1;
+                    vhf1AudioMute = -1;
+                }
+
+                if (lastVhf1App != Model.Vhf1VolumeApp)
+                {
+                    if (vhf1AudioSession != null)
+                    {
+                        vhf1AudioSession.SimpleAudioVolume.MasterVolume = 1.0f;
+                        vhf1AudioSession.SimpleAudioVolume.Mute = false;
+                        vhf1AudioSession = null;
+                        vhf1AudioVolume = -1;
+                        vhf1AudioMute = -1;
+                        Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for {lastVhf1App} (App changed)");
+                    }
+                    GetAudioSessions();
+                }
+                lastVhf1App = Model.Vhf1VolumeApp;
+
+                if (Model.GsxVolumeControl && gsxAudioSession != null && !IPCManager.IsProcessRunning(gsxProcess))
+                {
+                    gsxAudioSession = null;
+                    gsxAudioVolume = -1;
+                    gsxAudioMute = -1;
+                    Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for GSX (App not running)");
+                }
+
+                if (Model.GsxVolumeControl && gsxAudioSession != null && SimConnect.ReadLvar("FSDT_GSX_COUATL_STARTED") != 1)
+                {
+                    gsxAudioSession.SimpleAudioVolume.MasterVolume = 1.0f;
+                    gsxAudioSession.SimpleAudioVolume.Mute = false;
+                    gsxAudioSession = null;
+                    gsxAudioVolume = -1;
+                    gsxAudioMute = -1;
+                    Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for GSX (Couatl Engine not started)");
+                }
+
+                if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession != null && !IPCManager.IsProcessRunning(Model.Vhf1VolumeApp))
+                {
                     vhf1AudioSession = null;
                     vhf1AudioVolume = -1;
                     vhf1AudioMute = -1;
-                    Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for {lastVhf1App} (App changed)");
+                    Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for {Model.Vhf1VolumeApp} (App not running)");
                 }
-                GetAudioSessions();
             }
-            lastVhf1App = Model.Vhf1VolumeApp;
-
-            if (Model.GsxVolumeControl && gsxAudioSession != null && !IPCManager.IsProcessRunning(gsxProcess))
+            catch (Exception ex)
             {
-                gsxAudioSession = null;
-                gsxAudioVolume = -1;
-                gsxAudioMute = -1;
-                Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for GSX (App not running)");
-            }
-
-            if (!string.IsNullOrEmpty(Model.Vhf1VolumeApp) && vhf1AudioSession != null && !IPCManager.IsProcessRunning(Model.Vhf1VolumeApp))
-            {
-                vhf1AudioSession = null;
-                vhf1AudioVolume = -1;
-                vhf1AudioMute = -1;
-                Logger.Log(LogLevel.Information, "GsxController:ControlAudio", $"Disabled Audio Session for {Model.Vhf1VolumeApp} (App not running)");
+                Logger.Log(LogLevel.Debug, "GsxController:ControlAudio", $"Exception {ex.GetType()} during Audio Control: {ex.Message}");
             }
         }
 
@@ -301,6 +320,11 @@ namespace Fenix2GSX
                 if (SimConnect.ReadLvar("FSDT_GSX_COUATL_STARTED") != 1)
                 {
                     Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Couatl Engine not running");
+                    if (Model.GsxVolumeControl && gsxAudioSession != null)
+                    {
+                        Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Resetting GSX Audio (Engine not running)");
+                        gsxAudioSession = null;
+                    }
                     return;
                 }
 
@@ -687,6 +711,11 @@ namespace Fenix2GSX
             if (SimConnect.ReadLvar("FSDT_GSX_COUATL_STARTED") != 1)
             {
                 Logger.Log(LogLevel.Information, "GsxController:RunArrivalServices", $"Couatl Engine not running");
+                if (Model.GsxVolumeControl && gsxAudioSession != null)
+                {
+                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Resetting GSX Audio (Engine not running)");
+                    gsxAudioSession = null;
+                }
                 return;
             }
 

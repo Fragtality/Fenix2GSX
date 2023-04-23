@@ -103,7 +103,7 @@ namespace Fenix2GSX
                         elapsedMS = 0;
                     }
 
-                    if (Model.GsxVolumeControl)
+                    if (Model.GsxVolumeControl || !string.IsNullOrEmpty(Model.Vhf1VolumeApp))
                         gsxController.ControlAudio();
 
                     Thread.Sleep(delay);
