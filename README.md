@@ -74,6 +74,7 @@ A Note on the Audio-Control: The Tool does not control the Audio until the Plane
 <br/><br/>
 
 ## General Usage
+There might be Issues when used together with FS2Crew! (that is "FS2Crew: Fenix A320 Edition", the RAAS Tool is fine!)
 
 1) Create your SB Flightplan and start MSFS as you normally would. Depending on your Configuration, start the Tool before MSFS or when MSFS is in the Main Menu.
 2) When your Session is loaded (Ready to Fly was pressed), wait for the Repositioning and Jetway/Stair Call to happen (if configured).
