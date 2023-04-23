@@ -83,7 +83,7 @@ There might be Issues when used together with FS2Crew! (that is "FS2Crew: Fenix 
 5) When the Parking Brake is set, External Power is disconnected (on the Overhead) and Beacon Light is On, the Tool will remove all Ground-Equipment: Jetway/Stairs (if not already removed) and GPU, PCA & Chocks (always, to be safe).
 6) Happy Flight!
 7) When you arrive (pre-select your Gate), the Jetway/Stairs will automatically connect as soon as the Engines are Off and the Parking Brake is set (if configured).
-8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, you can dismiss it if you want. *DO NOT* generate a new Flightplan in SimBrief until Deboarding has finished!
+8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, you can dismiss it if you want. Only generate a new Flightplan in SimBrief until Deboarding has actively started!
 9) It works with Turn-Arounds! As soon as you (re)import a new Flightplan the Cycle starts over.
 
 
