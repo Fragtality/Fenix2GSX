@@ -317,6 +317,11 @@ namespace Fenix2GSX
                     Thread.Sleep(1500);
                     return;
                 }
+                else if (!Model.RepositionPlane && !planePositioned)
+                {
+                    planePositioned = true;
+                    Logger.Log(LogLevel.Information, "GsxController:RunServices", $"Repositioning was skipped (disabled in Settings)");
+                }
 
                 if (Model.AutoConnect && !connectCalled)
                 {
