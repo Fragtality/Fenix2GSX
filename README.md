@@ -71,7 +71,9 @@ Tip for VATSIM / IVAO: Disable the Auto-Connect Option before loading the Sessio
 - Ensure the other two Settings under Timings are on their Default (15s, 1x).
 
 <br/><br/>
+
 ## General Usage
+
 1) Create your SB Flightplan and start MSFS as you normally would. Depending on your Configuration, start the Tool before MSFS or when MSFS is in the Main Menu.
 2) When your Session is loaded (Ready to Fly was pressed), wait for the Repositioning and Jetway/Stair Call to happen (if configured).
 3) Import your Flightplan on the EFB (wherever you're using it from, does not need to be the EFB in the VC). Refueling and Catering will be called (if configured). Always import a Flightplan on the EFB, regardless of Configuration. Power up the Plane from Cold & Dark before importing the Flightplan.
@@ -81,6 +83,7 @@ Tip for VATSIM / IVAO: Disable the Auto-Connect Option before loading the Sessio
 7) When you arrive (pre-select your Gate), the Jetway/Stairs will automatically connect as soon as the Engines are Off and the Parking Brake is set (if configured).
 8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, you can dismiss it if you want. *DO NOT* generate a new Flightplan in SimBrief until Deboarding has finished!
 9) It works with Turn-Arounds! As soon as you (re)import a new Flightplan the Cycle starts over.
-<br/>
+
+
 If you set every Option for automatic Service Calls, I'd recommend to disable the GSX Menu in the Toolbar (Icon not white). The Services are still called, but you won't see the Menu popping-up. So Push-Back, De-Ice and Gate-Selection are the only Situations where you need to open it.<br/><br/>
 Be cautious on the Mass and Balance Page: Don't change the planned Numbers, use *"Load Aircraft"* or *"Reset All"* - they likely break the Integration. *"Resend Loadsheet"* should not hurt though if needed! (In Case the Prelim-LS wasn't send automatically by the Fenix due to EOBT or because the Plane had no Power yet).<br/>
