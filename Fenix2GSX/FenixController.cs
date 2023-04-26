@@ -132,7 +132,7 @@ namespace Fenix2GSX
 
             Interface.FenixPost(FenixInterface.MsgMutation("float", "aircraft.refuel.refuelingRate", 0.0f));
             Interface.FenixPost(FenixInterface.MsgMutation("bool", "aircraft.refuel.refuelingPower", true));
-            if (fuelUnits == "KGS")
+            if (fuelUnits == "KG")
                 Interface.FenixPost(FenixInterface.MsgMutation("float", "aircraft.refuel.fuelTarget", fuelPlanned));
             else
                 Interface.FenixPost(FenixInterface.MsgMutation("float", "aircraft.refuel.fuelTarget", fuelPlanned * weightConversion));
