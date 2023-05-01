@@ -17,6 +17,7 @@ namespace Fenix2GSX
         {
             try
             {
+                Logger.Log(LogLevel.Information, "ServiceController:Run", $"Service starting ...");
                 while (!Model.CancellationRequested)
                 {
                     if (Wait())
@@ -89,7 +90,7 @@ namespace Fenix2GSX
         protected void ServiceLoop()
         {
             var gsxController = new GsxController(Model);
-            int elapsedMS = Interval;
+            int elapsedMS = gsxController.Interval;
             int delay = 100;
             Thread.Sleep(1000);
             Logger.Log(LogLevel.Information, "ServiceController:ServiceLoop", "Starting Service Loop");
@@ -97,13 +98,13 @@ namespace Fenix2GSX
             {
                 try
                 {
-                    if (elapsedMS >= Interval)
+                    if (elapsedMS >= gsxController.Interval)
                     {
                         gsxController.RunServices();
                         elapsedMS = 0;
                     }
 
-                    if (Model.GsxVolumeControl || !string.IsNullOrEmpty(Model.Vhf1VolumeApp))
+                    if (Model.GsxVolumeControl || Model.IsVhf1Controllable())
                         gsxController.ControlAudio();
 
                     Thread.Sleep(delay);
@@ -116,7 +117,7 @@ namespace Fenix2GSX
             }
 
             Logger.Log(LogLevel.Information, "ServiceController:ServiceLoop", "ServiceLoop ended");
-            if (Model.GsxVolumeControl || !string.IsNullOrEmpty(Model.Vhf1VolumeApp))
+            if (Model.GsxVolumeControl || Model.IsVhf1Controllable())
             {
                 Logger.Log(LogLevel.Information, "ServiceController:ServiceLoop", "Resetting GSX/VHF1 Audio");
                 gsxController.ResetAudio();

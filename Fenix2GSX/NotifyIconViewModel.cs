@@ -26,7 +26,7 @@ namespace Fenix2GSX
         [RelayCommand(CanExecute = nameof(CanExecuteHideWindow))]
         public void HideWindow()
         {
-            Application.Current.MainWindow.Hide(enableEfficiencyMode: true);
+            Application.Current.MainWindow.Hide(enableEfficiencyMode: false);
             CanExecuteShowWindow = true;
             CanExecuteHideWindow = false;
         }

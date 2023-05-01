@@ -5,56 +5,114 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Fenix2GSX"
         mc:Ignorable="d"
-        Title="Fenix2GSX" Height="600" Width="528" ResizeMode="NoResize" IsVisibleChanged="Window_IsVisibleChanged" Closing="Window_Closing">
+        Title="Fenix2GSX" Height="792" Width="532" ResizeMode="NoResize" IsVisibleChanged="Window_IsVisibleChanged" Closing="Window_Closing">
+    <Window.Resources>
+        <Style TargetType="GroupBox">
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" FontWeight="DemiBold"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="64"/>
-            <RowDefinition Height="384" />
+            <RowDefinition Height="256" />
+            <RowDefinition Height="140" />
+            <RowDefinition Height="142" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" BorderBrush="DarkGray" BorderThickness="1" Margin="10,10,10,8" Grid.ColumnSpan="2">
+        <GroupBox Grid.Row="0" BorderBrush="DarkGray" BorderThickness="1" Margin="10,10,10,8">
+            <GroupBox.Header>Connection Status</GroupBox.Header>
             <StackPanel Orientation="Horizontal">
-                <Label Height="40" VerticalContentAlignment="Center" VerticalAlignment="Center" FontWeight="DemiBold" Padding="8,0,16,0">Connection Status</Label>
-                <Label Name="lblConnStatMSFS" Height="40" VerticalContentAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="Red">MSFS</Label>
-                <Label Name="lblConnStatSimConnect" Height="40" VerticalContentAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="Red">SimConnect</Label>
-                <Label Name="lblConnStatFenix" Height="40" VerticalContentAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="Red">Fenix</Label>
-                <Label Name="lblConnStatSession" Height="40" VerticalContentAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="Red">Session</Label>
+                <Label Name="lblConnStatMSFS" Height="40" VerticalContentAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="Red" Padding="8,0,16,0">MSFS</Label>
+                <Label Name="lblConnStatSimConnect" Height="40" VerticalContentAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="Red" Padding="8,0,16,0">SimConnect</Label>
+                <Label Name="lblConnStatFenix" Height="40" VerticalContentAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="Red" Padding="8,0,16,0">Fenix</Label>
+                <Label Name="lblConnStatSession" Height="40" VerticalContentAlignment="Center" VerticalAlignment="Center" TextBlock.Foreground="Red" Padding="8,0,16,0">Session</Label>
             </StackPanel>
-        </Border>
-        <Border Grid.Row="1" BorderBrush="DarkGray" BorderThickness="1" Margin="10,8,10,8" Grid.ColumnSpan="2">
-            <StackPanel>
-                <CheckBox Name="chkWaitForConnect" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkWaitForConnect_Click">Wait until MSFS is started (needs Restart)</CheckBox>
-                <CheckBox Name="chkGsxVolumeControl" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkGsxVolumeControl_Click">Control GSX Audio Volume via INT on ACP1</CheckBox>
-                <CheckBox Name="chkAutoReposition" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoReposition_Click">Reposition Plane on Startup (via GSX)</CheckBox>
-                <CheckBox Name="chkAutoConnect" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoConnect_Click">Automatic Jetway/Stair Operation (on Startup, Departure and Arrival)</CheckBox>
-                <CheckBox Name="chkConnectPCA" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkConnectPCA_Click">Connect/Disconnect PCA (on Startup, Departure and Arrival)</CheckBox>
-                <CheckBox Name="chkPcaOnlyJetway" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkPcaOnlyJetway_Click">PCA only available on Jetways</CheckBox>
-                <CheckBox Name="chkDisableCrewBoarding" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkDisableCrewBoarding_Click">Disable Crew De-/Boarding</CheckBox>
-                <CheckBox Name="chkAutoRefuel" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoRefuel_Click">Call Refuel Service on Flightplan Import</CheckBox>
-                <CheckBox Name="chkCallCatering" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkCallCatering_Click">Call Catering Service with Refuel Service</CheckBox>
-                <CheckBox Name="chkAutoBoard" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoBoard_Click">Automatically start Boarding when Refuel and Catering are finished</CheckBox>
-                <CheckBox Name="chkAutoDeboard" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoDeboard_Click">Automatically start Deboarding on Arrival</CheckBox>
-                <StackPanel Orientation="Horizontal" Margin="5,8,8,8" VerticalAlignment="Center" Height="26">
-                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">Reposition Delay</Label>
-                    <TextBox Name="txtRepositionDelay" Margin="2,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtRepositionDelay_LostFocus" KeyUp="txtRepositionDelay_KeyUp"></TextBox>
-                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">s</Label>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" BorderBrush="DarkGray" BorderThickness="1" Margin="10,10,10,8">
+            <GroupBox.Header>Service Calls</GroupBox.Header>
+            <StackPanel Orientation="Vertical">
+                <CheckBox Name="chkAutoReposition" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoReposition_Click" ToolTip="Uses the 'Reposition here at current Gate' Option of GSX to position the Plane in accordance with the Airport Profile.&#x0a;The Repositioning is done when the Flight-Session becomes ready and after the configurable Delay below.">
+                    <TextBlock><Underline>Reposition</Underline> Plane on Startup (via GSX)</TextBlock>
+                </CheckBox>
+                <StackPanel Orientation="Horizontal" Margin="24,0,8,0" VerticalAlignment="Center">
+                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,1">Reposition Delay:</Label>
+                    <TextBox Name="txtRepositionDelay" Margin="2,0,0,0" Height="20" MaxHeight="20" MinHeight="20" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtRepositionDelay_LostFocus" KeyUp="txtRepositionDelay_KeyUp"></TextBox>
+                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,1">s</Label>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,0,8,8" VerticalAlignment="Center" Height="26">
-                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">Refuel Rate</Label>
-                    <TextBox Name="txtRefuelRate" Margin="31,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtRefuelRate_LostFocus" KeyUp="txtRefuelRate_KeyUp"></TextBox>
-                    <RadioButton Name="unitKGS" Margin="5,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" Click="units_Click">kg/s</RadioButton>
+                <CheckBox Name="chkAutoRefuel" Margin="8,2,8,0" VerticalContentAlignment="Center" Click="chkAutoRefuel_Click" ToolTip="The Refuel Service will be directly called after you have imported your SimBrief Flightplan in the EFB (Fenix-App) - regardless on which Device/Browser you use it.&#x0a;Fuel-Synchronization (Loading, ECAM Message) stills work when this Option is disabled!">
+                    <TextBlock>Call <Underline>Refuel Service</Underline> on Flightplan Import on EFB</TextBlock>
+                </CheckBox>
+                <CheckBox Name="chkCallCatering" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkCallCatering_Click" ToolTip="The Catering Service is directly called after the Refuel Service was called automatically.&#x0a;Manually calling the Refuel Service will not trigger that!">
+                    <TextBlock>Call <Underline>Catering Service</Underline> together with Refuel Service</TextBlock>
+                </CheckBox>
+                <CheckBox Name="chkAutoBoard" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoBoard_Click" ToolTip="Boarding will automatically start 90s after Refueling is finished (regardless if the Refuel Service was called automatically or manually).&#x0a;Boarding-Synchronization still works when this Option is disabled!&#x0a;The Final Loadsheet will always be send regardless who called Refueling and Boarding.">
+                    <TextBlock>Automatically start <Underline>Boarding</Underline> when Refuel and Catering are finished</TextBlock>
+                </CheckBox>
+                <CheckBox Name="chkAutoDeboard" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoDeboard_Click" ToolTip="Deboarding will start automatically as soon as the Beacon was switched off.&#x0a;Deboarding-Synchronization still works when this Option is disabled!">
+                    <TextBlock>Automatically start <Underline>Deboarding</Underline> on Arrival (after Beacon is off)</TextBlock>
+                </CheckBox>
+                <CheckBox Name="chkDisableCrewBoarding" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkDisableCrewBoarding_Click" ToolTip="Configures GSX to not board/deboard any Crew-Members, so the Question/Pop-Up will not appear.&#x0a;This Option is independent of the Service Automations, it will work either Way.">
+                    <TextBlock>Disable <Underline>Crew</Underline> De-/Boarding (supress Question/Pop-Up)</TextBlock>
+                </CheckBox>
+                <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Margin="4,4,0,1">Refuel Rate</Label>
+                <StackPanel Orientation="Horizontal" Margin="0,0,8,8" VerticalAlignment="Center" ToolTip="The Rate at which the Tanks are filled - the Value is split amongst the Tanks!&#x0a;The Unit selected here does not need to match with the Airframe Configuration, it is just there for Convenience.">
+                    <TextBox Name="txtRefuelRate" Margin="26,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="20" MaxHeight="20" MinHeight="20" Width="64" LostFocus="txtRefuelRate_LostFocus" KeyUp="txtRefuelRate_KeyUp"></TextBox>
+                    <RadioButton Name="unitKGS" Margin="8,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" Click="units_Click">kg/s</RadioButton>
                     <RadioButton Name="unitLBS" Margin="8,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" Click="units_Click">lbs/s</RadioButton>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5,0,8,8" VerticalAlignment="Center" Height="26">
-                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">VHF1 App Name</Label>
-                    <TextBox Name="txtVhf1VolumeApp" Margin="2,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Width="64" LostFocus="txtVhf1VolumeApp_LostFocus" KeyUp="txtVhf1VolumeApp_KeyUp"></TextBox>
-                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center">Volume controlled via VHF1 on ACP1. Nothing to disable.</Label>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Grid.Row="2" BorderBrush="DarkGray" BorderThickness="1" Margin="10,10,10,8">
+            <GroupBox.Header>Ground Handling</GroupBox.Header>
+            <StackPanel Orientation="Vertical">
+                <CheckBox Name="chkAutoConnect" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkAutoConnect_Click" ToolTip="The Jetway or Stairs will automatically be called when the Session is started, the Plane is ready for Push-Back or has arrived at the Gate.&#x0a;Ready for Push-Back = External Power disconnected &amp; Parking Brake is set &amp; Beacon Light is On.&#x0a;Handling of other Ground-Equipment (Chocks, GPU) will always be performed!">
+                    <TextBlock>Automatic <Underline>Jetway/Stair</Underline> Operation (on Startup, Departure and Arrival)</TextBlock>
+                </CheckBox>
+                <CheckBox Name="chkConnectPCA" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkConnectPCA_Click" ToolTip="The Pre-Conditioned Air (PCA) will be automatically connected/disconnected to air-condition the Cabin without APU.&#x0a;The Disconnect will already happen when the APU is 'Avail' and APU Bleed is On. Else it will connect or disconnect with the Jetway.">
+                    <TextBlock>Connect/Disconnect <Underline>PCA</Underline> (on Startup, Departure and Arrival)</TextBlock>
+                </CheckBox>
+                <CheckBox Name="chkPcaOnlyJetway" Margin="27,8,8,0" VerticalContentAlignment="Center" Click="chkPcaOnlyJetway_Click" ToolTip="PCA will not be connected on Stands with only Stairs available.">
+                    PCA only available on Jetways
+                </CheckBox>
+                <CheckBox Name="chkSynchBypass" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkSynchBypass_Click" ToolTip="Triggers the 'NWS STRG DISC' ECAM Message in synch with the GSX Animation &amp; Audio Messages.&#x0a;The Message is triggered by overwriting a L-Var from GSX which the Fenix monitors (so it thinks the Push-Back is longer).&#x0a;If you have Issues with Push-Back you can disable that Option for Troubleshooting.">
+                    <TextBlock>Synchronize <Underline>By-Pass Pin</Underline> State during Push-Back</TextBlock>
+                </CheckBox>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Grid.Row="3" BorderBrush="DarkGray" BorderThickness="1" Margin="10,10,10,8">
+            <GroupBox.Header>Volume Control</GroupBox.Header>
+            <StackPanel Orientation="Vertical">
+                <CheckBox Name="chkGsxVolumeControl" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkGsxVolumeControl_Click" ToolTip="The Volume of the GSX (Couatl) Application will be controlled on the OS-Level.&#x0a;The Volume-Level is controlled with the INT Knob on ACP1. Pushing/Pulling the Knob will mute/unmute the whole Application.&#x0a;Volume Control will only start after the Plane is powered (that is FCU Displays are On).&#x0a;Be aware that the default Position in the Fenix is 50%!">
+                    <TextBlock>Control <Underline>GSX App Audio</Underline> Volume via the INT Knob on ACP1 (Record Latch does mute)</TextBlock>
+                </CheckBox>
+                <CheckBox Name="chkVhf1VolumeControl" Margin="8,8,8,0" VerticalContentAlignment="Center" Click="chkVhf1VolumeControl_Click" ToolTip="The Volume of the Application configured below will be controlled on the OS-Level.&#x0a;The Volume-Level is controlled with the VHF1 Knob on ACP1.&#x0a;Volume Control will only start after the Plane is powered (that is FCU Displays are On).&#x0a;Be aware that the default Position in the Fenix is 50%!">
+                    <TextBlock>Control <Underline>Custom App Audio</Underline> Volume via the VHF1 Knob on ACP1</TextBlock>
+                </CheckBox>
+                <CheckBox Name="chkVhf1LatchMute" Margin="27,8,8,0" VerticalContentAlignment="Center" Click="chkVhf1LatchMute_Click" ToolTip="Pushing/Pulling the VHF1 Knob will mute/unmute the whole Application.&#x0a;Leave it disabled for vPilot if you want to be able to deselect VHF1 and still hear VHF2 for Example!">
+                    Use Record Latch to mute/unmute App (push/pull Knob)
+                </CheckBox>
+                <StackPanel Orientation="Horizontal" Margin="24,2,8,0" VerticalAlignment="Center" ToolTip="Configure the Application you want to control with VHF1. Does not need to be vPilot, can be anything you want: any other ATC Application, Spotify, Browser or the Sim itself!&#x0a;Use the exact Name of the Binary File as seen in Windows Explorer (case-sensitive) without the .exe Extension.">
+                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,1">Custom App</Label>
+                    <TextBox Name="txtVhf1VolumeApp" Margin="6,0,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="20" MaxHeight="20" MinHeight="20" Width="96" LostFocus="txtVhf1VolumeApp_LostFocus" KeyUp="txtVhf1VolumeApp_KeyUp"></TextBox>
+                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,1">(Name of the Binary without .exe Extension)</Label>
                 </StackPanel>
             </StackPanel>
-        </Border>
-        <Border Grid.Row="2" BorderBrush="DarkGray" BorderThickness="1" Margin="10,8,10,10" Grid.ColumnSpan="2">
+        </GroupBox>
+       
+        <GroupBox Grid.Row="4" BorderBrush="DarkGray" BorderThickness="1" Margin="10,8,10,10">
+            <GroupBox.Header>Log Messages</GroupBox.Header>
             <TextBlock Name="txtLogMessages" Margin="4"></TextBlock>
-        </Border>
+        </GroupBox>
     </Grid>
 </Window>

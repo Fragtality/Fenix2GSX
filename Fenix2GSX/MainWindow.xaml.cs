@@ -28,8 +28,8 @@ namespace Fenix2GSX
 
         protected void LoadSettings()
         {
-            chkWaitForConnect.IsChecked = serviceModel.WaitForConnect;
             chkGsxVolumeControl.IsChecked = serviceModel.GsxVolumeControl;
+            chkVhf1VolumeControl.IsChecked = serviceModel.Vhf1VolumeControl;
             chkDisableCrewBoarding.IsChecked = serviceModel.DisableCrew;
             chkAutoReposition.IsChecked = serviceModel.RepositionPlane;
             chkAutoConnect.IsChecked = serviceModel.AutoConnect;
@@ -39,6 +39,7 @@ namespace Fenix2GSX
             chkCallCatering.IsChecked = serviceModel.CallCatering;
             chkAutoBoard.IsChecked = serviceModel.AutoBoarding;
             chkAutoDeboard.IsChecked = serviceModel.AutoDeboarding;
+            chkSynchBypass.IsChecked = serviceModel.SynchBypass;
             txtRepositionDelay.Text = serviceModel.RepositionDelay.ToString(CultureInfo.InvariantCulture);
             txtRefuelRate.Text = serviceModel.RefuelRate.ToString(CultureInfo.InvariantCulture);
             if (serviceModel.RefuelUnit == "KGS")
@@ -52,6 +53,8 @@ namespace Fenix2GSX
                 unitLBS.IsChecked = true;
             }
             txtVhf1VolumeApp.Text = serviceModel.Vhf1VolumeApp;
+            txtVhf1VolumeApp.IsEnabled = serviceModel.Vhf1VolumeControl;
+            chkVhf1LatchMute.IsChecked = serviceModel.Vhf1LatchMute;
         }
 
         protected void UpdateLogArea()
@@ -59,7 +62,7 @@ namespace Fenix2GSX
             while (Logger.MessageQueue.Count > 0)
             {
                 
-                if (lineCounter > 4)
+                if (lineCounter > 5)
                     txtLogMessages.Text = txtLogMessages.Text[(txtLogMessages.Text.IndexOf('\n') + 1)..];
                 txtLogMessages.Text += Logger.MessageQueue.Dequeue().ToString() + "\n";
                 lineCounter++;
@@ -116,14 +119,20 @@ namespace Fenix2GSX
             Hide();
         }
 
-        private void chkWaitForConnect_Click(object sender, RoutedEventArgs e)
-        {
-            serviceModel.SetSetting("waitForConnect", chkWaitForConnect.IsChecked.ToString().ToLower());
-        }
-
         private void chkGsxVolumeControl_Click(object sender, RoutedEventArgs e)
         {
             serviceModel.SetSetting("gsxVolumeControl", chkGsxVolumeControl.IsChecked.ToString().ToLower());
+        }
+
+        private void chkVhf1VolumeControl_Click(object sender, RoutedEventArgs e)
+        {
+            serviceModel.SetSetting("vhf1VolumeControl", chkVhf1VolumeControl.IsChecked.ToString().ToLower());
+            txtVhf1VolumeApp.IsEnabled = (bool)chkVhf1VolumeControl.IsChecked;
+        }
+
+        private void chkVhf1LatchMute_Click(object sender, RoutedEventArgs e)
+        {
+            serviceModel.SetSetting("vhf1LatchMute", chkVhf1LatchMute.IsChecked.ToString().ToLower());
         }
 
         private void chkAutoReposition_Click(object sender, RoutedEventArgs e)
@@ -169,6 +178,11 @@ namespace Fenix2GSX
         private void chkAutoDeboard_Click(object sender, RoutedEventArgs e)
         {
             serviceModel.SetSetting("autoDeboarding", chkAutoDeboard.IsChecked.ToString().ToLower());
+        }
+
+        private void chkSynchBypass_Click(object sender, RoutedEventArgs e)
+        {
+            serviceModel.SetSetting("synchBypass", chkSynchBypass.IsChecked.ToString().ToLower());
         }
 
         private void txtRepositionDelay_LostFocus(object sender, RoutedEventArgs e)

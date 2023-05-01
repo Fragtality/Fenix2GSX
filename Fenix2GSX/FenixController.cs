@@ -317,17 +317,5 @@ namespace Fenix2GSX
             paxCurrent = new bool[162];
             paxSeats = null;
         }
-
-        public void PushStart()
-        {
-            Interface.FenixPost(FenixInterface.MsgMutation("int", "groundservice.pushback", 0));
-            Interface.FenixPost(FenixInterface.MsgMutation("bool", "groundservice.pushback.wait", true));
-        }
-
-        public void PushStop()
-        {
-            Interface.FenixPost(FenixInterface.MsgMutation("int", "groundservice.pushback", 3));
-            Interface.FenixPost(FenixInterface.MsgMutation("bool", "groundservice.pushback.wait", false));
-        }
     }
 }

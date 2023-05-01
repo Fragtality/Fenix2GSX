@@ -80,7 +80,7 @@ namespace Fenix2GSX
             Logger.Log(LogLevel.Information, "App:InitSystray", $"Creating SysTray Icon ...");
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
             notifyIcon.Icon = GetIcon("phoenix.ico");
-            notifyIcon.ForceCreate();
+            notifyIcon.ForceCreate(false);
         }
 
         protected void InitCef()

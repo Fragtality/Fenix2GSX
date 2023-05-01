@@ -18,6 +18,8 @@ namespace Fenix2GSX
         public bool TestArrival { get; set; }
         public bool GsxVolumeControl { get; set; }
         public string Vhf1VolumeApp { get; set; }
+        public bool Vhf1VolumeControl { get; set; }
+        public bool Vhf1LatchMute { get; set; }
         public bool DisableCrew { get; set; }
         public bool RepositionPlane { get; set; }
         public float RepositionDelay { get; set; }
@@ -31,12 +33,18 @@ namespace Fenix2GSX
         public bool AutoDeboarding { get; set; }
         public float RefuelRate { get; set; }
         public string RefuelUnit { get; set; }
-        
+        public bool SynchBypass { get; set; }
+
         protected Configuration AppConfiguration;
 
         public ServiceModel()
         {
             LoadConfiguration();
+        }
+
+        public bool IsVhf1Controllable()
+        {
+            return Vhf1VolumeControl && !string.IsNullOrEmpty(Vhf1VolumeApp);
         }
 
         protected void LoadConfiguration()
@@ -49,6 +57,8 @@ namespace Fenix2GSX
             TestArrival = Convert.ToBoolean(settings["testArrival"].Value);
             GsxVolumeControl = Convert.ToBoolean(settings["gsxVolumeControl"].Value);
             Vhf1VolumeApp = Convert.ToString(settings["vhf1VolumeApp"].Value);
+            Vhf1VolumeControl = Convert.ToBoolean(settings["vhf1VolumeControl"].Value);
+            Vhf1LatchMute = Convert.ToBoolean(settings["vhf1LatchMute"].Value);
             DisableCrew = Convert.ToBoolean(settings["disableCrew"].Value);
             RepositionPlane = Convert.ToBoolean(settings["repositionPlane"].Value);
             RepositionDelay = Convert.ToSingle(settings["repositionDelay"].Value, CultureInfo.InvariantCulture);
@@ -62,6 +72,7 @@ namespace Fenix2GSX
             AutoDeboarding = Convert.ToBoolean(settings["autoDeboarding"].Value);
             RefuelRate = Convert.ToSingle(settings["refuelRate"].Value, CultureInfo.InvariantCulture);
             RefuelUnit = Convert.ToString(settings["refuelUnit"].Value);
+            SynchBypass = Convert.ToBoolean(settings["synchBypass"].Value);
         }
 
         protected void SaveConfiguration()
