@@ -20,7 +20,7 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 <br/><br/>
 ## Installation
 Extract it anywhere you want, but do not use Application-Folders, User-Folders or even C:\\ <br/>
-Please remove the old Version completely befor updating.<br/>
+Please remove the old Version completely before updating.<br/>
 It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/or setting an Exception helps.<br/>
 You can check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - the Version you downloaded should show up there.<br/><br/>
 
@@ -39,28 +39,14 @@ Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/><br/>
 
 **Fenix2GSX**:<br/>
 The Configuration is done through the UI, open it by clicking on the System-Tray/Notification-Icon. They are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
-<img src="img/ui.jpg" width="400"><br/><br/>
-All Settings can be changed dynamically on the Fly if needed (except "Wait until MSFS..."). But do that before a Service/Feature starts or after it has ended. For example, don't disable "Automatic Jetway/Stair Operation" (autoConnect) while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
-In general, it is up to your Preference how much Automation you want. I you want to keep Control of when Services are Called and/or the Jetway is connected, you can still enjoy the (De-)Boarding and Refueling Syncronization when the Automation-Options are disabled. The only Automation which can not be disabled: The Removal of the Ground-Equipment and Jetway-Disconnection (if still connected) is always active on Depature.<br/><br/>
-Tip for VATSIM / IVAO: Disable the Auto-Connect Option before loading the Session in MSFS, in Case you need to move to another Gate. If the Gate is free (or you have moved to a free one) you can renable Auto-Connect and the Jetway/Stairs will still connect then (unless the Flightplan was already loaded in the EFB). Repositioning through GSX normaly keeps GPU/Chocks/PCA connected - but a quick Check won't hurt :wink:<br/><br/>
-A Note on the Audio-Control: The Tool does not control Audio until the Plane is powered (=FCU is On). When you end your Session, it will try to reset the Application-Audio to unmuted and 100% Volume. But that does not really work on GSX because it is resetting at the same Time. So GSX can stay muted when switching to another Plane - keep that in Mind.
+All Options have ToolTips which explains them further.
 <br/><br/>
+<img src="img/ui.png" width="400"><br/><br/>
+All Settings can be changed dynamically on the Fly if needed. But do that before a Service/Feature starts or after it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
+In general, it is up to your Preference how much Automation you want. I you want to keep Control of when Services are Called and/or the Jetway is connected, you can still enjoy the (De-)Boarding and Refueling Syncronization when the Automation-Options are disabled. The only Automation which can not be disabled: The Removal of the Ground-Equipment and Jetway-Disconnection (if still connected) is always active on Depature.<br/><br/>
+Tip for VATSIM / IVAO: Disable the automatic Jetway Operation before loading the Session in MSFS, in Case you need to move to another Gate. If the Gate is free (or you have moved to a free one) you can renable Auto-Connect and the Jetway/Stairs will still connect then (unless the Flightplan was already loaded in the EFB).<br/><br/>
+A Note on the Audio-Control: The Tool does not control Audio until the Plane is powered (=FCU is On). Be aware, that the Fenix defaults to 50% Volume on INT and VHF1 when loaded. When you end your Session, Fenix2GSX will try to reset the Application-Audio to unmuted and 100% Volume. But that does not really work on GSX because it is resetting at the same Time. So GSX can stay muted when switching to another Plane (if it was muted) - keep that in Mind.
 
-* **waitForConnect**		- The Binary will wait until MSFS is started and SimConnect is available. Default *"true"*
-* **gsxVolumeControl**			- The GSX Volume is controlled via the INT-Knob on ACP1. Default *"true"*
-* **repositionPlane**			- The Plane will be repositioned via GSX when you start your Session (unless starting with Engines running). Default *"true"*
-* **autoConnect**		- Automatically connect Jetway/Stairs on Startup and on Arrival. Operator Selection is done automatically if needed. Default *"true"*
-* **connectPCA** 		-  The Preconditioned Air will be connected on Startup and on Arrival (and disconnected on Depature). Default *"true"*
-* **pcaOnlyJetway** 		-  The Preconditioned Air will only be connected when a Jetway is available. Default *"true"*
-* **disableCrew**		- Disable Crew boarding and deboarding and therefore supress the Pop-Up/Question. Default *"true"*
-* **autoRefuel**		- Call Refueling automatically as soon as a Flightplan was imported in the EFB. Default *"true"*
-* **callCatering**	- Catering will be called when Refueling is automatically called. Default *"true"*
-* **autoBoarding** 		-  Automatically start Boarding when Refueling and Catering (if configured) are finished. Default *"true"*
-* **autoDeboarding** 			-  Automatically start Deboarding on Arrival when the Beacon-Light is switched off (and Engines stopped). Default *"true"*
-* **repositionDelay**			-  The Delay in Seconds, before the Plane will be repositioned (to give the Sim/GSX time to load). Default *"3"*
-* **refuelRate** 			-  The Speed at which the Tanks are filled, defaults to 28 kg per Second (~62 lbs / s).
-* **refuelUnit** 			-  The Unit of refuelRate - either KGS or LBS.
-* **vhf1VolumeApp** 			- The Name of the Application's Binary (without .exe Extension) which will be controlled through the VHF1-Knob on ACP1. Leave it empty if you don't want to use that Setting. Defaults *"vPilot"*
 
 <br/><br/>
 
@@ -73,7 +59,7 @@ A Note on the Audio-Control: The Tool does not control Audio until the Plane is 
 
 <br/><br/>
 
-## General Usage
+## General Service Flow
 There might be Issues when used together with FS2Crew! (that is "FS2Crew: Fenix A320 Edition", the RAAS Tool is fine!)
 
 1) Create your SB Flightplan and start MSFS as you normally would. Depending on your Configuration, start the Tool before MSFS or when MSFS is in the Main Menu.
@@ -83,8 +69,8 @@ There might be Issues when used together with FS2Crew! (that is "FS2Crew: Fenix 
 5) When the Parking Brake is set, External Power is disconnected (on the Overhead) and Beacon Light is On, the Tool will remove all Ground-Equipment: Jetway/Stairs (if not already removed) and GPU, PCA & Chocks (always, to be safe).
 6) Happy Flight!
 7) When you arrive (pre-select your Gate), the Jetway/Stairs will automatically connect as soon as the Engines are Off and the Parking Brake is set (if configured).
-8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, you can dismiss it if you want. Only generate a new Flightplan in SimBrief until Deboarding has actively started!
-9) It works with Turn-Arounds! As soon as you (re)import a new Flightplan the Cycle starts over.
+8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks. If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, it is best to dismiss that. Only generate a new Flightplan in SimBrief until Deboarding has actively started!
+9) It works with Turn-Arounds! As soon as you (re)import a new Flightplan the Cycle starts over (after Deboarding has completely finished).
 
 
 If you set every Option for automatic Service Calls, I'd recommend to disable the GSX Menu in the Toolbar (Icon not white). The Services are still called, but you won't see the Menu popping-up. So Push-Back, De-Ice and Gate-Selection are the only Situations where you need to open it.<br/><br/>
