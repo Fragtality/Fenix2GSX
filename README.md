@@ -19,7 +19,7 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 
 <br/><br/>
 ## Installation
-Extract it anywhere you want, but do not use Application-Folders, User-Folders or even C:\\ <br/>
+Extract it anywhere you want, but do not use Application-Folders, User-Folders, the Windows' Program File Folders or even C:\\ <br/>
 Please remove the old Version completely before updating.<br/>
 It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/or setting an Exception helps.<br/>
 You can check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - the Version you downloaded should show up there.<br/><br/>
