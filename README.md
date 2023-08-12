@@ -55,7 +55,7 @@ A Note on the Audio-Control: The Tool does not control Audio until the Plane is 
 - If using any Automation Option from Fenix2GSX, make sure **"Assistance services Auto Mode"** is disabled in the GSX Settings (GSX In-Game Menu -> GSX Settings -> Simulation)
 - If you have troubles with Refueling, try if disabling "Always refuel progressively" and "Detect custom aircraft system refueling" in the GSX Settings helps. (Though it should work with these Settings)
 - Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. If you still should have Issues with Boarding (e.g. only 10 Pax boarded), please disable *Estimate passengers number*
-- The Checkbox for **Automated staircases** should be fully checked (=fully automated)
+- For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes
 - The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster Boarding. *BUT*: The Setting **Extreme** is too extreme! Boarding does not work with this Setting.
 - Ensure the other two Settings under Timings are on their Default (15s, 1x).
 
