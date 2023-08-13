@@ -7,7 +7,8 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 - Ground Equipment (GPU, Chocks, PCA) is automatically set or removed
 - All Service Calls except Push-Back, De-Ice and Gate-Selection can be automated
 - GSX Audio can be controlled via the INT-Knob from the Cockpit
-- ATC Volume can be controlled via the VHF1-Knob from the Cockpit (ATC Application configurable)
+- ATC Volume can be controlled via the VHF1-Knob from the Cockpit (or any other App you wish)
+- The other Audio-Channels on the ACP can also be used to control the Volume of even more Apps
 
 <br/><br/>
 
@@ -40,14 +41,15 @@ When starting it by other means, please ensure the Working Directory is set corr
 Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/><br/>
 
 **Fenix2GSX**:<br/>
-The Configuration is done through the UI, open it by clicking on the System-Tray/Notification-Icon. They are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
+The Configuration is done through the UI, open it by clicking on the System-Tray/Notification-Icon. The UI does not open from itself! The Settings are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
 All Options have ToolTips which explains them further.
 <br/><br/>
 <img src="img/ui2.png" width="400"><br/><br/>
 Note that the automatic Reposition (or GSX Reposition in General) breaks the Departure Countdown on the EFB and therefor Delay Card System  - if you mind that, disable that Option. I don't mind, it is the most useless Feature on the Fenix and the EFB still shows the Flightstate correctly :wink:<br/><br/>
 All Settings can be changed dynamically on the Fly if needed. But do that before a Service/Feature starts or after it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
 In general, it is up to your Preference how much Automation you want. I you want to keep Control of when Services are Called and/or the Jetway is connected, you can still enjoy the (De-)Boarding and Refueling Syncronization when the Automation-Options are disabled. The only Automation which can not be disabled: The Removal of the Ground-Equipment and Jetway-Disconnection (if still connected) is always active on Depature.<br/><br/>
-A Note on the Audio-Control: The Tool does not control Audio until the Plane is powered (=FCU is On). Be aware, that the Fenix defaults to 50% Volume on INT and VHF1 when loaded - that is why Fenix2GSX defaults to set them to 100% on Startup. You can disable that if you want.<br/>When you end your Session, Fenix2GSX will try to reset the Application-Audio to unmuted and last set Volume (before it started controlling the Volume). But that does not really work on GSX because it is resetting at the same Time. So GSX can stay muted when switching to another Plane (if it was muted) - keep that in Mind.
+A Note on the Audio-Control: The Tool does not control Audio until the Plane is powered (=FCU is On). Be aware, that the Fenix defaults to 50% Volume on INT and VHF1 when loaded - that is why Fenix2GSX defaults to set them to 100% on Startup. You can disable that if you want.<br/>When you end your Session, Fenix2GSX will try to reset the Application-Audio to unmuted and last set Volume (before it started controlling the Volume). But that does not really work on GSX because it is resetting at the same Time. So GSX can stay muted when switching to another Plane (if it was muted) - keep that in Mind.<br/><br/>
+The new "Advanced Audio Control" can be used to Control other Apps with the other Channels (VHF2, VHF3, HF1, HF2, CAB, PA) - one App, one Channel. Their knobs are not moved on Start-Up and the Record Latch always mutes/unmutes the App. But that Settings follow the configured Seat-Position and therefore which ACP is used for Audio-Control.
 
 
 <br/><br/>
@@ -63,7 +65,7 @@ A Note on the Audio-Control: The Tool does not control Audio until the Plane is 
 
 <br/><br/>
 
-## General Service Flow
+## General Service Flow / Usage
 There might be Issues when used together with FS2Crew - please uncheck "Fuel Truck" in the Settings! (that is "FS2Crew: Fenix A320 Edition", the RAAS Tool is fine!)<br/>
 There also Issues reported when used together with Self-Loading Cargo.
 
@@ -77,8 +79,16 @@ There also Issues reported when used together with Self-Loading Cargo.
 8) When the Beacon Light is off, the other Ground-Equipment will placed: GPU, PCA (if configured) and Chocks (it may be placed earlier, I can't change the Behavior of the Fenix). If configured, Deboarding will be called. Calling Deboarding in the EFB is not required, it is best to dismiss that. Only generate a new Flightplan in SimBrief until Deboarding has actively started!
 9) It works with Turn-Arounds! As soon as you (re)import a new Flightplan the Cycle starts over (after Deboarding has completely finished).
 
+<br/>
 
-If you set every Option for automatic Service Calls, I'd recommend to disable the GSX Menu in the Toolbar (Icon not white). The Services are still called, but you won't see the Menu popping-up. So Push-Back, De-Ice and Gate-Selection are the only Situations where you need to open it.<br/>
+NOTE: You can also use the **INT/RAD** Switch on the ACP to trigger some Services in certain Situations. Move the Switch to the INT Position and leave it there. When Fenix2GSX reacts to the Request it will reset the Switch Postion as Confirmation! Services triggerable:
+
+- Request Boarding - regardless if Auto-Boarding is configured and even when Catering & Refueling are still active.
+- Request Push-Back, after Refueling & Boarding are finished (regardless of who called them). Be aware that calling Push-Back also triggers the removal of Ground-Equipment. And removing the Equipment that Way does not care about the Position of the Parking-Brake, External Power or APU. So nobody holds you back sitting in a free-rolling and unpowered Plane, possibly injuring the Ground-Crew because they unplugged the Cable while being actively used 😅
+- Abort/Confirm Push-Back. While the the Push-Back is running you can abort it (that is Menu Option 1, "Stop here and complete pushback" - the correct Way of aborting the Push). When you have "Good engine start confirmation" enabled in GSX you can answer that GSX Question also with that Switch (after GSX asks you to do so).
+- Request Deboarding, after Parking Brake set, Engines off and Beacon off. If Automatic Jetway/Stair Operation is enabled, wait for them to be called. Works regardless if Auto-Deboarding is enabled (so you can force the Deboard Request if needed)
+
+<br/>If you set every Option for automatic Service Calls, I'd recommend to disable the GSX Menu in the Toolbar (Icon not white). The Services are still called, but you won't see the Menu popping-up. So De-Ice and Gate-Selection are the only Situations where you need to enable the menu again. And Push-Back, if you don't use the INT/RAD Switch.<br/>
 Be aware that Fenix2GSX automatically selectes the first Operator in the List if GSX asks for a Selection (Ground Handling, Catering). If you're picky about which Operator should appear, you have to disable the Automatic Jetway Operation and the Automatic Catering Call!<br/><br/>
 Be cautious on the Mass and Balance Page in the EFB: Don't change the planned Numbers and don't use *"Load Aircraft"* or *"Reset All"* - they likely break the Integration. *"Resend Loadsheet"* should not hurt though if needed! (In Case the Prelim-LS wasn't send automatically by the Fenix due to EOBT or because the Plane had no Power yet).<br/><br/>
 Tip for VATSIM / IVAO: Disable the automatic Jetway Operation before loading the Session in MSFS, in Case you need to move to another Gate. If the Gate is free (or you have moved to a free one) you can renable Auto-Connect and the Jetway/Stairs will still connect then (unless the Flightplan was already loaded in the EFB).<br/><br/>
