@@ -43,7 +43,7 @@ Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/><br/>
 The Configuration is done through the UI, open it by clicking on the System-Tray/Notification-Icon. They are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
 All Options have ToolTips which explains them further.
 <br/><br/>
-<img src="img/ui.png" width="400"><br/><br/>
+<img src="img/ui2.png" width="400"><br/><br/>
 Note that the automatic Reposition (or GSX Reposition in General) breaks the Departure Countdown on the EFB and therefor Delay Card System  - if you mind that, disable that Option. I don't mind, it is the most useless Feature on the Fenix and the EFB still shows the Flightstate correctly :wink:<br/><br/>
 All Settings can be changed dynamically on the Fly if needed. But do that before a Service/Feature starts or after it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
 In general, it is up to your Preference how much Automation you want. I you want to keep Control of when Services are Called and/or the Jetway is connected, you can still enjoy the (De-)Boarding and Refueling Syncronization when the Automation-Options are disabled. The only Automation which can not be disabled: The Removal of the Ground-Equipment and Jetway-Disconnection (if still connected) is always active on Depature.<br/><br/>
