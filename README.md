@@ -19,10 +19,10 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 - MSFS, Fenix, GSX Pro :wink:
 
 <br/><br/>
-## Installation
-Extract it anywhere you want, but do not use Application-Folders, User-Folders, the Windows' Program File Folders or even C:\\ <br/>
-Please remove the old Version completely before updating / extracting the new Version!<br/>
-It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/or setting an Exception helps.<br/>
+## Installation / Update
+Extract it anywhere you want, but do not use Application-Folders, User-Folders, the Windows' Program File Folders or even C:\\ <br/><br/>
+Please remove the old Version completely before updating / extracting the new Version!<br/>Keep in Mind that this resets all Settings to the Defaults. (You can keep your old .config, but only as Reference - don't replace the newer with an old one)<br/><br/>
+It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/or setting an Exception helps.<br/><br/>
 You can check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - the Version you downloaded should show up there.<br/><br/>
 
 If you own a registered Copy of FSUIPC, you can start it automatically through that. Add this to your FSUIPC7.ini:
