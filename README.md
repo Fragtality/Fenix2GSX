@@ -42,7 +42,8 @@ Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/><br/>
 
 **Fenix2GSX**:<br/>
 The Configuration is done through the UI, open it by clicking on the System-Tray/Notification-Icon. The UI does not open from itself! The Settings are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
-All Options have ToolTips which explains them further.
+All Options have ToolTips which explains them further.<br/>
+You can close the Windows/UI without Problems, Fenix2GSX will continue to run. The UI is only there for Configuration, you don't need to have it open to have Fenix2GSX doing its Work.
 <br/><br/>
 <img src="img/ui2.png" width="400"><br/><br/>
 All Settings can be changed dynamically on the Fly if needed. But do that before a Service/Feature starts or after it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
