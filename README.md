@@ -74,8 +74,8 @@ Options not available in the GUI - can be changed in *Fenix2GSX.dll.config* (Fen
 <br/><br/>
 
 ## General Service Flow / Usage
-There might be Issues when used together with FS2Crew - please uncheck "Fuel Truck" in the Settings! (that is "FS2Crew: Fenix A320 Edition", the RAAS Tool is fine!)<br/>
-There also Issues reported when used together with Self-Loading Cargo.
+There might be Issues when used together with **FS2Crew** - please uncheck *"Fuel Truck"* in the Settings! (that is "FS2Crew: Fenix A320 Edition", the RAAS Tool is fine!)<br/>
+There also Issues reported when used together with **Self-Loading Cargo** (SLC). Based on User Reports disabling *"Ground Crew"* in SLC can help!<br/>
 
 1) Create your SB Flightplan and start MSFS as you normally would. Depending on your Configuration, start the Tool before MSFS or when MSFS is in the Main Menu.
 2) When your Session is loaded (Ready to Fly was pressed), wait for the Repositioning and Jetway/Stair Call to happen (if configured).
