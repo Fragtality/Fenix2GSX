@@ -20,9 +20,9 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 
 <br/><br/>
 ## Installation / Update
-Extract it anywhere you want, but do not use Application-Folders, User-Folders, the Windows' Program File Folders or even C:\\ <br/><br/>
-Please remove the old Version completely before updating / extracting the new Version!<br/>Keep in Mind that this resets all Settings to the Defaults. (You can keep your old .config, but only as Reference - don't replace the newer with an old one)<br/><br/>
-It may be blocked by Windows Security or your AV-Scanner, try if unblocking and/or setting an Exception helps.<br/><br/>
+Extract it anywhere you want, but **do not use** Application-Folders, User-Folders, the Windows' Program File Folders or even C:\\ <br/><br/>
+Please *remove the old Version* completely before updating / extracting the new Version!<br/>Keep in Mind that this *resets all Settings* to the Defaults. (You can keep your old .config, but only as Reference - *don not replace* the newer with an old one)<br/><br/>
+It may be blocked by Windows Security or your AV-Scanner, try if *unblocking* and/or *setting an Exception* helps.<br/><br/>
 You can check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - the Version you downloaded should show up there.<br/><br/>
 
 If you own a registered Copy of FSUIPC, you can start it automatically through that. Add this to your FSUIPC7.ini:
@@ -30,9 +30,10 @@ If you own a registered Copy of FSUIPC, you can start it automatically through t
 [Programs]
 RunIf1=READY,KILL,X:\PATH\YOU\USED\Fenix2GSX.exe
 ```
-The ini-File is in the Folder where FSUIPC was installed to, remember to change the Path to the Binary. If there are multiple RunIf-Entries, make sure they are numbered uniquely and that the [Programs] Section only exists once.<br/>
-When starting it manually (or by other means), either start it before MSFS or when MSFS is in the Main Menu.<br/>
-When starting it by other means, please ensure the Working Directory is set correctly (to the Path where the Binary is).
+The ini-File is in the Folder where FSUIPC was installed to, remember to change the Path to the Binary. If there are multiple RunIf-Entries, make sure they are numbered uniquely and that the [Programs] Section only exists once.<br/><br/>
+When starting it manually (or by other means), either start it **before MSFS** or when MSFS is in the **Main Menu**.<br/><br/>
+When starting it by other means, please ensure the Working Directory is set correctly (to the Path where the Binary is). If the Working Directory is not set correctly by your choosen Variant (e.g. exe.xml), then set the Working Directory with the "path" Command Line Switch:
+`X:\PATH\YOU\USED\Fenix2GSX.exe -path "X:\PATH\YOU\USED"`
 
 
 <br/><br/>
