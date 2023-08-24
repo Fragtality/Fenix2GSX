@@ -39,7 +39,8 @@ When starting it by other means, please ensure the Working Directory is set corr
 <br/><br/>
 ## Configuration
 **Fenix**:<br/>
-Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/><br/>
+Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/>
+Make sure your **Default State** is set to either Cold & Dark or Turn-Around with APU. GSX won't provide any Services when Engines are running and Fenix2GSX will directly go to the Taxi-Out State (=does not provide any Departure Services).<br/><br/>
 
 **Fenix2GSX**:<br/>
 The Configuration is done through the UI, open it by clicking on the System-Tray/Notification-Icon. The UI does not open from itself! The Settings are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
