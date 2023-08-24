@@ -25,16 +25,46 @@ Please *remove the old Version* completely before updating / extracting the new 
 It may be blocked by Windows Security or your AV-Scanner, try if *unblocking* and/or *setting an Exception* helps.<br/><br/>
 You can check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - the Version you downloaded should show up there.<br/><br/>
 
+## Auto-Start
+The Tool can be automatically started by the usual Ways out there.<br/>
+If you wish to do so - it is not needed, you can also just place a Shortcut to Binary somewhere and start it manually! (When starting it manually, do so either **before MSFS** or when MSFS is in the **Main Menu**)<br/>
+
+### FSUIPC
 If you own a registered Copy of FSUIPC, you can start it automatically through that. Add this to your FSUIPC7.ini:
 ```
 [Programs]
 RunIf1=READY,KILL,X:\PATH\YOU\USED\Fenix2GSX.exe
 ```
-The ini-File is in the Folder where FSUIPC was installed to, remember to change the Path to the Binary. If there are multiple RunIf-Entries, make sure they are numbered uniquely and that the [Programs] Section only exists once.<br/><br/>
-When starting it manually (or by other means), either start it **before MSFS** or when MSFS is in the **Main Menu**.<br/><br/>
-When starting it by other means, please ensure the Working Directory is set correctly (to the Path where the Binary is). If the Working Directory is not set correctly by your choosen Variant (e.g. exe.xml), then set the Working Directory with the "path" Command Line Switch:
-`X:\PATH\YOU\USED\Fenix2GSX.exe -path "X:\PATH\YOU\USED"`
+The ini-File is in the Folder where FSUIPC was installed to, remember to change the Path to the Binary. If there are multiple RunIf-Entries, make sure they are numbered uniquely and that the [Programs] Section only exists once.<br/>
 
+### exe.xml
+You can also start it via the Simulator's exe.xml, but make sure to set the Working Directory correctly like so:
+```xml
+  <Launch.Addon>
+    <Name>Fenix2GSX</Name>
+    <Disabled>false</Disabled>
+    <Path>X:\PATH\YOU\USED\Fenix2GSX.exe</Path>
+    <CommandLine>-path "X:\PATH\YOU\USED"</CommandLine> 
+  </Launch.Addon>
+```
+
+### Addon Linker
+If you use Addon Linker to start your Addons/Tools, you can also add it there:<br/>
+**Program to launch** X:\PATH\YOU\USED\Fenix2GSX.exe<br/>
+**Optional arguments** -path "X:\PATH\YOU\USED"<br/>
+**Wait for simconnect** checked<br/>
+The Rest can be left at Default.<br/>
+
+### Custom Scripts
+You can also start it via Script, but make sure you set the **Working Directory** correctly!<br/>
+Either you change the Directory (cd) to the Fenix2GSX Folder and start the Binary:
+```batch
+cd X:\PATH\YOU\USED
+Fenix2GSX.exe
+```
+Note that it is .\Fenix2GSX.exe when using a Powershell Script.<br/><br/>
+Or you pass the Working Directory with the -path Command Line Switch:<br/>
+`start "" "X:\PATH\YOU\USED\Fenix2GSX.exe" -path "X:\PATH\YOU\USED\Fenix2GSX"`
 
 <br/><br/>
 ## Configuration
@@ -43,7 +73,7 @@ Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/>
 Make sure your **Default State** is set to either Cold & Dark or Turn-Around with APU. GSX won't provide any Services when Engines are running and Fenix2GSX will directly go to the Taxi-Out State (=does not provide any Departure Services).<br/><br/>
 
 **Fenix2GSX**:<br/>
-The Configuration is done through the UI, open it by clicking on the System-Tray/Notification-Icon. The UI does not open from itself! The Settings are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
+The Configuration is done through the **GUI**, open it by **clicking on the System-Tray/Notification-Icon**. The UI does not open from itself! The Settings are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
 All Options have ToolTips which explains them further.<br/>
 You can close the Windows/UI without Problems, Fenix2GSX will continue to run. The UI is only there for Configuration, you don't need to have it open to have Fenix2GSX doing its Work.
 <br/><br/>
@@ -68,7 +98,7 @@ Options not available in the GUI - can be changed in *Fenix2GSX.dll.config* (Fen
 - Make sure you do not have a customized Aircraft Config (GSX In-Game Menu -> Customize Aircraft -> should show only "Internal GSX Database"). If you want to keep your customized Config for whatever Reason, make sure the Option **"Show MSFS Fuel and Cargo during refueling"** is disabled!
 - If using any Automation Option from Fenix2GSX, make sure **"Assistance services Auto Mode"** is disabled in the GSX Settings (GSX In-Game Menu -> GSX Settings -> Simulation)
 - If you have troubles with Refueling, try if disabling "Always refuel progressively" and "Detect custom aircraft system refueling" in the GSX Settings helps. (Though it should work with these Settings)
-- Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. If you still should have Issues with Boarding (e.g. only 10 Pax boarded), please disable *Estimate passengers number*
+- Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. If you still should have Issues with Boarding (e.g. only 10 Pax boarded), please disable *Estimate passengers number*.<br/>If you still have Issues with Boarding (only 10 Pax) after confirming the mentioned Settings, you need to make clean Install of GSX - something in your Installation is broken!
 - For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes
 - The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster Boarding. *BUT*: The Setting **Extreme** is too extreme! Boarding does not work with this Setting.
 - Ensure the other two Settings under Timings are on their Default (15s, 1x).
@@ -77,7 +107,8 @@ Options not available in the GUI - can be changed in *Fenix2GSX.dll.config* (Fen
 
 ## General Service Flow / Usage
 There might be Issues when used together with **FS2Crew** - please uncheck *"Fuel Truck"* in the Settings! (that is "FS2Crew: Fenix A320 Edition", the RAAS Tool is fine!)<br/>
-There also Issues reported when used together with **Self-Loading Cargo** (SLC). Based on User Reports disabling *"Ground Crew"* in SLC can help!<br/>
+There also Issues reported when used together with **Self-Loading Cargo** (SLC). Based on User Reports disabling *"Ground Crew"* in SLC can help!<br/><br/>
+Note that Fenix2GSX **does not open a Window** when started - it is designed to run in the Background, the Window/GUI is only there for Configuration! There is no Need to have the GUI opened while running the Sim. When you do open the GUI, it can safely be closed (it only closes that Windows, it does not Stop the Binary/App itself)
 
 1) Create your SB Flightplan and start MSFS as you normally would. Depending on your Configuration, start the Tool before MSFS or when MSFS is in the Main Menu.
 2) When your Session is loaded (Ready to Fly was pressed), wait for the Repositioning and Jetway/Stair Call to happen (if configured).
