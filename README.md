@@ -103,6 +103,7 @@ Advanced Options not available in the GUI - can be changed in *Fenix2GSX.dll.con
 - For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes
 - The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster Boarding. *BUT*: The Setting **Extreme** is too extreme! Boarding does not work with this Setting.
 - Ensure the other two Settings under Timings are on their Default (15s, 1x).
+- As with GSX itself, Fenix2GSX runs best when you have a proper Airport Profile installed!
 
 <br/><br/>
 
