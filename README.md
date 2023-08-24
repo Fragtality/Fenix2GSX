@@ -13,10 +13,11 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 <br/><br/>
 
 ## Requirements
-- Windows 10/11
-- [.NET 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) x64 Runtime (.NET Runtime and .NET Desktop Runtime. Do not confuse it with arm64!) installed & updated. Reboot when installing the Runtimes for the first Time.
-- MobiFlight [WASM Module](https://github.com/MobiFlight/MobiFlight-WASM-Module/releases) installed in your Community Folder
-- MSFS, Fenix, GSX Pro :wink:
+- Windows 10/11, MSFS, Fenix :wink:
+- [.NET 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) x64 Runtime (.NET Runtime and .NET Desktop Runtime. Do not confuse it with arm64!) installed & updated.<br/>Reboot when installing the Runtimes for the first Time.
+- MobiFlight [WASM Module](https://github.com/MobiFlight/MobiFlight-WASM-Module/releases) installed in your Community Folder.<br/>
+Ensure your Archive-Tool does not create an unnecessary Subfolder - the Path to the layout.json should be as follows: `Community\mobiflight-event-module\layout.json`
+- A properly working GSX Installation
 
 <br/><br/>
 ## Installation / Update
