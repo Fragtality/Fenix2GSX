@@ -19,6 +19,13 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 Ensure your Archive-Tool does not create an unnecessary Subfolder - the Path to the layout.json should be as follows: `Community\mobiflight-event-module\layout.json`
 - A properly working GSX Installation
 
+<br/>
+
+[Download here](https://github.com/Fragtality/Fenix2GSX/releases/latest)
+
+(Under Assests, the Fenix2GSX... zip-File)
+
+
 <br/><br/>
 ## Installation / Update
 Extract it anywhere you want, but **do not use** Application-Folders, User-Folders, the Windows' Program File Folders or even C:\\ <br/><br/>
