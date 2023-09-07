@@ -113,6 +113,7 @@ Advanced Options not available in the GUI - can be changed in *Fenix2GSX.dll.con
 - The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster Boarding. *BUT*: The Setting **Extreme** is too extreme! Boarding does not work with this Setting.
 - Ensure the other two Settings under Timings are on their Default (15s, 1x).
 - As with GSX itself, Fenix2GSX runs best when you have a proper Airport Profile installed!
+- Up to everyone's *Preference*, but disabling the **Aural Cues** (GSX In-Game Menu -> GSX Settings -> Audio) and setting **Message verbosity** to "*only Important*" (GSX In-Game Menu -> GSX Settings -> Simulation) can improve Immersion! 😉
 
 <br/><br/>
 
