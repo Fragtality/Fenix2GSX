@@ -102,7 +102,7 @@ Make sure your **Default State** is set to either Cold & Dark or Turn-Around wit
 ### Fenix2GSX
 
 The Configuration is done through the **GUI**, open it by **clicking on the System-Tray/Notification-Icon**. The UI does not open from itself! The Settings are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
-All Options have ToolTips which explains them further.<br/>
+All Options have ToolTips which explains them further. When changing/adding something in the Text-Boxes: please either hit *Enter* or click in another Text-Box (so the one you changed loses the Input-Focus).<br/>
 You can close the Windows/UI without Problems, Fenix2GSX will continue to run. The UI is only there for Configuration, you don't need to have it open to have Fenix2GSX doing its Work.
 <br/><br/>
 <img src="img/ui2.png" width="400"><br/><br/>
