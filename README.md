@@ -187,6 +187,7 @@ I also tend to hang out in the GSX Community of Fenix Discord "from time to time
 
 - It does not open a Window if you expect that. The GUI is only needed for Configuration and can be opened by clicking on the Icon in the SysTray / Notification Area (these Icons beside your Clock)
 - Ensure you have .NET 7 Installed as described in [Requirements](#requirements) (Reboot!)
+- Check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - the .NET Version you downloaded should show up there.
 - Please just don't "run as Admin" because you think that is needed. You can try if that helps, but it should run just fine without that!
 - Certain AV/Security Software might require setting an Exception
 
