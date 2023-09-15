@@ -29,9 +29,10 @@ Ensure your Archive-Tool does not create an unnecessary Subfolder - the Path to 
 <br/><br/>
 ## Installation / Update
 Extract it anywhere you want, but **do not use** Application-Folders, User-Folders, the Windows' Program File Folders or even C:\\ <br/><br/>
-Please **remove the old Version** completely before updating / extracting the new Version (don't just overwrite)!<br/>Keep in Mind that this **resets all Settings** to the Defaults. (You can keep your old .config, but only as Reference - *don not replace* the newer with an old one)<br/><br/>
+Please **remove the old Version** completely before updating / extracting the new Version (don't just overwrite)!<br/>Keep in Mind that this **resets all Settings** to the Defaults. (You can keep your old .config, but only as Reference - *don not replace* the newer with an old one)<br/>
+The Program will display a little Exclamation Mark on the SysTray/Notification Area Icon and in the GUI to inform on a new Version. There is no Pop-Up and there will never be.<br/>
 It may be blocked by **Windows Security** or your **AV-Scanner**, try if *unblocking* and/or *setting an Exception* helps.<br/><br/>
-If it does not start at all, check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - the .NET Version you downloaded should show up there.<br/><br/>
+If it does not start at all, check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - the .NET Version you downloaded should show up there.<br/><br/><br/>
 
 ## Auto-Start
 The Tool can be automatically started by the usual Ways out there.<br/>
@@ -75,12 +76,32 @@ Or you pass the Working Directory with the -path Command Line Switch:<br/>
 `start "" "X:\PATH\YOU\USED\Fenix2GSX.exe" -path "X:\PATH\YOU\USED\Fenix2GSX"`
 
 <br/><br/>
-## Configuration
-**Fenix**:<br/>
-Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/>
-Make sure your **Default State** is set to either Cold & Dark or Turn-Around with APU. GSX won't provide any Services when Engines are running and Fenix2GSX will directly go to the Taxi-Out State (=does not provide any Departure Services).<br/><br/>
 
-**Fenix2GSX**:<br/>
+## Configuration
+
+### Fenix
+
+Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/>
+Make sure your **Default State** is set to either Cold & Dark or Turn-Around with APU. GSX won't provide any Services when Engines are running and Fenix2GSX will directly go to the Taxi-Out State (=does not provide any Departure Services).
+
+<br/>
+
+### GSX Pro
+
+- Make sure you do not have a customized Aircraft Config (GSX In-Game Menu -> Customize Aircraft -> should show only "Internal GSX Database"). If you want to keep your customized Config for whatever Reason, make sure the Option **"Show MSFS Fuel and Cargo during refueling"** is disabled!
+- If using any Automation Option from Fenix2GSX, make sure **"Assistance services Auto Mode"** is disabled in the GSX Settings (GSX In-Game Menu -> GSX Settings -> Simulation)
+- If you have troubles with Refueling, try if disabling "Always refuel progressively" and "Detect custom aircraft system refueling" in the GSX Settings helps. (Though it should work with these Settings)
+- Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. Some Users have reported they also need to disable *Estimate passengers number*.
+- For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes
+- The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster Boarding. *BUT*: The Setting **Extreme** is too extreme! Boarding does not work with this Setting.
+- Ensure the other two Settings under Timings are on their Default (15s, 1x).
+- As with GSX itself, Fenix2GSX runs best when you have a proper Airport Profile installed!
+- Up to everyone's *Preference*, but disabling the **Aural Cues** (GSX In-Game Menu -> GSX Settings -> Audio) and setting **Message verbosity** to "*only Important*" (GSX In-Game Menu -> GSX Settings -> Simulation) can improve Immersion! 😉
+
+<br/>
+
+### Fenix2GSX
+
 The Configuration is done through the **GUI**, open it by **clicking on the System-Tray/Notification-Icon**. The UI does not open from itself! The Settings are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/>
 All Options have ToolTips which explains them further.<br/>
 You can close the Windows/UI without Problems, Fenix2GSX will continue to run. The UI is only there for Configuration, you don't need to have it open to have Fenix2GSX doing its Work.
@@ -104,24 +125,7 @@ Advanced Options not available in the GUI - can be changed in *Fenix2GSX.dll.con
 
 <br/><br/>
 
-**GSX Pro**:
-- Make sure you do not have a customized Aircraft Config (GSX In-Game Menu -> Customize Aircraft -> should show only "Internal GSX Database"). If you want to keep your customized Config for whatever Reason, make sure the Option **"Show MSFS Fuel and Cargo during refueling"** is disabled!
-- If using any Automation Option from Fenix2GSX, make sure **"Assistance services Auto Mode"** is disabled in the GSX Settings (GSX In-Game Menu -> GSX Settings -> Simulation)
-- If you have troubles with Refueling, try if disabling "Always refuel progressively" and "Detect custom aircraft system refueling" in the GSX Settings helps. (Though it should work with these Settings)
-- Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. If you still should have Issues with Boarding (e.g. only 10 Pax boarded), please disable *Estimate passengers number*.<br/>If you still have Issues with Boarding (only 10 Pax) after confirming the mentioned Settings, you need to make clean Install of GSX - something in your Installation is broken!
-- For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes
-- The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster Boarding. *BUT*: The Setting **Extreme** is too extreme! Boarding does not work with this Setting.
-- Ensure the other two Settings under Timings are on their Default (15s, 1x).
-- As with GSX itself, Fenix2GSX runs best when you have a proper Airport Profile installed!
-- Up to everyone's *Preference*, but disabling the **Aural Cues** (GSX In-Game Menu -> GSX Settings -> Audio) and setting **Message verbosity** to "*only Important*" (GSX In-Game Menu -> GSX Settings -> Simulation) can improve Immersion! 😉
-
-<br/><br/>
-
 ## Usage
-
-### Addon NOTAMs
-There might be Issues when used together with **FS2Crew** - please uncheck *"Fuel Truck"* in the Settings! (that is "FS2Crew: Fenix A320 Edition", the RAAS Tool is fine!)<br/>
-There also Issues reported when used together with **Self-Loading Cargo** (SLC). Based on User Reports disabling *"Ground Crew"* in SLC can help!<br/><br/>
 
 ### General Service Flow
 Note that Fenix2GSX **does not open a Window** when started - it is designed to run in the Background, the Window/GUI is only there for Configuration! There is no Need to have the GUI opened while running the Sim. When you do open the GUI, it can safely be closed (it only closes that Windows, it does not Stop the Binary/App itself)<br/>
@@ -132,7 +136,7 @@ Note that Fenix2GSX **does not open a Window** when started - it is designed to 
 5) When your Session is loaded (Ready to Fly was pressed), **wait for the Repositioning**, Jetway/Stair Call and Ground-Equipment Placement to happen (if configured). When the Tool is done with its Preparation, it will trigger the **"Ding" Sound** (the Sound when you press the ALL Call Button)<br/>Make sure to **wait for that Signal** before powering the Plane and import the Flightplan.
 6) **Import your Flightplan** on the EFB (wherever you're using it from, does not need to be the EFB in the VC). **Refueling and Catering** will be called (if configured).<br/>*Always* import a Flightplan on the EFB, regardless of Configuration. Power up the Plane from Cold & Dark before importing the Flightplan!
 7) When **Refueling and Boarding are finished** (whoever called it), you will receive your **Final Loadsheet after 90-150s** (Boarding finished = GSX reports the Service as completed). The **Doors** will be **closed** when this happens (if not already closed by GSX) and also the **"Ding" Sound** is triggered.<br/>
-When both Services are finished, the APU is Avail and the APU Bleed is switched ON Fenix2GSX will remove the PCA (if configured to connect).
+When both Services are finished and if the APU is Avail and the APU Bleed is switched ON, then Fenix2GSX will remove the PCA (if configured to connect).
 8) When the **Parking Brake is set**, **External Power is disconnected** (on the Overhead) and **Beacon Light is On**, the Tool will **remove all Ground-Equipment**: Jetway/Stairs (if not already removed) and GPU, PCA & Chocks (always, to be safe).<br/>Ground-Equipment is **also removed when Push-Back is** called - make sure you have set you're Parking Brake and your APU is running :wink:
 9) Happy Flight! Note that Fenix2GSX can be restarted in Flight if you need/wish to do so.
 10) When you arrive (**pre-select your Gate**), the **Jetway/Stairs will automatically connect** as soon as the **Engines are Off** and the **Parking Brake is set** (if configured).
@@ -151,6 +155,14 @@ Be aware that this only works if you have "Synchronize By-Pass Pin" enabled.
 - **Request Deboarding**, after Parking Brake set, Engines off and Beacon off. If Automatic Jetway/Stair Operation is enabled, wait for them to be called. Works regardless if Auto-Deboarding is enabled (so you can force the Deboard Request if needed)
 <br/>
 
+### Addon NOTAMs
+There also Issues reported when used together with **Self-Loading Cargo** (SLC). Based on User Reports disabling *"Ground Crew"* in SLC can help! Everything else is mostly SLC missing a proper GSX Integration - so nothing I can solve.<br/><br/>
+
+**FS2Crew (Fenix Edition)**: You basically don't need any Ground- or Door-Handling Features of Fs2Crew. This is what another User recommends as Settings to let Fenix2GSX and FS2Crew work together (thanks for sharing):<br/>
+<img src="img/Fs2Crew.png" width="1006"><br/><br/>
+
+<br/>
+
 ### Usage Tips / NOTAMs
 
 If you set every Option for **automatic Service Calls**, I'd recommend to **disable the GSX Menu in the Toolbar** (= Icon not white). The Services are still called, but you **won't see the Menu popping-up**.<br/>
@@ -160,3 +172,63 @@ Be cautious on the Mass and Balance Page in the EFB: **Don't change the planned 
 That is **IF** you want to Refuel/Board through GSX: When you are in Hurry and want to *skip GSX Refuel/Boarding* but still want to use the other Features, you can use the Fast/Instant Boarding on the EFB. To do so, please *disable* the Option to Call Refuel on EFB import and only then import the Flightplan. The Rest then works the same as before, after the Plane was boarded through the EFB.<br/><br/>
 Tip for **VATSIM / IVAO**: Disable the automatic Jetway Operation before loading the Session in MSFS, in Case you need to move to another Gate. If the Gate is free (or you have moved to a free one) you can renable Auto-Connect and the Jetway/Stairs will still connect then (unless the Flightplan was already loaded in the EFB).<br/><br/>
 Fenix2GSX has a Detection built-in when starting with **Engines running** (i.e. you selected a Runway as Start). It won't provide any Departure Service apart from removing the Ground-Equipment. It will provide Arrival-Sevices after you've landed again (when you have imported a FlightPlan in the EFB before Take-Off)<br/><br/>
+
+<br/>
+
+### Troubleshooting / FCOM
+
+First Order: Ensure you have fully read and understand the Readme 😉<br/>
+If that and any of the Instructions below did not help, please open an Issue with a meaningful Problem Description and attach the Logs to it (Fenix2GSX\<date>.log)!<br/>
+I also tend to hang out in the GSX Community of Fenix Discord "from time to time" - you can also ping me there!
+
+<br/>
+
+#### Does not Start
+
+- It does not open a Window if you expect that. The GUI is only needed for Configuration and can be opened by clicking on the Icon in the SysTray / Notification Area (these Icons beside your Clock)
+- Ensure you have .NET 7 Installed as described in [Requirements](#requirements) (Reboot!)
+- Please just don't "run as Admin" because you think that is needed. You can try if that helps, but it should run just fine without that!
+- Certain AV/Security Software might require setting an Exception
+
+<br/>
+
+#### There are no Log Files
+
+- Regardless of how you start it, please ensure the Working Directory will be set to the Directory where Fenix2GSX is installed - see [Auto-Start](#auto-start). If that is something you can't follow: just make a Shortcut to the Binary on your Desktop (or wherever you placed your Sim and Tools Shortcuts) and run it manually
+- Please just don't "run as Admin" because you think that is needed. You can try if that helps, but it should run just fine without that!
+
+<br/>
+
+#### Does not Connect / Exception 31
+
+The MobiFlight WASM Module is not installed correctly or at all:
+
+- Ensure you have downloaded the actual Module (Binary) and not the Source-Code! Go to [Releases](https://github.com/MobiFlight/MobiFlight-WASM-Module/releases) and download the File mobiflight-event-module-x.y.z.zip (under Assets)
+- Ensure you have unpacked it correctly (or at all). Check the Path as recommended under [Requirements](#requirements). In the End it is installed like any other 3rd Party Scenery in your Community Folder
+
+<br/>
+
+#### Refuel Stops / Problems with Boarding / Jetways do not connect
+
+If it is only Boarding (e.g. only 10 Pax boarded) it might be something with your GSX Settings (In Game Menu -> Settings):
+- Ensure your *SimBrief Username* is set
+- Ensure *Ignore Time* is set
+- Try if disabling (or enabling) *Estimate passengers number* helps anything
+
+<br/>
+
+There have been also Cases where the GSX Installation was somehow "corrupted". You can try to run the Check in the FSDT Installer multiple Times, else a complete fresh / clean Installation of GSX might be required.
+
+<br/>
+
+Else it is likely that you have Issues with the SimConnect Interface (the API which both GSX and Fenix2GSX use) being overloaded by too many SimObjects (one of these Things Asobo is incapable or unwilling of fixing).<br/>
+In most Cases this is caused by AI Aircraft or other Tools spawning SimObjects (e.g. Nool VDGS or even GSX itself). Reduce the Number of SimObjects and check if it works better then:
+
+- If only tried while connecting to an Online Network, try if it works in an Offline Session
+- Disable Traffic in the MSFS Settings (Airport Vehicle / Ground Aircraft / Worker)
+- Reduce the amount of AI Planes in your Tool's Settings
+- External AI Tools might have the Option to spawn Ground Services for AI Aircraft (AIG-TC e.g.) - be sure to disable that!
+- Disable AI Traffic all together - whether it be MSFS or an external Tool
+- Disable "Ground Clutter" in GSX (FSDT Installer -> Config)
+- Disable other Addons spawning SimObjects
+
