@@ -30,7 +30,7 @@ Ensure your Archive-Tool does not create an unnecessary Subfolder - the Path to 
 ## Installation / Update
 Extract it anywhere you want, but **do not use** Application-Folders, User-Folders, the Windows' Program File Folders or even C:\\ <br/><br/>
 Please **remove the old Version** completely before updating / extracting the new Version (don't just overwrite)!<br/>Keep in Mind that this **resets all Settings** to the Defaults. (You can keep your old .config, but only as Reference - *do not replace* the newer with an old one)<br/>
-The Program will display a little Exclamation Mark on the SysTray/Notification Area Icon and in the GUI to inform on a new Version. There is no Pop-Up and there will never be.<br/>
+The Program will display a **little Exclamation Mark** on the SysTray/Notification Area Icon and in the GUI to inform on a **new Version**. There is no Pop-Up and there will never be.<br/>
 It may be blocked by **Windows Security** or your **AV-Scanner**, try if *unblocking* and/or *setting an Exception* helps.<br/><br/><br/>
 
 ## Auto-Start
@@ -62,6 +62,11 @@ If you use Addon Linker to start your Addons/Tools, you can also add it there:<b
 **Optional arguments** -path "X:\PATH\YOU\USED"<br/>
 **Wait for simconnect** checked<br/>
 The Rest can be left at Default.<br/>
+
+### Axis and Ohs
+You can also use AAO to autostart Fenix2GSX if you have that.<br/>
+Configure it as *One Shot* / *Beginning* with a Delay of *10000ms*. The Content of the Script is:<br/>
+`(EXEC:X:\PATH\YOU\USED\Fenix2GSX.exe)`
 
 ### Custom Scripts
 You can also start it via Script, but make sure you set the **Working Directory** correctly!<br/>
