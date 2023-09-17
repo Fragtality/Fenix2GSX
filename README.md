@@ -66,7 +66,7 @@ The Rest can be left at Default.<br/>
 ### Axis and Ohs
 You can also use AAO to autostart Fenix2GSX if you have that.<br/>
 Configure it as *One Shot* / *Beginning* with a Delay of *10000ms*. The Content of the Script is:<br/>
-`(EXEC:X:\PATH\YOU\USED\Fenix2GSX.exe)`
+`(EXEC:X:\PATH\YOU\USED\Fenix2GSX.exe -path X:\PATH\YOU\USED)`
 
 ### Custom Scripts
 You can also start it via Script, but make sure you set the **Working Directory** correctly!<br/>
@@ -77,7 +77,7 @@ Fenix2GSX.exe
 ```
 Note that it is .\Fenix2GSX.exe when using a Powershell Script.<br/><br/>
 Or you pass the Working Directory with the -path Command Line Switch:<br/>
-`start "" "X:\PATH\YOU\USED\Fenix2GSX.exe" -path "X:\PATH\YOU\USED\Fenix2GSX"`
+`start "" "X:\PATH\YOU\USED\Fenix2GSX.exe" -path "X:\PATH\YOU\USED"`
 
 <br/><br/>
 
