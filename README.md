@@ -63,11 +63,6 @@ If you use Addon Linker to start your Addons/Tools, you can also add it there:<b
 **Wait for simconnect** checked<br/>
 The Rest can be left at Default.<br/>
 
-### Axis and Ohs
-You can also use AAO to autostart Fenix2GSX if you have that.<br/>
-Configure it as *One Shot* / *Beginning* with a Delay of *10000ms*. The Content of the Script is:<br/>
-`(EXEC:X:\PATH\YOU\USED\Fenix2GSX.exe -path X:\PATH\YOU\USED)`
-
 ### Custom Scripts
 You can also start it via Script, but make sure you set the **Working Directory** correctly!<br/>
 Either you change the Directory (cd) to the Fenix2GSX Folder and start the Binary:
