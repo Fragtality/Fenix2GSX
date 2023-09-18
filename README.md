@@ -217,14 +217,17 @@ If it is only Boarding (e.g. only 10 Pax boarded) it might be something with you
 
 <br/>
 
-There have been also Cases where the GSX Installation was somehow "corrupted". You can try to run the Check in the FSDT Installer multiple Times, else a complete fresh / clean Installation of GSX might be required.
+If it is only Refueling it might be something with your GSX Settings (In Game Menu -> Settings):
+- Try if disabling or enabling *Always refuel progressively* makes a Difference
+- Try if disabling or enabling *Detect custom aircraft system refueling* makes a Difference
 
 <br/>
 
-Else it is likely that you have Issues with the SimConnect Interface (the API which both GSX and Fenix2GSX use) being overloaded by too many SimObjects (one of these Things Asobo is incapable or unwilling of fixing).<br/>
+It is also likely that you have Issues with the SimConnect Interface (the API which both GSX and Fenix2GSX use) being overloaded by too many SimObjects (one of these Things Asobo is incapable or unwilling of fixing).<br/>
 In most Cases this is caused by AI Aircraft or other Tools spawning SimObjects (e.g. Nool VDGS or even GSX itself). Reduce the Number of SimObjects and check if it works better then:
 
 - If only tried while connecting to an Online Network, try if it works in an Offline Session
+- Disable Road and Boat Traffic in the MSFS Settings
 - Disable Traffic in the MSFS Settings (Airport Vehicle / Ground Aircraft / Worker)
 - Reduce the amount of AI Planes in your Tool's Settings
 - External AI Tools might have the Option to spawn Ground Services for AI Aircraft (AIG-TC e.g.) - be sure to disable that!
@@ -232,3 +235,6 @@ In most Cases this is caused by AI Aircraft or other Tools spawning SimObjects (
 - Disable "Ground Clutter" in GSX (FSDT Installer -> Config)
 - Disable other Addons spawning SimObjects
 
+<br/>
+
+There have been also Cases where the GSX Installation was somehow "corrupted". You can try to run the Check in the FSDT Installer multiple Times, else a complete fresh / clean Installation of GSX might be required.
