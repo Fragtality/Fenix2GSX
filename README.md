@@ -82,7 +82,7 @@ Or you pass the Working Directory with the -path Command Line Switch:<br/>
 ### Fenix
 
 Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/>
-Make sure your **Default State** is set to either Cold & Dark or Turn-Around with APU. GSX won't provide any Services when the Engines are running.
+Make sure your **Default State** is set to either Cold & Dark or Turn-Around with GPU or APU. GSX won't provide any Services when the Engines are running.
 
 <br/>
 
