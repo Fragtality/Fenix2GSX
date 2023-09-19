@@ -139,7 +139,7 @@ Note that Fenix2GSX **does not open a Window** when started - it is designed to 
 
 - Ensure you use the **correct SimBrief Airframe** Configuration provided by Fenix!
 - Ensure that the **Units** used in SimBrief **match** the Units used in the EFB!
-- Ensure your default State is either **Cold & Dark** or **Turn-Around with APU**!
+- Ensure your default State is either **Cold & Dark** or **Turn-Around with GPU or APU**!
 
 Besides that general Best Practice, there is nothing Special to consider - Plan your Flight as you always do.
 <br/><br/>
