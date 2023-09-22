@@ -278,7 +278,16 @@ The MobiFlight WASM Module is not installed correctly or at all:
 
 <br/>
 
-### Refuel Stops / Problems with Boarding / Jetways do not connect
+### Jetway does not connect
+
+There can be certain Situations where the Jetways stop responding. For me usually when I arrive again at an Airport I already departed from in the same Sim-Session.<br/>
+This an 100% Asobo-Problem. Any Application is then not able to call Jetways anymore via SimEvent ("TOGGLE_JETWAY"). When you are in such a Situation, confirm it by use "Toggle Jetway" in the Fenix EFB. If it still does not move, you experience that MSFS-"Feature".<br/>
+The only Workaround is to request the Jetway via ATC Menu. But beware: That does not toggle the mentioned Event, so no Application (i.e. GSX) can detect that the Jetway is connected.<br/>
+The Workaround is only for the Visuals, GSX (and therefor Fenix2GSX) should handle the Situation and should be able to deboard the Plane (you won't see any Passengers either Way though).
+
+<br/>
+
+### Refuel Stops / Problems with Boarding or Deboarding / other Erratic Behavior
 
 If it is only Boarding (e.g. only 10 Pax boarded) it might be something with your GSX Settings (In Game Menu -> Settings):
 - Ensure your *SimBrief Username* is set
