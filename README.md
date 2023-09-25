@@ -94,6 +94,7 @@ Make sure your **Default State** is set to either Cold & Dark or Turn-Around wit
 - If you have troubles with Refueling, try if disabling "Always refuel progressively" and "Detect custom aircraft system refueling" in the GSX Settings helps. (Though it should work with these Settings)
 - Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. Some Users have reported they also need to disable *Estimate passengers number*.
 - For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes
+- It is **not recommended** to use the **Always ask for pushback** Option
 - The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster Boarding.
 - Ensure the other two Settings under Timings are on their Default (15s, 1x).
 - As with GSX itself, Fenix2GSX runs best when you have a proper Airport Profile installed!
@@ -110,9 +111,16 @@ You can close the Windows/UI without Problems, Fenix2GSX will continue to run. T
 <img src="img/ui2.png" width="400"><br/><br/>
 All Settings **can be changed dynamically** on the Fly if needed. But do that **before a Service/Feature** starts or **after** it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
 In general, it is up to **your Preference how much Automation** you want. If you want to keep Control of when Services are Called and/or the Jetway is connected, you **can still enjoy the (De-)Boarding and Refueling Syncronization** when the Automation-Options are disabled. The only Automation which **can not be disabled**: The **Removal of the Ground-Equipment and Jetway-Disconnection** (if still connected) is always active on Depature.<br/><br/>
-A Note on the **Audio-Control**: The Tool does not control Audio until the Plane is **powered** (=FCU is On).<br/>When you end your Session, Fenix2GSX will try to reset the Application-Audio to unmuted and last set Volume (before it started controlling the Volume). But that does not really work on GSX because it is resetting at the same Time. So **GSX can stay muted** when switching to another Plane (if it was muted) - keep that in Mind.<br/><br/>
+
+#### Audio-Control
+
+A Note on the **Audio-Control**: The Tool does not control Audio until the Plane is **powered** (=FCU is On).<br/>When you end your Session, Fenix2GSX will try to reset the Application-Audio to unmuted and last set Volume (before it started controlling the Volume). But that does not really work on GSX because it is resetting at the same Time. So **GSX can stay muted** when switching to another Plane (if it was muted) - keep that in Mind.<br/>
+Please also note that Fenix2GSX uses **the first Audio-Session** it finds for any given Application. So if the Volume does not change although it said it found an Audio-Session, that is likely the Problem. There are no Plans to change that.<br/><br/>
 The new **"Advanced Audio Control"** can be used to Control other Apps with the other Channels (VHF2, VHF3, HF1, HF2, CAB, PA) - one App, one Channel. Their knobs are not moved on Start-Up and the Record Latch always mutes/unmutes the App. But that Feature follows the configured Seat-Position and therefore which ACP is used for Audio-Control those Applications.<br/>The Syntax is `CHANNEL=Application` and multiple Mappings are separated by a `,` - the Channel-Name is upper-case as noted above and for the Application you need to enter the *exact* (case-sensitive) Name of the Applications Binary (EXE-File) without Extension. For Example controlling MSFS Volume with the Cabin and Chrome Volume with the Passenger Announcement Knob would be: `CAB=FlightSimulator,PA=chrome`
 <br/><br/>
+
+#### Advanced / Hidden Options
+
 Advanced Options not available in the GUI - can be changed in *Fenix2GSX.dll.config* (Fenix2GSX restart needed. Don't touch any other Option):
 
 - **logLevel**: When I request a "Verbose-Log" on Support-Requests, change the Value to "Verbose" here
@@ -305,6 +313,7 @@ If it is only Refueling it might be something with your GSX Settings (In Game Me
 It is also likely that you have Issues with the SimConnect Interface (the API which both GSX and Fenix2GSX use) being overloaded by too many SimObjects (one of these Things Asobo is incapable or unwilling of fixing).<br/>
 In most Cases this is caused by AI Aircraft or other Tools spawning SimObjects (e.g. Nool VDGS or even GSX itself). Reduce the Number of SimObjects and check if it works better then:
 
+- Remove Microsoft Fireworks (see below)
 - If only tried while connecting to an Online Network, try if it works in an Offline Session
 - Disable Road and Boat Traffic in the MSFS Settings
 - Disable Traffic in the MSFS Settings (Airport Vehicle / Ground Aircraft / Worker)
@@ -313,6 +322,15 @@ In most Cases this is caused by AI Aircraft or other Tools spawning SimObjects (
 - Disable AI Traffic all together - whether it be MSFS or an external Tool
 - Disable "Ground Clutter" in GSX (FSDT Installer -> Config)
 - Disable other Addons spawning SimObjects
+
+<br/>
+
+**Remove Microsoft Fireworks**
+
+- Go to the Content Manager
+- Search for 'Fireworks'
+- The "City Update 3: Texas" should be listed -> go do List View
+- Remove the Package "Microsoft Fireworks"
 
 <br/>
 
