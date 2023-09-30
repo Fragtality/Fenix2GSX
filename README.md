@@ -260,7 +260,7 @@ Fenix2GSX has a Detection built-in when starting with **Engines running** (i.e. 
 ## Troubleshooting / FCOM
 
 First Order: Ensure you have fully read and understand the Readme 😉<br/>
-If that and any of the Instructions below did not help, and you are *really really* sure that Fenix2GSX is misbehaving and you provide a *meaningful* Description with the Logs attached to it (Fenix2GSX\<date>.log) - I might look into it.<br/>
+If that and any of the Instructions below did not help, and you are *really really* sure that Fenix2GSX is misbehaving and you provide a *meaningful* Description with the Logs attached to it (Fenix2GSX\<date>.log) - I might look into it if I find it worthwhile.<br/>
 Else the new "Support-Policy" introduced with 0.3.4 takes Effect: Issues (and Messages/Pings on other Platforms) are *directly ignored*!<br/>
 Almost every Problem I dealt with lately has something to do with weird Settings, broken Sim- or GSX-Setups or People just not reading anything I wrote.<br/>
 
