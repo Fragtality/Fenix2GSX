@@ -89,7 +89,7 @@ Make sure your **Default State** is set to either Cold & Dark or Turn-Around wit
 ### GSX Pro
 
 - Make sure you do not have a customized Aircraft Config (GSX In-Game Menu -> Customize Aircraft -> should show only "Internal GSX Database"). If you want to keep your customized Config for whatever Reason, make sure the Option **"Show MSFS Fuel and Cargo during refueling"** is disabled!
-- Fenix2GSX relies on **GSX to open and close** the Doors.
+- Fenix2GSX relies on GSX to open and close the Doors.
 - If using any Automation Option from Fenix2GSX, make sure **"Assistance services Auto Mode"** is disabled in the GSX Settings (GSX In-Game Menu -> GSX Settings -> Simulation)
 - If you have troubles with Refueling, try if disabling "Always refuel progressively" and "Detect custom aircraft system refueling" in the GSX Settings helps. (Though it should work with these Settings)
 - Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. Some Users have reported they also need to disable *Estimate passengers number*.
@@ -128,13 +128,15 @@ Advanced Options not available in the GUI - can be changed in *Fenix2GSX.dll.con
 - **autoConnectDelay**: Delay in Seconds before Jetway/Stairs are called on Session Start (only there). Delay can be cancelled with the INT/RAD Switch.
 - **finalDelayMin**: Minimum Delay in Seconds before the Final LS is transmitted after Boarding.
 - **finalDelayMax**: Maximum Delay in Seconds before the Final LS is transmitted after Boarding.
-- **gpuAndChockInterception**: Intercept (and remove) the automatic placed GPU and Chocks (by Fenix) upon Arrival (so they do not appear before the Beacon is off).
 - **chocksDelayMin**: Minimum Delay in Seconds before the Chocks are placed.
 - **chocksDelayMax**: Maximum Delay in Seconds before the Chocks are placed.
 - **removeAftStairAfterBoard**: Automatically remove the Aft Stair (if available) on Jetway-Stands after Boarding was finished.
 - **boardingDelay**: The Delay to wait for Boarding to be called after Refuel has finished to avoid Vehicle conflicts (Refuel finished does not mean the Fuel Truck has already gone). Half of that Time is used when Boarding starts after Catering (when Catering is configured to start after Refuel)
 - **paxBagWeightKGS**: The Bag Weight per Passenger in KG. Used for the Passenger randomization to change the actual Cargo accordingly.
 - **closeDoorOnFinal**: Close the Doors when the Final LS was received.
+- **synchBypass**: The Syncronization of the By-Pass Pin. Do not enable with GSX 2.7.6 and above, unless you only use Towbar Tugs on every Push.
+- **jetwayFixer**: When enabled, Fenix2GSX will attempt to reconnect the Jetway should it disconnect during Boarding or Deboarding (only active while these Services are running). That can only work if the Jetway gets disconnected by the "TOGGLE_JETWAY" SimEvent. If you're an experienced Fenix2GSX User, you can enable it and report your Results!
+- **groupBoxConcealable**: For System with an abnormal high "Text-Scaling" Setting in Windows (so high, the Window does not fit on the Screen anymore). When enabled the Group-Boxes can be hidden (and unhidden) with a Right-Click.
 
 <br/><br/>
 
@@ -148,6 +150,7 @@ Note that Fenix2GSX **does not open a Window** when started - it is designed to 
 - Ensure you use the **correct SimBrief Airframe** Configuration provided by Fenix!
 - Ensure that the **Units** used in SimBrief **match** the Units used in the EFB!
 - Ensure your default State is either **Cold & Dark** or **Turn-Around with GPU or APU**!
+- Ensure your **EOBT** in SimBrief matches the Simulator Time!
 
 Besides that general Best Practice, there is nothing Special to consider - Plan your Flight as you always do.
 <br/><br/>
