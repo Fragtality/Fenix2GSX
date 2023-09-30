@@ -108,7 +108,7 @@ The Configuration is done through the **GUI**, open it by **clicking on the Syst
 All Options have **ToolTips** which explains them further. When changing/adding something in the **Text-Boxes**: please either hit *Enter* or click in another Text-Box (so the one you changed loses the Input-Focus).<br/><br/>
 You can close the Windows/UI without Problems, Fenix2GSX will continue to run. The UI is only there for Configuration, you don't need to have it open to have Fenix2GSX doing its Work.
 <br/><br/>
-<img src="img/ui2.png" width="400"><br/><br/>
+<img src="img/ui3.png" width="400"><br/><br/>
 All Settings **can be changed dynamically** on the Fly if needed. But do that **before a Service/Feature** starts or **after** it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
 In general, it is up to **your Preference how much Automation** you want. If you want to keep Control of when Services are Called and/or the Jetway is connected, you **can still enjoy the (De-)Boarding and Refueling Syncronization** when the Automation-Options are disabled. The only Automation which **can not be disabled**: The **Removal of the Ground-Equipment and Jetway-Disconnection** (if still connected) is always active on Depature.<br/><br/>
 
@@ -184,7 +184,9 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 
 <br/>
 
-#### Pushback
+#### Pushback - INOP with Fenix2GSX 0.3.4 and above
+
+This is *NOT* a Fault of GSX! I was "misusing" one of the GSX Variables for that, because there was no other Way to get that working with the Fenix.
 
 - You can request GSX Pushback with the **INT/RAD** Switch. It does not make any Difference if you call it that Way or through the GSX Menu.
 - **Only** request Pushback **when** it is **neccessary** - i.e. don't call it on Stands where you supposed to roll out!
@@ -192,7 +194,7 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 - When the Push is running, you can disable the Menu again - you can use the INT/RAD Switch to Stop or Confirm the Engine Start.
 - **Before** GSX requests to report good Engine Start the INT/RAD Switch will **Stop the Pushback** at the current Position (GSX Menu Option 1).
 - Only **confirm** the Engine Start if enabled in the GSX Options and GSX has requested to report it.
-- **DO NOT USE ABORT PUSHBACK**
+- **DO NOT USE ABORT PUSHBACK** (And if only as the very very last Resort, early stopping the Pushback is meant to be commenced with "Stop". If you abort, please set your Parking Brake.)
 
 <br/>
 
@@ -230,7 +232,7 @@ You can also use the **INT/RAD** Switch on the ACP to trigger some Services in c
 - **Request Boarding** - regardless if Auto-Boarding is configured and even when Catering & Refueling are still active.
 - **Request Pushback**, after Refueling & Boarding are finished (regardless of who called them). Please **note** that this Trigger does **not make any Checks** and relies on your good Airmanship to not end up with an unpowered and free rolling Plane :wink:<br/>
 Make sure to **enable the GSX Menu** again at that Point! Fenix2GSX **only requests** the Service, but **does not answer** any Pushback related Question in the GSX Menu.
-- **Stop/Confirm Pushback**. While the the **Pushback is running** you can **stop it** (that is Menu Option 1, "Stop here and complete pushback" - the correct Way of stopping the Push). When you have "**Good engine start confirmation**" enabled in GSX you can answer that GSX Question also **with that Switch** (**after GSX asks** you to do so).<br/>
+- **!INOP!** **Stop/Confirm Pushback**. While the the **Pushback is running** you can **stop it** (that is Menu Option 1, "Stop here and complete pushback" - the correct Way of stopping the Push). When you have "**Good engine start confirmation**" enabled in GSX you can answer that GSX Question also **with that Switch** (**after GSX asks** you to do so).<br/>
 Be aware that this **only works** if you have **Synchronize By-Pass Pin** enabled.
 - **Request Deboarding**, after Parking Brake set, Engines off and Beacon off. If Automatic Jetway/Stair Operation is enabled, wait for them to be called. Only works when automatic Deboarding is disabled.
 
@@ -258,8 +260,9 @@ Fenix2GSX has a Detection built-in when starting with **Engines running** (i.e. 
 ## Troubleshooting / FCOM
 
 First Order: Ensure you have fully read and understand the Readme 😉<br/>
-If that and any of the Instructions below did not help, please open an Issue with a meaningful Problem Description and attach the Logs to it (Fenix2GSX\<date>.log)!<br/>
-I also tend to hang out in the GSX Community of Fenix Discord "from time to time" - you can also ping me there!
+If that and any of the Instructions below did not help, and you are *really really* sure that Fenix2GSX is misbehaving and you provide a *meaningful* Description with the Logs attached to it (Fenix2GSX\<date>.log) - I might look into it.<br/>
+Else the new "Support-Policy" introduced with 0.3.4 takes Effect: Issues (and Messages/Pings on other Platforms) are *directly ignored*!<br/>
+Almost every Problem I dealt with lately has something to do with weird Settings, broken Sim- or GSX-Setups or People just not reading anything I wrote.<br/>
 
 <br/>
 
@@ -337,4 +340,4 @@ In most Cases this is caused by AI Aircraft or other Tools spawning SimObjects (
 
 <br/>
 
-There have been also Cases where the GSX Installation was somehow "corrupted". You can try to run the Check in the FSDT Installer multiple Times, else a complete fresh / clean Installation of GSX might be required.
+There have been also Cases where the GSX Installation was somehow "corrupted". You can try to run the Check in the FSDT Installer multiple Times or use the [offline Installer](https://www.fsdreamteam.com/forum/index.php/topic,26826.0.html). Else a complete fresh / clean Installation of GSX might be required.<br/>
