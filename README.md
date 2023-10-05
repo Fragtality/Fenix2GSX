@@ -111,6 +111,7 @@ You can close the Windows/UI without Problems, Fenix2GSX will continue to run. T
 <img src="img/ui3.png" width="400"><br/><br/>
 All Settings **can be changed dynamically** on the Fly if needed. But do that **before a Service/Feature** starts or **after** it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
 In general, it is up to **your Preference how much Automation** you want. If you want to keep Control of when Services are Called and/or the Jetway is connected, you **can still enjoy the (De-)Boarding and Refueling Syncronization** when the Automation-Options are disabled. The only Automation which **can not be disabled**: The **Removal of the Ground-Equipment and Jetway-Disconnection** (if still connected) is always active on Depature.<br/><br/>
+Note that on every Service Call initiated by Fenix2GSX which requires to **select an Operator**, it will **automatically select** the **\[GSX Choice]**! So it selects what GSX thinks is right, so if the Selection is not right in your Opinion: don't tell me, I don't have anything to do with that. So if you care about Operators: don't use the Automations which require an Operator Selection. There are no Plans to change the Behavior.<br/><br/>
 
 #### Audio-Control
 
