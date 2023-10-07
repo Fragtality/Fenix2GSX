@@ -185,12 +185,11 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 
 <br/>
 
-#### Pushback - INOP with Fenix2GSX 0.3.4 and above
-
-This is *NOT* a Fault of GSX! I was "misusing" one of the GSX Variables for that, because there was no other Way to get that working with the Fenix.
+#### Pushback
 
 - You can request GSX Pushback with the **INT/RAD** Switch. It does not make any Difference if you call it that Way or through the GSX Menu.
 - **Only** request Pushback **when** it is **neccessary** - i.e. don't call it on Stands where you supposed to roll out!
+- If you did not follow the Recommendation to disable the *'Always ask for pushback'* Option, Fenix2GSX will attempt to Answer the Question with 'Yes'.
 - Requesting Pushback is the **latest** Point where you need to **enable the GSX Menu** (=Icon white in the Toolbar) in order to select the Direction and answer all other Questions GSX might have. (You can close the Menu with the "X")
 - When the Push is running, you can disable the Menu again - you can use the INT/RAD Switch to Stop or Confirm the Engine Start.
 - **Before** GSX requests to report good Engine Start the INT/RAD Switch will **Stop the Pushback** at the current Position (GSX Menu Option 1).
@@ -233,8 +232,7 @@ You can also use the **INT/RAD** Switch on the ACP to trigger some Services in c
 - **Request Boarding** - regardless if Auto-Boarding is configured and even when Catering & Refueling are still active.
 - **Request Pushback**, after Refueling & Boarding are finished (regardless of who called them). Please **note** that this Trigger does **not make any Checks** and relies on your good Airmanship to not end up with an unpowered and free rolling Plane :wink:<br/>
 Make sure to **enable the GSX Menu** again at that Point! Fenix2GSX **only requests** the Service, but **does not answer** any Pushback related Question in the GSX Menu.
-- **!INOP!** **Stop/Confirm Pushback**. While the the **Pushback is running** you can **stop it** (that is Menu Option 1, "Stop here and complete pushback" - the correct Way of stopping the Push). When you have "**Good engine start confirmation**" enabled in GSX you can answer that GSX Question also **with that Switch** (**after GSX asks** you to do so).<br/>
-Be aware that this **only works** if you have **Synchronize By-Pass Pin** enabled.
+- **Stop/Confirm Pushback**. While the the **Pushback is running** you can **stop it** (that is Menu Option 1, "Stop here and complete pushback" - the correct Way of stopping the Push). When you have "**Good engine start confirmation**" enabled in GSX you can answer that GSX Question also **with that Switch** (**after GSX asks** you to do so).<br/>
 - **Request Deboarding**, after Parking Brake set, Engines off and Beacon off. If Automatic Jetway/Stair Operation is enabled, wait for them to be called. Only works when automatic Deboarding is disabled.
 
 <br/><br/>
