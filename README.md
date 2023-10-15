@@ -108,7 +108,7 @@ The Configuration is done through the **GUI**, open it by **clicking on the Syst
 All Options have **ToolTips** which explains them further. When changing/adding something in the **Text-Boxes**: please either hit *Enter* or click in another Text-Box (so the one you changed loses the Input-Focus).<br/><br/>
 You can close the Windows/UI without Problems, Fenix2GSX will continue to run. The UI is only there for Configuration, you don't need to have it open to have Fenix2GSX doing its Work.
 <br/><br/>
-<img src="img/ui3.png" width="400"><br/><br/>
+<img src="img/ui4.png" width="817"><br/><br/>
 All Settings **can be changed dynamically** on the Fly if needed. But do that **before a Service/Feature** starts or **after** it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
 In general, it is up to **your Preference how much Automation** you want. If you want to keep Control of when Services are Called and/or the Jetway is connected, you **can still enjoy the (De-)Boarding and Refueling Syncronization** when the Automation-Options are disabled. The only Automation which **can not be disabled**: The **Removal of the Ground-Equipment and Jetway-Disconnection** (if still connected) is always active on Depature.<br/><br/>
 Note that on every Service Call initiated by Fenix2GSX which requires to **select an Operator**, it will **automatically select** the **\[GSX Choice]**! So it selects what GSX thinks is right, so if the Selection is not right in your Opinion: don't tell me, I don't have anything to do with that. So if you care about Operators: don't use the Automations which require an Operator Selection. There are no Plans to change the Behavior.<br/><br/>
@@ -127,6 +127,7 @@ Advanced Options not available in the GUI - can be changed in *Fenix2GSX.dll.con
 - **logLevel**: When I request a "Verbose-Log" on Support-Requests, change the Value to "Verbose" here
 - **ignoreAudioDevice**: Ignore a certain Sound Device when searching for Audio-Sessions for Volume-Control (Device Name as seen in your Windows Volume Control / Device List). Certain Sound Cards / Applications (e.g. Sonic Studio Virtual Mixer) mirror the Sound-Sessions to a virtual Device which messes up the Volume-Control Feature.
 - **autoConnectDelay**: Delay in Seconds before Jetway/Stairs are called on Session Start (only there). Delay can be cancelled with the INT/RAD Switch.
+- **startupDelay**: Delay in Seconds before Service Automation & Audio-Control is started after the Session is Ready.
 - **finalDelayMin**: Minimum Delay in Seconds before the Final LS is transmitted after Boarding.
 - **finalDelayMax**: Maximum Delay in Seconds before the Final LS is transmitted after Boarding.
 - **chocksDelayMin**: Minimum Delay in Seconds before the Chocks are placed.
@@ -261,7 +262,16 @@ Fenix2GSX has a Detection built-in when starting with **Engines running** (i.e. 
 First Order: Ensure you have fully read and understand the Readme 😉<br/>
 If that and any of the Instructions below did not help, and you are *really really* sure that Fenix2GSX is misbehaving and you provide a *meaningful* Description with the Logs attached to it (Fenix2GSX\<date>.log) - I might look into it if I find it worthwhile.<br/>
 Else the new "Support-Policy" introduced with 0.3.4 takes Effect: Issues (and Messages/Pings on other Platforms) are *directly ignored*!<br/>
-Almost every Problem I dealt with lately has something to do with weird Settings, broken Sim- or GSX-Setups or People just not reading anything I wrote.<br/>
+Almost every Problem I dealt with lately has something to do with weird Settings, broken Sim- or GSX-Setups or People just not reading anything I wrote.<br/><br/>
+
+Beginning with 0.3.6 the Connection Status in the GUI shows some additional Information about the Fenix2GSX and GSX State. If you encounter Problems, I'd recommend to watch these Values in the GUI while it happens:
+<img src="img/ui4-commented.png" width="817"><br/><br/>
+Especially the GSX Values are important here: These are the raw Values which Fenix2GSX reads through SimConnect from GSX and the Values it acts upon. So if the Values are faulty, there is nothing that Fenix2GSX can do.
+- Pax and Cargo must never be -1 while either Boarding or Deboarding is in Progress
+- Jetway and Stairs must never be 0 while at the Gate/Stand
+- Except "H", every other Service-State must never be 0 while at the Gate/Stand
+- The States, from left to right, are: **R**efuel, Fuel-**H**ose, **C**atering, **B**oarding, **P**ushback, **D**eboard
+- So "H" must switch to 1 when the Fuel-Hose was visually connected and stay that Way while Refueling
 
 <br/>
 
