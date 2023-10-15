@@ -127,7 +127,7 @@ Advanced Options not available in the GUI - can be changed in *Fenix2GSX.dll.con
 - **logLevel**: When I request a "Verbose-Log" on Support-Requests, change the Value to "Verbose" here
 - **ignoreAudioDevice**: Ignore a certain Sound Device when searching for Audio-Sessions for Volume-Control (Device Name as seen in your Windows Volume Control / Device List). Certain Sound Cards / Applications (e.g. Sonic Studio Virtual Mixer) mirror the Sound-Sessions to a virtual Device which messes up the Volume-Control Feature.
 - **autoConnectDelay**: Delay in Seconds before Jetway/Stairs are called on Session Start (only there). Delay can be cancelled with the INT/RAD Switch.
-- **startupDelay**: Delay in Seconds before Service Automation & Audio-Control is started after the Session is Ready.
+- **startupDelay**: Delay in Seconds before Service Automation & Audio-Control (aka the Service Loop) is started after the Session is Ready.
 - **finalDelayMin**: Minimum Delay in Seconds before the Final LS is transmitted after Boarding.
 - **finalDelayMax**: Maximum Delay in Seconds before the Final LS is transmitted after Boarding.
 - **chocksDelayMin**: Minimum Delay in Seconds before the Chocks are placed.
