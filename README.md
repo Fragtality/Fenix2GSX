@@ -239,12 +239,20 @@ Make sure to **enable the GSX Menu** again at that Point! Fenix2GSX **only reque
 <br/><br/>
 
 ### Addon NOTAMs
+
+#### Self-Loading Cargo
+
 There Issues reported when used together with **Self-Loading Cargo** (SLC). Based on User Reports disabling *"Ground Crew"* in SLC can help!<br/>
 You can try to play with some Advanced Options in the .config File to improve Timings.<br/>
 Everything else is mostly SLC missing a proper GSX Integration - so nothing I can solve.<br/><br/>
 
+#### FlowPro
+
 For **FlowPro** it is strongly recommended to disable the Option *Skip 'Ready to Fly'*. Else it might happen that Fenix2GSX starts in the Flight State.<br/>
-<img src="img/flowpro.png" width="400"><br/><br/>
+<img src="img/flowpro.png" width="400"><br/>
+Another "Issue" with FlowPro is that you can't disable the GSX Menu, so that it won't pop-up when Fenix2GSX is doing its Service-Calls. To be able to enabled/disable the GSX Menu/Icon like in the normal MSFS Toolbar you need the Addon [Flow GSX Launcher](https://flightsim.to/file/46482/flow-gsx-launcher)!<br/><br/>
+
+#### FS2Crew
 
 **FS2Crew (Fenix Edition)**: You basically don't need any Ground- or Door-Handling Features of Fs2Crew. This is what another User recommends as Settings to let Fenix2GSX and FS2Crew work together (thanks for sharing):<br/>
 <img src="img/Fs2Crew.png" width="1006"><br/><br/>
