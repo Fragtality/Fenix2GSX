@@ -249,8 +249,7 @@ Everything else is mostly SLC missing a proper GSX Integration - so nothing I ca
 #### FlowPro
 
 For **FlowPro** it is strongly recommended to disable the Option *Skip 'Ready to Fly'*. Else it might happen that Fenix2GSX starts in the Flight State.<br/>
-<img src="img/flowpro.png" width="400"><br/>
-Another "Issue" with FlowPro is that you can't disable the GSX Menu, so that it won't pop-up when Fenix2GSX is doing its Service-Calls. To be able to enabled/disable the GSX Menu/Icon like in the normal MSFS Toolbar you need the Addon [Flow GSX Launcher](https://flightsim.to/file/46482/flow-gsx-launcher)!<br/><br/>
+<img src="img/flowpro.png" width="400"><br/><br/>
 
 #### FS2Crew
 
