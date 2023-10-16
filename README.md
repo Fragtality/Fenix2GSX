@@ -243,7 +243,8 @@ There Issues reported when used together with **Self-Loading Cargo** (SLC). Base
 You can try to play with some Advanced Options in the .config File to improve Timings.<br/>
 Everything else is mostly SLC missing a proper GSX Integration - so nothing I can solve.<br/><br/>
 
-For **FlowPro** it is strongly recommended to disable the Option *Skip 'Ready to Fly'*. Else it might happen that Fenix2GSX starts in the Flight State.<br/><br/>
+For **FlowPro** it is strongly recommended to disable the Option *Skip 'Ready to Fly'*. Else it might happen that Fenix2GSX starts in the Flight State.<br/>
+<img src="img/flowpro.png" width="400"><br/><br/>
 
 **FS2Crew (Fenix Edition)**: You basically don't need any Ground- or Door-Handling Features of Fs2Crew. This is what another User recommends as Settings to let Fenix2GSX and FS2Crew work together (thanks for sharing):<br/>
 <img src="img/Fs2Crew.png" width="1006"><br/><br/>
