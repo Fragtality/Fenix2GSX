@@ -14,66 +14,47 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 
 ## Requirements
 - Windows 10/11, MSFS, Fenix :wink:
-- [.NET 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) x64 Runtime (.NET Runtime and .NET Desktop Runtime. Do not confuse it with arm64!) installed & updated.<br/>Reboot when installing the Runtimes for the first Time.
-- MobiFlight [WASM Module](https://github.com/MobiFlight/MobiFlight-WASM-Module/releases) installed in your Community Folder.<br/>
-Ensure your Archive-Tool does not create an unnecessary Subfolder - the Path to the layout.json should be as follows: `Community\mobiflight-event-module\layout.json`
 - A properly working GSX Installation
 - Capability to actually read the Readme up until and beyond this Point :stuck_out_tongue_winking_eye:
+- The Installer will install the following Software:
+  - .NET 7 Desktop Runtime (x64)
+  - MobiFlight Event/WASM Module
 
 <br/>
 
 [Download here](https://github.com/Fragtality/Fenix2GSX/releases/latest)
 
-(Under Assests, the Fenix2GSX... zip-File)
+(Under Assests, the Fenix2GSX-Installer-vXYZ.exe File)
 
 
 <br/><br/>
 ## Installation / Update
-Extract it anywhere you want, but **do not use** Application-Folders, User-Folders, the Windows' Program File Folders or even C:\\ <br/><br/>
-Please **remove the old Version** completely before updating / extracting the new Version (don't just overwrite)!<br/>Keep in Mind that this **resets all Settings** to the Defaults. (You can keep your old .config, but only as Reference - *do not replace* the newer with an old one)<br/><br/>
+Basically: Just run the Installer - it will extract it for you to a fixed Location and will also install/update the neccessary Software to your PC/Sim. It even setups Auto-Start and creates a Link on the Desktop, if you want.<br/><br/>
+
+Some Notes:
+- Fenix2GSX has to be stopped before installing.
+- If the MobiFlight Module is not installed or outdated, MSFS also has to be stopped.
+- If you upgrade from Version 0.3.6 or below, delete your old Installation manually (it is no longer needed).
+- From Version 0.4.0 onwards, your Configuration will not be resetted after Updating
+- The Installation-Location is fixed to %appdata%\Fenix2GSX (your Users AppData\Roaming Folder) and can not be changed.
+- For Auto-Start either your FSUIPC7.ini or EXE.xml (MSFS) is modified. The Installer does not create a Backup (not deemed neccessary), so if you want a Backup, do so yourself.
+- **Do not** run as Admin!
+- It may be blocked by **Windows Security** or your **AV-Scanner**, try if *unblocking* and/or *setting an Exception* helps
+
+<br/><br/>
+
 The Program will display a **little Exclamation Mark** on the SysTray/Notification Area Icon and in the GUI to inform on a **new Version**. There is no Pop-Up and there will never be.<br/><br/>
-It may be blocked by **Windows Security** or your **AV-Scanner**, try if *unblocking* and/or *setting an Exception* helps.<br/><br/><br/>
+.<br/><br/><br/>
 
 ## Auto-Start
-The Tool can be automatically started by the usual Ways out there.<br/>
-If you wish to do so - it is not needed, you can also just place a Shortcut to Binary somewhere and start it manually! (When starting it manually, do so either **before MSFS** or when MSFS is in the **Main Menu**)<br/>
-
-### FSUIPC
-If you own a registered Copy of FSUIPC, you can start it automatically through that. Add this to your FSUIPC7.ini:
-```
-[Programs]
-RunIf1=READY,KILL,X:\PATH\YOU\USED\Fenix2GSX.exe
-```
-The ini-File is in the Folder where FSUIPC was installed to, remember to change the Path to the Binary. If there are multiple RunIf-Entries, make sure they are numbered uniquely and that the [Programs] Section only exists once.<br/>
-
-### exe.xml
-You can also start it via the Simulator's exe.xml, but make sure to set the Working Directory correctly like so:
-```xml
-  <Launch.Addon>
-    <Name>Fenix2GSX</Name>
-    <Disabled>false</Disabled>
-    <Path>X:\PATH\YOU\USED\Fenix2GSX.exe</Path>
-    <CommandLine>-path "X:\PATH\YOU\USED"</CommandLine> 
-  </Launch.Addon>
-```
+When starting it manually, please do so either **before MSFS** or when MSFS is in the **Main Menu**.<br/>
+To automatically start it with **FSUIPC or MSFS**, select the respective Option in the **Installer**.<br/>
 
 ### Addon Linker
 If you use Addon Linker to start your Addons/Tools, you can also add it there:<br/>
-**Program to launch** X:\PATH\YOU\USED\Fenix2GSX.exe<br/>
-**Optional arguments** -path "X:\PATH\YOU\USED"<br/>
+**Program to launch** C:\Users\YOURUSERNAME\AppData\Roaming\Fenix2GSX\bin\Fenix2GSX.exe<br/>
 **Wait for simconnect** checked<br/>
 The Rest can be left at Default.<br/>
-
-### Custom Scripts
-You can also start it via Script, but make sure you set the **Working Directory** correctly!<br/>
-Either you change the Directory (cd) to the Fenix2GSX Folder and start the Binary:
-```batch
-cd X:\PATH\YOU\USED
-Fenix2GSX.exe
-```
-Note that it is .\Fenix2GSX.exe when using a Powershell Script.<br/><br/>
-Or you pass the Working Directory with the -path Command Line Switch:<br/>
-`start "" "X:\PATH\YOU\USED\Fenix2GSX.exe" -path "X:\PATH\YOU\USED"`
 
 <br/><br/>
 
@@ -104,25 +85,25 @@ Make sure your **Default State** is set to either Cold & Dark or Turn-Around wit
 
 ### Fenix2GSX
 
-The Configuration is done through the **GUI**, open it by **clicking on the System-Tray/Notification-Icon**. The UI does not open from itself! The Settings are stored persistently in the *Fenix2GSX.dll.config* File - so set them once to your Preference and you should be fine :smiley:<br/><br/>
+The Configuration is done through the **GUI**, open it by **clicking on the System-Tray/Notification-Icon**. The UI does not open from itself! The Settings are stored persistently in the *%appdata\Fenix2GSX\Fenix2GSX.config* File - so set them once to your Preference and you should be fine :smiley:<br/><br/>
 All Options have **ToolTips** which explains them further. When changing/adding something in the **Text-Boxes**: please either hit *Enter* or click in another Text-Box (so the one you changed loses the Input-Focus).<br/><br/>
 You can close the Windows/UI without Problems, Fenix2GSX will continue to run. The UI is only there for Configuration, you don't need to have it open to have Fenix2GSX doing its Work.
 <br/><br/>
-<img src="img/ui4.png" width="817"><br/><br/>
+<img src="img/ui5.png" width="817"><br/><br/>
 All Settings **can be changed dynamically** on the Fly if needed. But do that **before a Service/Feature** starts or **after** it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
 In general, it is up to **your Preference how much Automation** you want. If you want to keep Control of when Services are Called and/or the Jetway is connected, you **can still enjoy the (De-)Boarding and Refueling Syncronization** when the Automation-Options are disabled. The only Automation which **can not be disabled**: The **Removal of the Ground-Equipment and Jetway-Disconnection** (if still connected) is always active on Depature.<br/><br/>
-Note that on every Service Call initiated by Fenix2GSX which requires to **select an Operator**, it will **automatically select** the **\[GSX Choice]**! So it selects what GSX thinks is right, so if the Selection is not right in your Opinion: don't tell me, I don't have anything to do with that. So if you care about Operators: don't use the Automations which require an Operator Selection. There are no Plans to change the Behavior.<br/><br/>
+Fenix2GSX will automatically **select the Operator** when one of its Service-Calls or your (manually) selected **Arrival-Gate** requires that. It will default to the Operator marked with *[GSX Choice]*.<br/>If you still want to select the **Operator manually**, disable that Option in the GUI. But note, that it will always waits 10 Seconds before continuing when a Selection is needed.<br/><br/>
 
 #### Audio-Control
 
 A Note on the **Audio-Control**: The Tool does not control Audio until the Plane is **powered** (=FCU is On).<br/>When you end your Session, Fenix2GSX will try to reset the Application-Audio to unmuted and last set Volume (before it started controlling the Volume). But that does not really work on GSX because it is resetting at the same Time. So **GSX can stay muted** when switching to another Plane (if it was muted) - keep that in Mind.<br/>
-Please also note that Fenix2GSX uses **the first Audio-Session** it finds for any given Application. So if the Volume does not change although it said it found an Audio-Session, that is likely the Problem. There are no Plans to change that.<br/><br/>
+Please also note that Fenix2GSX controls **all Audio Sessions** on all Devices for a configured Application. So if an Application runs on your Speakers and Headphones, both Sessions will have their Volume or Mute-State changed.<br/><br/>
 The new **"Advanced Audio Control"** can be used to Control other Apps with the other Channels (VHF2, VHF3, HF1, HF2, CAB, PA) - one App, one Channel. Their knobs are not moved on Start-Up and the Record Latch always mutes/unmutes the App. But that Feature follows the configured Seat-Position and therefore which ACP is used for Audio-Control those Applications.<br/>The Syntax is `CHANNEL=Application` and multiple Mappings are separated by a `,` - the Channel-Name is upper-case as noted above and for the Application you need to enter the *exact* (case-sensitive) Name of the Applications Binary (EXE-File) without Extension. For Example controlling MSFS Volume with the Cabin and Chrome Volume with the Passenger Announcement Knob would be: `CAB=FlightSimulator,PA=chrome`
 <br/><br/>
 
 #### Advanced / Hidden Options
 
-Advanced Options not available in the GUI - can be changed in *Fenix2GSX.dll.config* (Fenix2GSX restart needed. Don't touch any other Option):
+Advanced Options not available in the GUI - can be changed in *%appdata%\Fenix2GSX\Fenix2GSX.config* (Fenix2GSX restart needed. **Don't touch** any other Option):
 
 - **logLevel**: When I request a "Verbose-Log" on Support-Requests, change the Value to "Verbose" here
 - **ignoreAudioDevice**: Ignore a certain Sound Device when searching for Audio-Sessions for Volume-Control (Device Name as seen in your Windows Volume Control / Device List). Certain Sound Cards / Applications (e.g. Sonic Studio Virtual Mixer) mirror the Sound-Sessions to a virtual Device which messes up the Volume-Control Feature.
@@ -136,7 +117,6 @@ Advanced Options not available in the GUI - can be changed in *Fenix2GSX.dll.con
 - **boardingDelay**: The Delay to wait for Boarding to be called after Refuel has finished to avoid Vehicle conflicts (Refuel finished does not mean the Fuel Truck has already gone). Half of that Time is used when Boarding starts after Catering (when Catering is configured to start after Refuel)
 - **paxBagWeightKGS**: The Bag Weight per Passenger in KG. Used for the Passenger randomization to change the actual Cargo accordingly.
 - **closeDoorOnFinal**: Close the Doors when the Final LS was received.
-- **synchBypass**: The Syncronization of the By-Pass Pin. Do not enable with GSX 2.7.6 and above, unless you only use Towbar Tugs on every Push.
 - **jetwayFixer**: When enabled, Fenix2GSX will attempt to reconnect the Jetway should it disconnect during Boarding or Deboarding (only active while these Services are running). That can only work if the Jetway gets disconnected by the "TOGGLE_JETWAY" SimEvent. If you're an experienced Fenix2GSX User, you can enable it and report your Results!
 - **groupBoxConcealable**: For System with an abnormal high "Text-Scaling" Setting in Windows (so high, the Window does not fit on the Screen anymore). When enabled the Group-Boxes can be hidden (and unhidden) with a Right-Click.
 
@@ -161,6 +141,7 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 
 - Make sure Fenix2GSX was already started **before** entering the Cockpit.
 - **Wait** until Fenix2GSX has finished it Startup Steps like Repositioning (if configured), calling Jetway/Stairs (if configured) and the EFB Reset.<br/>You will be informed with the Cabin **"Ding" Sound** when it has finished these Steps. **Wait** for that Signal **before doing anything** in the EFB or powering up the Plane (when starting Cold & Dark).
+- Mind that selecting a **Panel-State** in the EFB also changes the **ACP State** - so that will override the Option to set VHF1 and INT to 100% at Startup!
 - After that **import the Flightplan** into the EFB to get the Automatic Service-Flow (**starting with Refuel**) going -OR- **before** you call any GSX Service manually (if you have disabled the Automations).
 - You can do the Import anytime you want, but when starting Cold & Dark and depending on the exact Timing you might get two Preliminary Loadsheet (only a "cosmetic" Issue). To prevent that either import right after power-up or after the MCDU has initialized.
 - If you plan to **skip** GSX Refuel, Catering and Boarding all together and want to load the Plane via EFB, **disable Call Refuel** Service in the Fenix2GSX GUI **before importing** the Flightplan. How and when you load the Plane via EFB is at your Discretion (**Do not** call GSX Refuel or Boarding - it is either through GSX or through EFB, but not both).
@@ -170,7 +151,7 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 #### Departure
 
 - If you have **choosen to disable** the Automations, call GSX Refuel and Boarding **at your Discretion**. The Integration Part of Fenix2GSX will still be active and will load the Plane in accordance to the GSX Animations.
-- If you **kept on** the Automations, it is advisable to **disable the GSX Menu** (=Icon not white in the Toolbar) to prevent the Menu being displayed when Services are called by Fenix2GSX. (When using the Default Toolbar)
+- If you **kept on** the Automations, it is advisable to **disable the GSX Menu** (=Icon not white in the Toolbar) to prevent the Menu being displayed when Services are called by Fenix2GSX. (When using the Default Toolbar, see Addon NOTAMs for Flow)
 - **Do not** use *Load Aircraft* in the EFB when using the GSX Integration/Automation!
 - **Do not** use *Reset All* regardless if loading through GSX or EFB!
 - If you want to **start Boarding while Refuel** is active, move the **INT/RAD Switch** to the INT Position (and leave it there - it will flip back when recognized). Note that only the INT/RAD Switch for your Seat Position is monitored!
@@ -208,12 +189,12 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 #### Arrival
 (Arrival Services will only start when Engines are off and the Parking Brake is set)<br/>
 
-- Please **pre-select** the Gate in the GSX Menu **while** you're **taxing** to it. Assuming you use all Automations, that is the only Time you need to have the Menu enabled on Turn-Around until you need to Pushback again.
+- Please **pre-select** the Gate in the GSX Menu **while** you're **taxing** to it. If enabled, it will automatically answer the Follow-Me Question with 'No' and select the Operator if needed (if configured to do so).
+- Assuming you use all Automations, that is the only Time you need to have the Menu enabled on Turn-Around until you need to Pushback again.
 - **Chocks** will be placed 10-20 Seconds after the **Beacon is off**. When placed through Fenix2GSX the "MECH" Indicator on the ACP (INT Button) will flash briefly to indicate that. You can release the Parking Brakes then.
 - **Deboarding** is called (which will also move Jetway/Stairs) after the **Beacon is off** - *if* automatic Deboarding is configured. Note that there is no Check for the Seat-Belt Signs, deboarding will commence in either Way.
 - *Else* Fenix2GSX will only connect Jetway/Stairs (if that is enabled).
 - **GPU** and **PCA** will be connected 10 Seconds **after Chocks** has been placed and the L1 (left forward) **Door was opened**.
-- **Do not** Deboard via EFB - just **dismiss the Pop-Up**.
 
 <br/>
 
@@ -273,13 +254,14 @@ Fenix2GSX has a Detection built-in when starting with **Engines running** (i.e. 
 ## Troubleshooting / FCOM
 
 First Order: Ensure you have fully read and understand the Readme 😉<br/>
-If that and any of the Instructions below did not help, and you are *really really* sure that Fenix2GSX is misbehaving and you provide a *meaningful* Description with the Logs attached to it (Fenix2GSX\<date>.log) - I might look into it if I find it worthwhile.<br/>
+If that and any of the Instructions below did not help, and you are *really really* sure that Fenix2GSX is misbehaving and you provide a *meaningful* Description with the *Logs* attached to it (%appdata%\Fenix2GSX\log) - I might look into it if I find it worthwhile.<br/>
 Else the new "Support-Policy" introduced with 0.3.4 takes Effect: Issues (and Messages/Pings on other Platforms) are *directly ignored*!<br/>
 Almost every Problem I dealt with lately has something to do with weird Settings, broken Sim- or GSX-Setups or People just not reading anything I wrote.<br/><br/>
 
 Beginning with 0.3.6 the Connection Status in the GUI shows some additional Information about the Fenix2GSX and GSX State. If you encounter Problems, I'd recommend to watch these Values in the GUI while it happens:
 <img src="img/ui4-commented.png" width="817"><br/><br/>
 Especially the GSX Values are important here: These are the raw Values which Fenix2GSX reads through SimConnect from GSX and the Values it acts upon. So if the Values are faulty, there is nothing that Fenix2GSX can do.
+- These Values are not meant to be a Progress Display (just watch it in your EFB, if you need to)
 - Pax and Cargo must never be -1 while either Boarding or Deboarding is in Progress
 - Jetway and Stairs must never be 0 while at the Gate/Stand
 - Except "H", every other Service-State must never be 0 while at the Gate/Stand
@@ -291,8 +273,8 @@ Especially the GSX Values are important here: These are the raw Values which Fen
 ### Does not Start
 
 - It does not open a Window if you expect that. The GUI is only needed for Configuration and can be opened by clicking on the Icon in the SysTray / Notification Area (these Icons beside your Clock)
-- Ensure you have .NET 7 Installed as described in [Requirements](#requirements) (Reboot!)
-- Check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - the .NET Version you downloaded should show up there.
+- Ensure you have rebooted your PC after .NET 7 was installed
+- Check if the .NET Runtimes are correctly installed by running the Command `dotnet --list-runtimes` - it should show an Entry like `Microsoft.WindowsDesktop.App` (with Version 7.0.x).
 - Please just don't "run as Admin" because you think that is needed. You can try if that helps, but it should run just fine without that!
 - Certain AV/Security Software might require setting an Exception
 
@@ -300,7 +282,6 @@ Especially the GSX Values are important here: These are the raw Values which Fen
 
 ### There are no Log Files
 
-- Regardless of how you start it, please ensure the Working Directory will be set to the Directory where Fenix2GSX is installed - see [Auto-Start](#auto-start). If that is something you can't follow: just make a Shortcut to the Binary on your Desktop (or wherever you placed your Sim and Tools Shortcuts) and run it manually
 - Please just don't "run as Admin" because you think that is needed. You can try if that helps, but it should run just fine without that!
 
 <br/>
@@ -308,9 +289,9 @@ Especially the GSX Values are important here: These are the raw Values which Fen
 ### Does not Connect / Exception 31
 
 The MobiFlight WASM Module is not installed correctly or at all:
-
-- Ensure you have downloaded the actual Module (Binary) and not the Source-Code! Go to [Releases](https://github.com/MobiFlight/MobiFlight-WASM-Module/releases) and download the File mobiflight-event-module-x.y.z.zip (under Assets)
-- Ensure you have unpacked it correctly (or at all). Check the Path as recommended under [Requirements](#requirements). In the End it is installed like any other 3rd Party Scenery in your Community Folder
+- Check if you have a Folder called `mobiflight-event-module` in your Community-Folder. In it there must be a File called `layout.json` (amongst other Files and Folders)
+- To download it manually: Go to [Releases](https://github.com/MobiFlight/MobiFlight-WASM-Module/releases) and download the File mobiflight-event-module-x.y.z.zip (under Assets)
+- Extract it to your Community-Folder (so that the Path to the layout.json File is `Community\mobiflight-event-module\layout.json`)
 
 <br/>
 
