@@ -35,7 +35,7 @@ Some Notes:
 - Fenix2GSX has to be stopped before installing.
 - If the MobiFlight Module is not installed or outdated, MSFS also has to be stopped.
 - If you upgrade from Version 0.3.6 or below, delete your old Installation manually (it is no longer needed).
-- From Version 0.4.0 onwards, your Configuration will not be resetted after Updating
+- From Version 0.4.0 onwards, your Configuration is *not* be resetted after Updating
 - The Installation-Location is fixed to %appdata%\Fenix2GSX (your Users AppData\Roaming Folder) and can not be changed.
 - For Auto-Start either your FSUIPC7.ini or EXE.xml (MSFS) is modified. The Installer does not create a Backup (not deemed neccessary), so if you want a Backup, do so yourself.
 - **Do not** run as Admin!
@@ -171,7 +171,8 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 
 - You can request GSX Pushback with the **INT/RAD** Switch. It does not make any Difference if you call it that Way or through the GSX Menu.
 - **Only** request Pushback **when** it is **neccessary** - i.e. don't call it on Stands where you supposed to roll out!
-- If you did not follow the Recommendation to disable the *'Always ask for pushback'* Option, Fenix2GSX will attempt to Answer the Question with 'Yes'.
+  - The **realiable** Way to remove the Ground-Equipment is via **Beacon** on such Taxi-Out Stands. You can try tro remove the Ground-Equipment by calling **Push-Back via INT/RAD** Switch (only) - but you have the **Chance of being Stuck** because GSX tries to Push-Back on Stand not intended for Push-Back.
+- The *'Do you want to request Push-Back'* Question will be answered with 'Yes' by Fenix2GSX (if configured)
 - Requesting Pushback is the **latest** Point where you need to **enable the GSX Menu** (=Icon white in the Toolbar) in order to select the Direction and answer all other Questions GSX might have. (You can close the Menu with the "X")
 - When the Push is running, you can disable the Menu again - you can use the INT/RAD Switch to Stop or Confirm the Engine Start.
 - **Before** GSX requests to report good Engine Start the INT/RAD Switch will **Stop the Pushback** at the current Position (GSX Menu Option 1).
