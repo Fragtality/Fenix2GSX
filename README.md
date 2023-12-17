@@ -119,6 +119,7 @@ Advanced Options not available in the GUI - can be changed in *%appdata%\Fenix2G
 - **closeDoorOnFinal**: Close the Doors when the Final LS was received.
 - **jetwayFixer**: When enabled, Fenix2GSX will attempt to reconnect the Jetway should it disconnect during Boarding or Deboarding (only active while these Services are running). That can only work if the Jetway gets disconnected by the "TOGGLE_JETWAY" SimEvent. If you're an experienced Fenix2GSX User, you can enable it and report your Results!
 - **groupBoxConcealable**: For System with an abnormal high "Text-Scaling" Setting in Windows (so high, the Window does not fit on the Screen anymore). When enabled the Group-Boxes can be hidden (and unhidden) with a Right-Click.
+- **ignoreMenuChecks**: Disables the Checks if the expected GSX Menu (Title) is loaded. Currently only relevant for Reposition - may fix Situations where Fenix2GSX is stuck in a "Reposition Loop".
 
 <br/><br/>
 
@@ -295,6 +296,17 @@ The MobiFlight WASM Module is not installed correctly or at all:
 - Check if you have a Folder called `mobiflight-event-module` in your Community-Folder. In it there must be a File called `layout.json` (amongst other Files and Folders)
 - To download it manually: Go to [Releases](https://github.com/MobiFlight/MobiFlight-WASM-Module/releases) and download the File mobiflight-event-module-x.y.z.zip (under Assets)
 - Extract it to your Community-Folder (so that the Path to the layout.json File is `Community\mobiflight-event-module\layout.json`)
+
+<br/>
+
+### Fenix2GSX is stuck in a Reposition Loop
+
+Some Issue in your Setup causes a Situation where Fenix2GSX can't read/evaluate the GSX Menu File. But during Repostion Fenix2GSX checks actively to be in the right Menu before selecting anything - so it is stuck in a Loop because it can't get that Information.<br/>
+As a Workaround there are two Advanced/Hidden [Config Parameters](#advanced--hidden-options) you can try:
+1) If the Cause is that it just takes more Time on your System before everything is fully ready, you can try to increase the `startupDelay`
+2) If that does not help, or Fenix2GSX can never read/evaluate the GSX Menu File, you can try to set `ignoreMenuChecks` to true. Note that this disables Check meant as Safety-Measure - so you have to hope the Reposition does not do weird Things (and happens at all). But at least you won't be stuck in a Loop anymore ^^
+
+But generally it would be advisable to eliminate the Root Cause. Maybe a Reinstall through the Offline Installer (see below) or even a complete fresh/clean installation of GSX - in Case your Installation is somehow "corrupted".
 
 <br/>
 
