@@ -304,7 +304,7 @@ The MobiFlight WASM Module is not installed correctly or at all:
 Some Issue in your Setup causes a Situation where Fenix2GSX can't read/evaluate the GSX Menu File. But during Repostion Fenix2GSX checks actively to be in the right Menu before selecting anything - so it is stuck in a Loop because it can't get that Information.<br/>
 As a Workaround there are two Advanced/Hidden [Config Parameters](#advanced--hidden-options) you can try:
 1) If the Cause is that it just takes more Time on your System before everything is fully ready, you can try to increase the `startupDelay`
-2) If that does not help, or Fenix2GSX can never read/evaluate the GSX Menu File, you can try to set `ignoreMenuChecks` to true. Note that this disables Check meant as Safety-Measure - so you have to hope the Reposition does not do weird Things (and happens at all). But at least you won't be stuck in a Loop anymore ^^
+2) If that does not help, or Fenix2GSX can never read/evaluate the GSX Menu File, you can try to set `ignoreMenuChecks` to true. Note that this disables Check meant as Safety-Measure - so you have to hope the Reposition does not do weird Things (and happens at all). But at least you won't be stuck in a Loop anymore 😅
 
 But generally it would be advisable to eliminate the Root Cause. Maybe a Reinstall through the Offline Installer (see below) or even a complete fresh/clean installation of GSX - in Case your Installation is somehow "corrupted".
 
