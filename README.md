@@ -310,6 +310,13 @@ But generally it would be advisable to eliminate the Root Cause. Maybe a Reinsta
 
 <br/>
 
+### Fenix2GSX in Flight/Taxi-In when starting on the Ground
+
+Try to increase the `startupDelay` Parameter in the [Config File](#advanced--hidden-options.<br/>
+Can also be caused by FlowPro - check the recommended [Settings](#flowpro).
+
+<br/>
+
 ### Jetway does not connect
 
 There can be certain Situations where the Jetways stop responding. For me usually when I arrive again at an Airport I already departed from in the same Sim-Session.<br/>
