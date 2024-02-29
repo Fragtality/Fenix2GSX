@@ -63,6 +63,7 @@ The Rest can be left at Default.<br/>
 ### Fenix
 
 Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/>
+Disable **ALL GSX Options in the EFB! Fenix2GSX currently only works as "standalone" Solution, so it is either Fenix native or Fenix2GSX, not both.<br/>
 Make sure your **Default State** is set to either Cold & Dark or Turn-Around with GPU or APU. GSX won't provide any Services when the Engines are running.
 
 <br/>
@@ -107,13 +108,13 @@ Advanced Options not available in the GUI - can be changed in *%appdata%\Fenix2G
 
 - **logLevel**: When I request a "Verbose-Log" on Support-Requests, change the Value to "Verbose" here
 - **ignoreAudioDevice**: Ignore a certain Sound Device when searching for Audio-Sessions for Volume-Control (Device Name as seen in your Windows Volume Control / Device List). Certain Sound Cards / Applications (e.g. Sonic Studio Virtual Mixer) mirror the Sound-Sessions to a virtual Device which messes up the Volume-Control Feature.
+- **disableVolumeControl**: Disables the whole Volume-Control Feature of Fenix2GSX - useful for Troubleshooting.
 - **autoConnectDelay**: Delay in Seconds before Jetway/Stairs are called on Session Start (only there). Delay can be cancelled with the INT/RAD Switch.
 - **startupDelay**: Delay in Seconds before Service Automation & Audio-Control (aka the Service Loop) is started after the Session is Ready.
 - **finalDelayMin**: Minimum Delay in Seconds before the Final LS is transmitted after Boarding.
 - **finalDelayMax**: Maximum Delay in Seconds before the Final LS is transmitted after Boarding.
 - **chocksDelayMin**: Minimum Delay in Seconds before the Chocks are placed.
 - **chocksDelayMax**: Maximum Delay in Seconds before the Chocks are placed.
-- **removeAftStairAfterBoard**: Automatically remove the Aft Stair (if available) on Jetway-Stands after Boarding was finished.
 - **boardingDelay**: The Delay to wait for Boarding to be called after Refuel has finished to avoid Vehicle conflicts (Refuel finished does not mean the Fuel Truck has already gone). Half of that Time is used when Boarding starts after Catering (when Catering is configured to start after Refuel)
 - **paxBagWeightKGS**: The Bag Weight per Passenger in KG. Used for the Passenger randomization to change the actual Cargo accordingly.
 - **closeDoorOnFinal**: Close the Doors when the Final LS was received.
@@ -151,15 +152,17 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 
 #### Departure
 
+**NOTE**: You will not receive any Loadsheets currently when using Fenix2GSX and have to enter the TOW & CG manually in the Perf Calculator!<br/>
+
 - If you have **choosen to disable** the Automations, call GSX Refuel and Boarding **at your Discretion**. The Integration Part of Fenix2GSX will still be active and will load the Plane in accordance to the GSX Animations.
 - If you **kept on** the Automations, it is advisable to **disable the GSX Menu** (=Icon not white in the Toolbar) to prevent the Menu being displayed when Services are called by Fenix2GSX. (When using the Default Toolbar, see Addon NOTAMs for Flow)
-- **Do not** use *Load Aircraft* in the EFB when using the GSX Integration/Automation!
+- **Do not** use *Load Aircraft* in the EFB!
 - **Do not** use *Reset All* regardless if loading through GSX or EFB!
 - If you want to **start Boarding while Refuel** is active, move the **INT/RAD Switch** to the INT Position (and leave it there - it will flip back when recognized). Note that only the INT/RAD Switch for your Seat Position is monitored!
 - Else **Boarding** will start automatically **after Refuel and Catering** (if configured) are **finished**.
 - The PCA will be removed anytime the **APU is running** and the APU **Bleed is On**.
-- On a **Jetway** Stand **with rear Stairs**, the Stairs will be removed **as soon as the Boarding** Service is reported as **finished**.
-- The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after the Boarding and Refueling** Service is reported as **finished**. On **Reception** the **Doors are closed** (if still open) and you will hear the Cabin **"Ding" Sound**.
+- The Stairs will be removed **as soon as the Boarding** Service is reported as **finished** (if configured).
+- ~~The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after the Boarding and Refueling** Service is reported as **finished**. On **Reception** the **Doors are closed** (if still open) and you will hear the Cabin **"Ding" Sound**.~~
 - You can start Pushback at your Discretion, you don't have to wait for the Final LS (it will arrive either Way).
 - The **Removal** of **Ground-Equipment** is triggered by **two Situations**:
   - Parking **Brake Set** AND External **Power Off** AND **Beacon On**.
