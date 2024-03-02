@@ -63,7 +63,7 @@ The Rest can be left at Default.<br/>
 ### Fenix
 
 Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/>
-Disable **ALL GSX Options in the EFB! Fenix2GSX currently only works as "standalone" Solution, so it is either Fenix native or Fenix2GSX, not both.<br/>
+Disable **ALL GSX** Options in the EFB! Fenix2GSX currently only works as "standalone" Solution, so it is either Fenix native or Fenix2GSX, not both.<br/>
 Make sure your **Default State** is set to either Cold & Dark or Turn-Around with GPU or APU. GSX won't provide any Services when the Engines are running.
 
 <br/>
