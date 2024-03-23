@@ -206,7 +206,7 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 #### Turn-Around
 
 - **Wait** with generating a new Simbrief Flightplan until **Deboarding has started**.
-- **Wait** with importing the Flightplan in the EFB until **Deboarding has finished** completely.
+- **Wait** with importing the Flightplan in the EFB until **the EFB was resetted**. You will hear the **Ding** Sound when that happened and you can start importing.
 - Besides that: just import and it will start over again as described!
 - Note that Fenix2GSX will check only every 10 Seconds for a new Flightplan, so don't wonder if Refuel is not immediately called.
 
