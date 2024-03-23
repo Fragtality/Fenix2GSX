@@ -142,7 +142,7 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
  #### Cockpit Preparation
 
 - Make sure Fenix2GSX was already started **before** entering the Cockpit.
-- **Wait** until Fenix2GSX has finished it Startup Steps like Repositioning (if configured), calling Jetway/Stairs (if configured) and the EFB Reset.<br/>You will be informed with the Cabin **"Ding" Sound** when it has finished these Steps. **Wait** for that Signal **before doing anything** in the EFB or powering up the Plane (when starting Cold & Dark).
+- **Wait** until Fenix2GSX has finished it Startup Steps like Repositioning (if configured), calling Jetway/Stairs (if configured) and restoring the last stored Shutdown FOB.<br/>You will be informed with the Cabin **"Ding" Sound** when it has finished these Steps. **Wait** for that Signal **before doing anything** in the EFB or powering up the Plane (when starting Cold & Dark).
 - Mind that selecting a **Panel-State** in the EFB also changes the **ACP State** - so that will override the Option to set VHF1 and INT to 100% at Startup!
 - After that **import the Flightplan** into the EFB to get the Automatic Service-Flow (**starting with Refuel**) going -OR- **before** you call any GSX Service manually (if you have disabled the Automations).
 - You can do the Import anytime you want, but when starting Cold & Dark and depending on the exact Timing you might get two Preliminary Loadsheet (only a "cosmetic" Issue). To prevent that either import right after power-up or after the MCDU has initialized.
@@ -152,7 +152,7 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 
 #### Departure
 
-**NOTE**: You will not receive any Loadsheets currently when using Fenix2GSX and have to enter the TOW & CG manually in the Perf Calculator!<br/>
+**NOTE**: You will only receive both Loadsheets (Prelim and Final) when Refueling & Boarding are completed after the usual Delay.<br/>
 
 - If you have **choosen to disable** the Automations, call GSX Refuel and Boarding **at your Discretion**. The Integration Part of Fenix2GSX will still be active and will load the Plane in accordance to the GSX Animations.
 - If you **kept on** the Automations, it is advisable to **disable the GSX Menu** (=Icon not white in the Toolbar) to prevent the Menu being displayed when Services are called by Fenix2GSX. (When using the Default Toolbar, see Addon NOTAMs for Flow)
@@ -162,8 +162,8 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 - Else **Boarding** will start automatically **after Refuel and Catering** (if configured) are **finished**.
 - The PCA will be removed anytime the **APU is running** and the APU **Bleed is On**.
 - The Stairs will be removed **as soon as the Boarding** Service is reported as **finished** (if configured).
-- ~~The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after the Boarding and Refueling** Service is reported as **finished**. On **Reception** the **Doors are closed** (if still open) and you will hear the Cabin **"Ding" Sound**.~~
-- You can start Pushback at your Discretion, you don't have to wait for the Final LS (it will arrive either Way).
+- The **both Loadsheets** will be transmitted 90 - 150 Seconds **after the Boarding and Refueling** Service is reported as **finished**. On **Reception** the **Doors are closed** (if still open), you will hear the Cabin **"Ding" Sound** and see the **"Aircraft Loaded"** Notification in the EFB.
+- It is recommended to **wait with Pushback** until you received the **Final LS**. (Fenix2GSX needs to trigger an "Instant Load" and I don't know if that is a good Idea when the Airplane started moving)
 - The **Removal** of **Ground-Equipment** is triggered by **two Situations**:
   - Parking **Brake Set** AND External **Power Off** AND **Beacon On**.
   - GSX **Pushback is called** (regardless if through GSX Menu or by INT/RAD Switch). Please **note** that this Trigger does **not make any Checks** and relies on your good Airmanship to not end up with an unpowered and free rolling Plane :wink:
