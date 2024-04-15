@@ -121,6 +121,7 @@ Advanced Options not available in the GUI - can be changed in *%appdata%\Fenix2G
 - **jetwayFixer**: When enabled, Fenix2GSX will attempt to reconnect the Jetway should it disconnect during Boarding or Deboarding (only active while these Services are running). That can only work if the Jetway gets disconnected by the "TOGGLE_JETWAY" SimEvent. If you're an experienced Fenix2GSX User, you can enable it and report your Results!
 - **groupBoxConcealable**: For System with an abnormal high "Text-Scaling" Setting in Windows (so high, the Window does not fit on the Screen anymore). When enabled the Group-Boxes can be hidden (and unhidden) with a Right-Click.
 - **ignoreMenuChecks**: Disables the Checks if the expected GSX Menu (Title) is loaded. Currently only relevant for Reposition - may fix Situations where Fenix2GSX is stuck in a "Reposition Loop".
+- **interceptGpuAndChocks**: Don't remove GPU & Chocks when they are placed automatically by the Fenix on Arrival.
 
 <br/><br/>
 
