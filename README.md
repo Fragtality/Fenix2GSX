@@ -28,7 +28,7 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 
 
 <br/><br/>
-## Installation / Update
+## Installation / Update / Removal
 Basically: Just run the Installer - it will extract it for you to a fixed Location and will also install/update the neccessary Software to your PC/Sim. It even setups Auto-Start and creates a Link on the Desktop, if you want.<br/><br/>
 
 Some Notes:
