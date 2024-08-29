@@ -163,7 +163,7 @@ Besides that general Best Practice, there is nothing Special to consider - Plan 
 - Else **Boarding** will start automatically **after Refuel and Catering** (if configured) are **finished**.
 - The PCA will be removed anytime the **APU is running** and the APU **Bleed is On**.
 - The Stairs will be removed **as soon as the Boarding** Service is reported as **finished** (if configured).
-- **Both Loadsheets** will be transmitted 90 - 150 Seconds **after the Boarding and Refueling** Service is reported as **finished**. On **Reception** the **Doors are closed** (if still open), you will hear the Cabin **"Ding" Sound** and see the **"Aircraft Loaded"** Notification in the EFB.
+-  The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after Boarding and Refueling** Service is reported as **finished**. On **Reception** the **Doors are closed** (if still open), you will hear the Cabin **"Ding" Sound** and see the **"Aircraft Loaded"** Notification in the EFB.
 - It is recommended to **wait with Pushback** until you received the **Final LS**. (Fenix2GSX needs to trigger an "Instant Load" and I don't know if that is a good Idea when the Airplane started moving)
 - The **Removal** of **Ground-Equipment** is triggered by **two Situations**:
   - Parking **Brake Set** AND External **Power Off** AND **Beacon On**.
