@@ -17,7 +17,7 @@ Full and proper GSX Integration and Automation for the Fenix A320! <br/>
 - A properly working GSX Installation
 - Capability to actually read the Readme up until and beyond this Point :stuck_out_tongue_winking_eye:
 - The Installer will install the following Software:
-  - .NET 7 Desktop Runtime (x64)
+  - .NET 8 Desktop Runtime (x64)
   - MobiFlight Event/WASM Module
 
 <br/>
