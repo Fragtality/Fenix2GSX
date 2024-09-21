@@ -323,7 +323,7 @@ In most Cases it should be fixed by setting the Advanced/Hidden [Config Paramete
 
 ### Fenix2GSX in Flight/Taxi-In when starting on the Ground
 
-Try to increase the `startupDelay` Parameter in the [Config File](#advanced--hidden-options.<br/>
+Try to increase the `startupDelay` Parameter in the [Config File](#advanced--hidden-options).<br/>
 Can also be caused by FlowPro - check the recommended [Settings](#flowpro).
 
 <br/>
