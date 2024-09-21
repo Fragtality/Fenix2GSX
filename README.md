@@ -314,6 +314,13 @@ But generally it would be advisable to eliminate the Root Cause. Maybe a Reinsta
 
 <br/>
 
+### Exception or even Crash when Final LS is transmitted
+
+On some Systems the Chromium Embedded Framework (CEF) behaves differently for unknown Reasons - but CEF is needed to trigger the Final LS and its Transmission is needed to advance the current State correctly.<br/>
+In most Cases it should be fixed by setting the Advanced/Hidden [Config Parameter](#advanced--hidden-options) `setCefRootPath` to `true`.
+
+<br/>
+
 ### Fenix2GSX in Flight/Taxi-In when starting on the Ground
 
 Try to increase the `startupDelay` Parameter in the [Config File](#advanced--hidden-options.<br/>
