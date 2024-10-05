@@ -1,6 +1,6 @@
 # Fenix2GSX
 <img src="img/icon.png" width="196"><br/>
-Full and proper GSX Integration and Automation for the Fenix A320! <br/>
+Full and proper GSX Integration and Automation for the Fenix A320 (all Variants, so including the 319/321)! <br/>
 
 - The **Refuel Service is filling the Tanks** as planned (or more correctly GSX and Fenix are "synched")
 - Calling **Boarding load's Passengers and Cargo**, as does Deboarding for unloading (or more correctly GSX and Fenix are "synched")
