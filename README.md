@@ -177,6 +177,7 @@ Besides that general Best Practices, there is nothing Special to consider - Plan
   - Parking **Brake Set** AND External **Power Off** AND **Beacon On**.
   - GSX **Pushback is called** (regardless if through GSX Menu or by INT/RAD Switch). Please **note** that this Trigger does **not make any Checks** and relies on your good Airmanship to not end up with an unpowered and free rolling Plane :wink:
   - In either Case **Jetway, Stairs, Chocks, GPU and PCA** will be removed.
+  - People who use the "call the tug at the beginning of boarding" Feature should **either ensure** that their APU is running when the last Passenger boards/the last Cargo is loaded into the Plane **or uncheck** the "Automatically call Pushback when Tug is already connected" option in the Fenix2GSX settings. This way you won't end up without Power!
 
 <br/>
 
