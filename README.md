@@ -76,7 +76,7 @@ Make sure your **Default State** is set to either Cold & Dark or Turn-Around wit
 - Make sure you do not have a customized Aircraft Profile (GSX In-Game Menu -> Customize Aircraft -> should show as used Profile "Developer provided" or "Internal GSX Database"). A fair Chunk of Problems come from People having an outdated Custom Profile without knowing it. Just hit the "Reset" Button in the Customize Aircraft Dialog to delete the custom Profile (needs to be done on each Variant!)
 - If you want to keep your customized Config for whatever Reason, make sure the Option **"Show MSFS Fuel and Cargo during refueling"** is disabled!
 - If using any Automation Option from Fenix2GSX, make sure **"Assistance services Auto Mode"** is disabled in the GSX Settings (GSX In-Game Menu -> GSX Settings -> Simulation)
-- If you have troubles with Refueling, try if disabling "Always refuel progressively" and "Detect custom aircraft system refueling" in the GSX Settings helps. (Though it should work with these Settings)
+- If you have troubles with Refueling, check if "Detect custom aircraft system refueling" is *disabled* in the GSX Settings helps. (The "Always refuel progressively" should be grayed out and unchecked)
 - Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. Some Users have reported they also need to disable *Estimate passengers number*.
 - For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes
 - It is **not recommended** to use the **Always ask for pushback** Option (and if you use it: Fenix2GSX will default to auto-answer with 'Yes')
@@ -173,6 +173,7 @@ Besides that general Best Practices, there is nothing Special to consider - Plan
 - The Stairs will be removed **as soon as the Boarding** GSX Service is reported as **finished** (if configured).
 -  The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after Boarding and Refueling** GSX Service is reported as **finished**. On **Reception** the **Doors are closed** (if still open), you will hear the Cabin **"Ding" Sound** again. When the Soundpack has Boarding-Music - it will be played until the Final LS is received (technical Limitations)
 - It is recommended to **wait with Pushback** until you received the **Final LS**. (Fenix2GSX needs to trigger an "Instant Load" and I don't know if that is a good Idea when the Airplane already started moving)
+- It is normal that you sometimes receive a second Prelim LS when the Final is transmitted - technical Limitations of my Approach and not solvable without Fenix' Help.
 - The **Removal** of **Ground-Equipment** is triggered by **two Situations** after Boarding & Refuel are completed:
   - Parking **Brake Set** AND External **Power Off** AND **Beacon On**.
   - GSX **Pushback is called** (regardless if through GSX Menu or by INT/RAD Switch). Please **note** that this Trigger does **not make any Checks** and relies on your good Airmanship to not end up with an unpowered and free rolling Plane :wink:
@@ -304,6 +305,12 @@ Especially the GSX Values are important here: These are the raw Values which Fen
 
 <br/>
 
+### Does not Connect / "Out of Bound" Exception / MSFS 2024
+
+- Reasons currently unknown, likely due to the Beta State of 2024. Try if removing the Mobiflight Event Module, re-runinng the Installer and then rebooting the PC helps.
+
+<br/>
+
 ### Does not Connect / Exception 31
 
 The MobiFlight WASM Module is not installed correctly or at all:
@@ -357,7 +364,7 @@ If it is only Boarding (e.g. only 10 Pax boarded) it might be something with you
 <br/>
 
 If it is only Refueling it might be something with your GSX Settings (In Game Menu -> Settings):
-- Try if disabling or enabling *Always refuel progressively* makes a Difference
+- Check if *Always refuel progressively* is grayed out and unchecked
 - Try if disabling or enabling *Detect custom aircraft system refueling* makes a Difference
 
 <br/>
