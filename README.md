@@ -167,7 +167,7 @@ Besides these general Best Practices, there is nothing Special to consider - Pla
 - Else **Boarding** will start automatically **after Refuel and Catering** (if configured) are **finished**.
 - The PCA will be removed anytime the **APU is running** and the APU **Bleed is On**.
 - The Stairs will be removed **as soon as the Boarding** GSX Service is reported as **finished** (if configured).
--  The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after the Boarding and Refueling** Services are reported as **finished**. On **Reception** the **Doors are closed** (if still open), you will hear the Cabin **"Ding" Sound** again. When the Soundpack has Boarding-Music - it will be played until the Final LS is received (technical Limitations)
+-  The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after the Boarding and Refueling** Services are reported as **finished**. On **Reception** the **Doors are closed** (if still open), you will hear the Cabin **"Ding" Sound** again.
 - The **Removal** of **Ground-Equipment** is triggered by **two Situations** after Boarding & Refuel are completed:
   - Parking **Brake Set** AND External **Power Off** AND **Beacon On**.
   - GSX **Pushback is called** (regardless if through GSX Menu or by INT/RAD Switch). Please **note** that this Trigger does **not make any Checks** and relies on your good Airmanship to not end up with an unpowered and free rolling Plane :wink:
