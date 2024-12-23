@@ -65,9 +65,9 @@ The Rest can be left at Default.<br/>
 
 ### Fenix
 
-Disable **Auto-Door** and **Auto-Jetway** Simulation in the EFB!<br/>
-Disable **ALL GSX** Options in the EFB! Fenix2GSX currently only works as "standalone" Solution, so it is either Fenix native or Fenix2GSX, not both.<br/>
-Make sure your **Default State** is set to either Cold & Dark or Turn-Around with GPU or APU. GSX won't provide any Services when the Engines are running.
+Make sure your **Default State** is set to either Cold & Dark or Turn-Around with GPU or APU. GSX won't provide any Services when the Engines are running.<br/>
+Please note that some EFB Settings will automatically be adjusted by Fenix2GSX to ensure Compatibility!
+(Auto-Door, Auto-Jetway, GSX Options disabled)<br/>
 
 <br/>
 
@@ -75,8 +75,6 @@ Make sure your **Default State** is set to either Cold & Dark or Turn-Around wit
 
 - Make sure you do not have a customized Aircraft Profile (GSX In-Game Menu -> Customize Aircraft -> should show as used Profile "Developer provided" or "Internal GSX Database"). A fair Chunk of Problems come from People having an outdated Custom Profile without knowing it. Just hit the "Reset" Button in the Customize Aircraft Dialog to delete the custom Profile (needs to be done on each Variant!)
 - If you want to keep your customized Config for whatever Reason, make sure the Option **"Show MSFS Fuel and Cargo during refueling"** is disabled!
-- If using any Automation Option from Fenix2GSX, make sure **"Assistance services Auto Mode"** is disabled in the GSX Settings (GSX In-Game Menu -> GSX Settings -> Simulation)
-- If you have troubles with Refueling, check if "Detect custom aircraft system refueling" is *disabled* in the GSX Settings helps. (The "Always refuel progressively" should be grayed out and unchecked)
 - Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. Some Users have reported they also need to disable *Estimate passengers number*.
 - For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes
 - It is **not recommended** to use the **Always ask for pushback** Option (and if you use it: Fenix2GSX will default to auto-answer with 'Yes')
@@ -127,8 +125,6 @@ Advanced Options not available in the GUI - can be changed in *%appdata%\Fenix2G
 - **keepGpuUntilDisconnected**: Keep the GPU in Place when Ground-Equipment is cleared and External Power is still on.
 - **disablePaxDoorSync**: Disable the permanent Door-Synchronization for Pax Doors (does not influence Settings like Doors-on-Final)
 - **disableCargoDoorSync**: Disable the permanent Door-Synchronization for Cargo Doors (does not influence Settings like Doors-on-Final)
-- **skipCef**: Troubleshoot Option - skips calls to the EFB which need the Chromium Embedded Framework.
-- **setCefRootPath**: Workaround Option - some Systems need that set to *true* to avoid Fenix2GSX Crashes.
 - **ignoreMenuChecks**: Troubleshoot Option - by-pass Checks which evaluate the GSX Menu Title or Content.
 - **restartCouatlOnArrival**: GSX Workaround - the Couatl Binary is forcefully killed on Arrival when GS is below 30-ish.
 - **fuelRoundUp100**: Round Up Fuel to nearest 100 - e.g. 4154kg planned will become 4200kg or 16286lbs will become 16300lbs.
@@ -147,7 +143,7 @@ Note that Fenix2GSX **does not open a Window** when started - it is designed to 
 - Ensure your default State is either **Cold & Dark** or **Turn-Around with GPU or APU**!
 - Ensure your **EOBT** in SimBrief matches the Simulator Time!
 
-Besides that general Best Practices, there is nothing Special to consider - Plan your Flight as you always do.
+Besides these general Best Practices, there is nothing Special to consider - Plan your Flight as you always do.
 <br/><br/>
 
  #### Cockpit Preparation
@@ -171,9 +167,7 @@ Besides that general Best Practices, there is nothing Special to consider - Plan
 - Else **Boarding** will start automatically **after Refuel and Catering** (if configured) are **finished**.
 - The PCA will be removed anytime the **APU is running** and the APU **Bleed is On**.
 - The Stairs will be removed **as soon as the Boarding** GSX Service is reported as **finished** (if configured).
--  The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after Boarding and Refueling** GSX Service is reported as **finished**. On **Reception** the **Doors are closed** (if still open), you will hear the Cabin **"Ding" Sound** again. When the Soundpack has Boarding-Music - it will be played until the Final LS is received (technical Limitations)
-- It is recommended to **wait with Pushback** until you received the **Final LS**. (Fenix2GSX needs to trigger an "Instant Load" and I don't know if that is a good Idea when the Airplane already started moving)
-- It is normal that you sometimes receive a second Prelim LS when the Final is transmitted - technical Limitations of my Approach and not solvable without Fenix' Help.
+-  The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after the Boarding and Refueling** Services are reported as **finished**. On **Reception** the **Doors are closed** (if still open), you will hear the Cabin **"Ding" Sound** again. When the Soundpack has Boarding-Music - it will be played until the Final LS is received (technical Limitations)
 - The **Removal** of **Ground-Equipment** is triggered by **two Situations** after Boarding & Refuel are completed:
   - Parking **Brake Set** AND External **Power Off** AND **Beacon On**.
   - GSX **Pushback is called** (regardless if through GSX Menu or by INT/RAD Switch). Please **note** that this Trigger does **not make any Checks** and relies on your good Airmanship to not end up with an unpowered and free rolling Plane :wink:
