@@ -16,8 +16,8 @@ Full and proper GSX Integration and Automation for the Fenix A320 (all Variants,
 <br/><br/>
 
 ## Requirements
-- Windows 10/11, MSFS, Fenix :wink:
-- A properly working GSX Installation
+- Windows 10/11, MSFS 2020/2024, Fenix latest :wink:
+- A properly working and updated GSX Installation
 - Capability to actually read the Readme up until and beyond this Point :stuck_out_tongue_winking_eye:
 - The Installer will install the following Software automatically:
   - .NET 8 Desktop Runtime (x64)
@@ -163,6 +163,8 @@ Besides these general Best Practices, there is nothing Special to consider - Pla
 - If you **kept on** the Automations, it is advisable to **disable the GSX Menu** (=Icon not white in the Toolbar) to prevent the Menu being displayed when Services are called by Fenix2GSX. (When using the Default Toolbar, see Addon NOTAMs for Flow)
 - **Do not** use *Load Aircraft* in the EFB!
 - **Do not** use *Reset All* regardless if loading through GSX or EFB!
+- Use of **Walkaround Mode** while Services are running is **possible with Constraints**:
+  - Do not use Walkaround Mode when Doors are about to be opened/closed (else they can't be handled)
 - If you want to **start Boarding while Refuel** is active, move the **INT/RAD Switch** to the INT Position (and leave it there - it will flip back when recognized). Note that only the INT/RAD Switch for your Seat Position is monitored!
 - Else **Boarding** will start automatically **after Refuel and Catering** (if configured) are **finished**.
 - The PCA will be removed anytime the **APU is running** and the APU **Bleed is On**.
