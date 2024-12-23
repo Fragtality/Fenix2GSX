@@ -19,7 +19,7 @@ Full and proper GSX Integration and Automation for the Fenix A320 (all Variants,
 - Windows 10/11, MSFS, Fenix :wink:
 - A properly working GSX Installation
 - Capability to actually read the Readme up until and beyond this Point :stuck_out_tongue_winking_eye:
-- The Installer will install the following Software:
+- The Installer will install the following Software automatically:
   - .NET 8 Desktop Runtime (x64)
   - MobiFlight Event/WASM Module
 
@@ -91,7 +91,7 @@ The Configuration is done through the **GUI**, open it by **clicking on the Syst
 All Options have **ToolTips** which explains them further. When changing/adding something in the **Text-Boxes**: please either hit *Enter* or click in another Text-Box (so the one you changed loses the Input-Focus).<br/><br/>
 You can close the Windows/UI without Problems, Fenix2GSX will continue to run. The UI is only there for Configuration, you don't need to have it open to have Fenix2GSX doing its Work.
 <br/><br/>
-<img src="img/ui6.png" width="817"><br/><br/>
+<img src="img/ui.png" width="817"><br/><br/>
 All Settings **can be changed dynamically** on the Fly if needed. But do that **before a Service/Feature** starts or **after** it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
 In general, it is up to **your Preference how much Automation** you want. If you want to keep Control of when Services are Called and/or the Jetway is connected, you **can still enjoy the (De-)Boarding and Refueling Syncronization** when the Automation-Options are disabled. The only Automation which **can not be disabled**: The **Removal of the Ground-Equipment and Jetway-Disconnection** (if still connected) is always active on Depature.<br/><br/>
 Fenix2GSX will automatically **select the Operator** when one of its Service-Calls or your (manually) selected **Arrival-Gate** requires that. It will default to the Operator marked with *[GSX Choice]*.<br/>If you still want to select the **Operator manually**, disable that Option in the GUI. But note, that it will always waits 10 Seconds before continuing when a Selection is needed.<br/><br/>
@@ -325,13 +325,6 @@ But generally it would be advisable to eliminate the Root Cause. Maybe a Reinsta
 
 <br/>
 
-### Exception or even Crash when Final LS is transmitted
-
-On some Systems the Chromium Embedded Framework (CEF) behaves differently for unknown Reasons - but CEF is needed to trigger the Final LS and its Transmission is needed to advance the current State correctly.<br/>
-In most Cases it should be fixed by setting the Advanced/Hidden [Config Parameter](#advanced--hidden-options) `setCefRootPath` to `true`.
-
-<br/>
-
 ### Fenix2GSX in Flight/Taxi-In when starting on the Ground
 
 Try to increase the `startupDelay` Parameter in the [Config File](#advanced--hidden-options).<br/>
@@ -359,7 +352,7 @@ If it is only Boarding (e.g. only 10 Pax boarded) it might be something with you
 
 If it is only Refueling it might be something with your GSX Settings (In Game Menu -> Settings):
 - Check if *Always refuel progressively* is grayed out and unchecked
-- Try if disabling or enabling *Detect custom aircraft system refueling* makes a Difference
+- Check if *Detect custom aircraft system refueling* is grayed out and unchecked
 
 <br/>
 
