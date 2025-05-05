@@ -6,22 +6,23 @@ Full and proper GSX Integration and Automation for the Fenix A320 (all Variants,
 - Calling **Boarding load's Passengers and Cargo**, as does Deboarding for unloading (or more correctly GSX and Fenix are "synched")
 - **Ground Equipment** (GPU, Chocks, PCA) is automatically set or removed
 - All **Service Calls** except Pushback, De-Ice and Gate-Selection **can be automated**
-- **GSX Audio** can be controlled via the **INT-Knob** from the ACP in the Cockpit
-- **ATC Volume** can be controlled via the **VHF1-Knob** from the ACP in Cockpit (or any other App you wish)
-- The other Audio-Channels on the ACP can also be used to control the Volume of even more Apps
-- Follows a different Approach than native: Fenix2GSX is an Integration with Automation built on Top
-
-**NOTE**: Fenix2GSX is a "standalone" Solution - you *CAN NOT* use it parallel to the native Integration. It is either-or.
+- Using the **INT/RAD** Switch as a Shortcut for certain GSX Interactions (i.e. call / confirm Pushback)
+- **GSX Audio** and **ATC Volume** can be controlled via the **INT/VHF1-Knob** from the ACP in the Cockpit
+- Applications can be **freely mapped** to Audio-Channels
+- Can be used, within certain Limits, with the native Integration
+- Supports to use the Volume Control without having GSX installed or running (or to solely use the native Integration)
 
 <br/><br/>
 
-## Requirements
+## 1 - Introduction
+
+### 1.1 - Requirements
+
 - Windows 10/11, MSFS 2020/2024, Fenix latest :wink:
 - A properly working and updated GSX Installation
 - Capability to actually read the Readme up until and beyond this Point :stuck_out_tongue_winking_eye:
 - The Installer will install the following Software automatically:
-  - .NET 8 Desktop Runtime (x64)
-  - MobiFlight Event/WASM Module
+  - .NET 8 Desktop Runtime (x64) - Reboot your System if it was installed for the first Time
 
 <br/>
 
@@ -29,217 +30,289 @@ Full and proper GSX Integration and Automation for the Fenix A320 (all Variants,
 
 (Under Assests, the Fenix2GSX-Installer-vXYZ.exe File)
 
-
-<br/><br/>
-## Installation / Update / Removal
-Basically: Just run the Installer - it will extract it for you to a fixed Location and will also install/update the neccessary Software to your PC/Sim. It even setups Auto-Start and creates a Link on the Desktop, if you want.<br/><br/>
-
-Some Notes:
-- Fenix2GSX has to be stopped before installing.
-- If the MobiFlight Module is not installed or outdated, MSFS also has to be stopped.
-- If you upgrade from Version 0.3.6 or below, delete your old Installation manually (it is no longer needed).
-- From Version 0.4.0 onwards, your Configuration is *not* be resetted after Updating
-- The Installation-Location is fixed to %appdata%\Fenix2GSX (your Users AppData\Roaming Folder) and can not be changed.
-- For Auto-Start either your FSUIPC7.ini or EXE.xml (MSFS) is modified. The Installer does not create a Backup (not deemed neccessary), so if you want a Backup, do so yourself.
-- **Do not** run as Admin!
-- It may be blocked by **Windows Security** or your **AV-Scanner**, try if *unblocking* and/or *setting an Exception* helps (for the whole Fenix2GSX Folder)
-
 <br/><br/>
 
-The Program will display a **little Exclamation Mark** on the SysTray/Notification Area Icon and in the GUI to inform on a **new Version**. There is no Pop-Up and there will never be.<br/><br/>
-.<br/><br/><br/>
+### 1.2 - Installation, Update & Removal
 
-## Auto-Start
-When starting it manually, please do so either **before MSFS** or when MSFS is in the **Main Menu**.<br/>
-To automatically start it with **FSUIPC or MSFS**, select the respective Option in the **Installer**.<br/>
+Just [Download](https://github.com/Fragtality/Fenix2GSX/releases/latest) & Run the **Installer** Binary! It will check and install all Requirements the App (or remove it). Your existing Configuration persists through Updates.<br/>
+On the second Installer Page you can select if Auto-Start should be set up for Fenix2GSX (recommended for Ease of Use).<br/>
+You do **not need to remove** the old Version for an Update (unless instructed) - using 'Remove' in the Installer completely removes Fenix2GSX and removes it from Auto-Start. This also removes your Configuration including Aircraft Profiles and saved Fuel!<br/><br/>
 
-### Addon Linker
+It is highly likely that you need to **Unblock/Exclude** the Installer & App from BitDefender and other AV-/Security-Software.<br/>
+**DO NOT** run the Installer or App "as Admin" - it might work, it might fail.<br/><br/>
+
+When **Upgrading** from Versions **before 0.5.0**:
+- Remove the old Version first (with the new Installer)!
+- You only need to backup your old Config if you want to go back (the old and new Config Formats are incompatible)
+- The MobiFlight Module is not required anymore, the Installer will offer an Option to remove it - if MF Connector and PilotsDeck are not detected.
+- Even then it is *your Responsibility* to know if the MobiFlight Module is not required for other Addons on your System and safe to remove!
+
+<br/><br/>
+
+Fenix2GSX will display a **little Exclamation Mark** on its SysTray/Notification Area Icon if a **new Version** (both Stable and Development) is available. There is no Version Pop-Up and there will never be.
+<br/><br/>
+
+### 1.3 - Auto-Start
+
+When starting it manually, please do so when MSFS is loading or in the **Main Menu**. Fenix2GSX will directly close if no Simulator is running.<br/>
+To automatically start it with **FSUIPC or MSFS**, select the respective Option in the **Installer**. Just re-run it if you want to change if and how Fenix2GSX is auto started. Selecting one Option (i.e. MSFS) will also check and remove Fenix2GSX from all other Options (i.e. FSUIPC), so just set & forget.<br/>
+For Auto-Start either your FSUIPC7.ini or EXE.xml (MSFS) is modified. The Installer does not create a Backup (not deemed neccessary), so if you want a Backup, do so yourself.<br/><br/>
+
+#### 1.3.1 - Addon Linker
+
 If you use Addon Linker to start your Addons/Tools, you can also add it there:<br/>
 **Program to launch** C:\Users\YOURUSERNAME\AppData\Roaming\Fenix2GSX\bin\Fenix2GSX.exe<br/>
 **Wait for simconnect** checked<br/>
 The Rest can be left at Default.<br/>
 
+<br/><br/><br/>
+
+## 2 - Configuration
+
+### 2.1 - Fenix EFB
+
+Make sure your **Default State** is set to either Cold & Dark or Turn-Around with GPU or APU - GSX won't provide any Services when the Engines are running.<br/>
+All other relevant EFB Options will automatically be disabled by Fenix2GSX. Note that they are not re-enabled!<br/>
+
 <br/><br/>
 
-## Configuration
-
-### Fenix
-
-Make sure your **Default State** is set to either Cold & Dark or Turn-Around with GPU or APU. GSX won't provide any Services when the Engines are running.<br/>
-Please note that some EFB Settings will automatically be adjusted by Fenix2GSX to ensure Compatibility!
-(Auto-Door, Auto-Jetway, GSX Options disabled)<br/>
-
-<br/>
-
-### GSX Pro
+### 2.2 - GSX Pro
 
 - Make sure you do not have a customized Aircraft Profile (GSX In-Game Menu -> Customize Aircraft -> should show as used Profile "Developer provided" or "Internal GSX Database"). A fair Chunk of Problems come from People having an outdated Custom Profile without knowing it. Just hit the "Reset" Button in the Customize Aircraft Dialog to delete the custom Profile (needs to be done on each Variant!)
-- If you want to keep your customized Config for whatever Reason, make sure the Option **"Show MSFS Fuel and Cargo during refueling"** is disabled!
-- Please ensure you have entered your **SimBrief Username** and have **Ignore Time** checked. Some Users have reported they also need to disable *Estimate passengers number*.
-- For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes
+- It is recommended (but not required) to enter your **SimBrief Username** and have **Ignore Time** checked to have correct Information on the VDGS Displays.
+- For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes.
 - It is **not recommended** to use the **Always ask for pushback** Option (and if you use it: Fenix2GSX will default to auto-answer with 'Yes')
-- The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster De/Boarding.
+- The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster De/Boarding (But "Extreme" can be to extreme in some Cases).
 - Ensure the other two Settings under Timings are on their Default (15s, 1x).
 - As with GSX itself, Fenix2GSX runs best when you have a proper Airport Profile installed!
+- Some Users have reported they also need to disable *Estimate passengers number*.
 - Up to everyone's *Preference*, but disabling the **Aural Cues** (GSX In-Game Menu -> GSX Settings -> Audio) and setting **Message verbosity** to "*only Important*" (GSX In-Game Menu -> GSX Settings -> Simulation) can improve Immersion! 😉
 
-<br/>
-
-### Fenix2GSX
-
-The Configuration is done through the **GUI**, open it by **clicking on the System-Tray/Notification-Icon**. The UI does not open from itself! The **Settings are stored** persistently in the `%appdata\Fenix2GSX\Fenix2GSX.config` File - so set them once to your Preference and you should be fine :smiley:<br/><br/>
-All Options have **ToolTips** which explains them further. When changing/adding something in the **Text-Boxes**: please either hit *Enter* or click in another Text-Box (so the one you changed loses the Input-Focus).<br/><br/>
-You can close the Windows/UI without Problems, Fenix2GSX will continue to run. The UI is only there for Configuration, you don't need to have it open to have Fenix2GSX doing its Work.
-<br/><br/>
-<img src="img/ui.png" width="817"><br/><br/>
-All Settings **can be changed dynamically** on the Fly if needed. But do that **before a Service/Feature** starts or **after** it has ended. For example, don't disable "Automatic Jetway/Stair Operation" while the Jetway is connected. Do it before the Tool calls the Jetway or after it was disconnected by the Tool.<br/><br/>
-In general, it is up to **your Preference how much Automation** you want. If you want to keep Control of when Services are Called and/or the Jetway is connected, you **can still enjoy the (De-)Boarding and Refueling Syncronization** when the Automation-Options are disabled. The only Automation which **can not be disabled**: The **Removal of the Ground-Equipment and Jetway-Disconnection** (if still connected) is always active on Depature.<br/><br/>
-Fenix2GSX will automatically **select the Operator** when one of its Service-Calls or your (manually) selected **Arrival-Gate** requires that. It will default to the Operator marked with *[GSX Choice]*.<br/>If you still want to select the **Operator manually**, disable that Option in the GUI. But note, that it will always waits 10 Seconds before continuing when a Selection is needed.<br/><br/>
-
-#### Audio-Control
-
-A Note on the **Audio-Control**: The Tool does not control Audio until the Plane is **powered** (=FCU is On).<br/>When you end your Session, Fenix2GSX will try to reset the Application-Audio to unmuted and last set Volume (before it started controlling the Volume). But that does not really work on GSX because it is resetting at the same Time. So **GSX can stay muted** when switching to another Plane (if it was muted) - keep that in Mind.<br/>
-Please also note that Fenix2GSX controls **all Audio Sessions** on all Devices for a configured Application. So if an Application runs on your Speakers and Headphones, both Sessions will have their Volume or Mute-State changed.<br/><br/>
-The new **"Advanced Audio Control"** can be used to Control other Apps with the other Channels (VHF2, VHF3, HF1, HF2, CAB, PA) - one App, one Channel. Their knobs are not moved on Start-Up and the Record Latch always mutes/unmutes the App. But that Feature follows the configured Seat-Position and therefore which ACP is used for Audio-Control those Applications.<br/>The Syntax is `CHANNEL=Application` and multiple Mappings are separated by a `,` - the Channel-Name is upper-case as noted above and for the Application you need to enter the *exact* (case-sensitive) Name of the Applications Binary (EXE-File) without Extension. For Example controlling MSFS Volume with the Cabin and Chrome Volume with the Passenger Announcement Knob would be: `CAB=FlightSimulator,PA=chrome`
 <br/><br/>
 
-#### Advanced / Hidden Options
+### 2.3 - Fenix2GSX
 
-Advanced Options not available in the GUI - can be changed in *%appdata%\Fenix2GSX\Fenix2GSX.config* (Fenix2GSX restart needed. **Don't touch** any other Option):
+The Configuration is done through the **GUI**, open it by **clicking on the System-Tray/Notification-Icon**. You do not need to configure anything to start using Fenix2GSX - although it is *recommended to get yourself familiar* with the Settings. Change them to your Preferences in order to improve your Experience. The default Settings aim to maximize Automation respectively minimize GSX Interaction. All Options have **ToolTips** to explain them further.<br/>
+Everything is stored persistently in the *AppConfig.json* File in the Application's Folder - so backup that File in order to backup your Settings!<br/>
 
-- **logLevel**: When I request a "Verbose-Log" on Support-Requests, change the Value to "Verbose" here
-- **ignoreAudioDevice**: Ignore a certain Sound Device when searching for Audio-Sessions for Volume-Control (Device Name as seen in your Windows Volume Control / Device List). Certain Sound Cards / Applications (e.g. Sonic Studio Virtual Mixer) mirror the Sound-Sessions to a virtual Device which messes up the Volume-Control Feature.
-- **disableVolumeControl**: Disables the whole Volume-Control Feature of Fenix2GSX - useful for Troubleshooting.
-- **autoConnectDelay**: Delay in Seconds before Jetway/Stairs are called on Session Start (only there). Delay can be cancelled with the INT/RAD Switch.
-- **startupDelay**: Delay in Seconds before Service Automation & Audio-Control (aka the Service Loop) is started after the Session is Ready.
-- **finalDelayMin**: Minimum Delay in Seconds before the Final LS is transmitted after Boarding.
-- **finalDelayMax**: Maximum Delay in Seconds before the Final LS is transmitted after Boarding.
-- **chocksDelayMin**: Minimum Delay in Seconds before the Chocks are placed.
-- **chocksDelayMax**: Maximum Delay in Seconds before the Chocks are placed.
-- **operatorDelay**: Delayin Seconds to wait for the manual Operator Selection by the User.
-- **boardingDelay**: Additional Delay for Boarding after Refuel (and half of that Delay for Catering with Refuel).
-- **paxBagWeightKGS**: The Bag Weight per Passenger in KG. Used for the Passenger randomization to change the actual Cargo accordingly. Only change that if you have modified the Weight from the default SimBrief Template for the Fenix.
-- **groupBoxConcealable**: For System with an abnormal high "Text-Scaling" Setting in Windows (so high, the Window does not fit on the Screen anymore). When enabled the Group-Boxes can be hidden (and unhidden) with a Right-Click.
-- **ignoreMenuChecks**: Disables the Checks if the expected GSX Menu (Title) is loaded. Currently only relevant for Reposition - may fix Situations where Fenix2GSX is stuck in a "Reposition Loop".
-- **interceptGpuAndChocks**: Intercept GPU & Chocks when they are placed automatically by the Fenix on Arrival.
-- **keepGpuUntilDisconnected**: Keep the GPU in Place when Ground-Equipment is cleared and External Power is still on.
-- **disablePaxDoorSync**: Disable the permanent Door-Synchronization for Pax Doors (does not influence Settings like Doors-on-Final)
-- **disableCargoDoorSync**: Disable the permanent Door-Synchronization for Cargo Doors (does not influence Settings like Doors-on-Final)
-- **ignoreMenuChecks**: Troubleshoot Option - by-pass Checks which evaluate the GSX Menu Title or Content.
-- **restartCouatlOnArrival**: GSX Workaround - the Couatl Binary is forcefully killed on Arrival when GS is below 30-ish.
-- **fuelRoundUp100**: Round Up Fuel to nearest 100 - e.g. 4154kg planned will become 4200kg or 16286lbs will become 16300lbs.
+<br/><br/>
+<img src="img/ui.png" width="400"><br/><br/>
+Allmost all Settings regarding GSX, Fenix and the general Automation can be found in the '**Automation**' View. All Settings in this View are stored in a Profile.<br/>
+You can have many different Profiles which are automatically loaded depending on the current Aircraft's Registration, Title or Airline. To manage these Profiles use the '**Aircraft Profiles**' View.<br/>
+In order map Applications to the different ACP Audio Channels, use the '**Volume Control**' View. The Volume Control Settings are global - thay apply to all Profiles. Volume Control is generally independent from the GSX Integration/Automation.<br/>
+All central Settings regarding the Application (so applying to all Profiles) are found in the '**App Settings**' View.<br/><br/>
+Most Settings can be **changed dynamically** on the Fly, **BUT**: only change Settings not relevant in the current Automation/Flight Phase. For Example do not change the Departure Services in the Departure Phase and do not change Profiles while Services are active.<br/><br/>
+In general, it is up to **your Preference how much Automation** you want. I you want to keep Control of when Services are Called and/or the Jetway is connected, you can still enjoy the (De-)Boarding and Refueling Syncronization when the Automation-Options are disabled. The only Automation which **can not be disabled**: The Removal of the Ground-Equipment is always active to assist with Departure & Push-Back and Arrival.
 
 <br/><br/>
 
-## Usage
+#### 2.3.1 - Automation
 
-### General Service Flow / SOP
-Note that Fenix2GSX **does not open a Window** when started - it is designed to run in the Background, the Window/GUI is only there for Configuration! There is no Need to have the GUI opened while running the Sim. When you do open the GUI, it can safely be closed (it only closes that Window, it does not Stop the Binary/App itself)<br/><br/>
+These are basically the core Settings to customize the Automation to your own Service-Flow. All Settings in this View are associated to an Aircraft Profile. The currently loaded Profile's Name is displayed on the Category Selection.<br/>
+The Settings are grouped into different Categories:<br/><br/>
 
-#### Pre-Flight
+**Gate & Doors**
+
+Handling if and when the Jetway and or the Stairs are called or removed.<br/>
+It also allows you to completely disable the Door Automation. But even then the Doors will automatically be closed when Pushback or Deice become active!
+
+<br/><br/>
+
+**Ground Equipment**
+
+Configure the Chock-Delay, PCA Handling or the Removal when the Beacon is turned on.<br/>
+Note: Basic Ground Equipment Handling (GPU, Chocks) is always active and can not be disabled. Fenix2GSX will automatically place or remove the Equipment on Startup, during Pushback and on Arrival.
+
+<br/><br/>
+
+**GSX Services**
+
+Configure how the GSX Services are handled:
+- Reposition on Startup (either use Fenix2GSX for that or the GSX Setting - but not both!)
+- The Service Activation (if and when) and Order of the Departure Services (Refuel, Catering, Boarding as well as Lavatory & Water)
+- How Refueling is handled: with a fixed Rate or a fixed Time Target (or if it is called at all to support Tankering)
+- If and when Pushback should be called automatically
+
+**Operator Selection**
+
+Enable or Disable the automatic Operator Selection. You can also define Preferences to control which Operator is picked by Fenix2GSX! If no preferred Operator is found, it will use the 'GSX Choice' in the Menu.<br/>
+The Strings you add to the Preferred Operator List will be used in a (case insensitive) Substring-Search - so does Name listed in the Menu contains that Text. The List is evaluated from Top to Bottom - so the higher of two available Operator is choosen.
+
+<br/><br/>
+
+**Skip Questions**
+
+All Options related to skip / automatically Answer certain GSX Questions or Aircraft Interactions: Crew Question, Tug Question, Follow-Me Question, Fenix Cabin-Calls and reopen the Pushback Menu.
+
+<br/><br/>
+
+**Aircraft Options**
+
+Delay for the Final Loadsheet, Save & Load of the Fuel on Board, Randomization of Passengers on OFP Import.<br/>
+By default, Fenix2GSX saves the FOB per Aircraft Registration upon Arrival. When you load the same Registration in another Session, it will load/restore the last saved FOB on Startup. If no saved Fuel Value can be found, it uses the Default Value set under App Settings (3000kg).
+
+<br/><br/>
+
+#### 2.3.2 - Aircraft Profiles
+
+The Idea behind Aircraft Profiles is to have *different Automation Settings* for *different Operators* without having the Need to change the Settings manually every time.<br/>
+The *Profile Name* is only for display Purposes, it doesn't have a functional Impact. The *Match Type* defines on what Aircraft Information the *Match String* will be compared to.<br/>
+When the Session starts and the Connection to the Fenix EFB was successful, Fenix2GSX will automatically switch to the Profile with the best Match:
+1) The Aircraft Registration (as reported by the EFB) is matching exactly (case insensitive)
+2) The Aircraft Title (as reported by the Sim) contains the Match String (case insensitive)
+3) The Aircraft Airline (as reported by the Sim) starts with the Match String (case insensitive)
+
+If there a multiple Results, only the first one will be used. If you want to switch to another Profile, do so before the Departure Phase (OFP was imported).<br/>
+The **default Profile** can not be deleted and there can only ever be one Profile using the 'Default' Match Type.
+
+<br/><br/>
+
+#### 2.3.3 - Volume Control
+
+Fenix2GSX will only start to control Volume once the Plane is **powered** (=DC Essential Bus powered). When the Aircraft is powered, Fenix2GSX will set each Audio-Channel to the configured Startup State (e.g. 100% Volume and unmuted for VHF1). **Only one ACP** Panel is used for Volume Control at any given time. But you can change your Seat Position / Panel at any Time (the Startup State is only applied to the Panel selected at that Time).<br/>
+When you end your Session (or close Fenix2GSX), Fenix2GSX will try to reset all Audio Sessions of the controlled Applications to their last known State (before it started controlling the Volume). That might not work on Applications which reset their Audio Sessions at the same Time (like GSX). So **GSX can stay muted** when switching to another Plane (if it was muted) - keep that in Mind.<br/>
+Fenix2GSX will control **all Audio Sessions** on all Devices for a configured Application by default. You can change the Configuration to limit the Volume Control to a certain Device per Application - but on that Device it will still control all Sessions at once.<br/><br/>
+
+You can map freely Applications to any of the ACP Channels. Per Default ATC Applications are controlled by VHF1, GSX by INT and the Simulator by CAB. You change the Mappings to your Preferences. All Mappings are global - they are not associated to an Aircraft Profile!<br/>
+To identify an Application you need to enter it's Binary Name without .exe Extension. The UI will present a List of matching (running!) Applications to your Input to ease Selection. The **Use Mute** Checkbox determines if the **Record Latch** (=Knob is pulled or pushed) is used to mute the Application.<br/><br/>
+
+Some Audio Devices act 'strangely' or throw Exceptions when being scanned by Fenix2GSX for Audio-Sessions. If you have such a Device, you can add it to the Blacklist so that Fenix2GSX ignores it.<br/>
+Matching is done on the Start of the Device Name, but it is recommended to use the exact Device Name for blacklisting. Tip: when you hit Ctrl+C on the Device Dropdown (under App Mappings), the selected Device's Name is automatically pasted to Blacklist Input Field.
+
+<br/><br/>
+
+#### 2.3.4 - App Settings
+
+These global Settings affect all Profiles and basic App Features. In most cases you only need to check if the Weight per Bag matches to your SimBrief Profile (the default Value matches the Default in the official SimBrief Profile).<br/>
+You might want to change the Weight Unit used in the UI, but you don't need to match that to SimBrief or the Airplane - it's just for displaying Purposes.<br/>
+Depending on your Preferences, you might want to check the Settings to round the planned Block Fuel or skipping Walkaround.<br/>
+If you only want to use Fenix2GSX for Volume-Control, uncheck 'Run GSX Controller' - in all other Cases leave it on!
+
+<br/><br/><br/>
+
+## 3 - Usage
+
+### 3.1 - General Service Flow / SOP
+Note that Fenix2GSX **does not open a Window** when started - it is designed to run in the Background, the Window/GUI is only there for Configuration! There is no Need to have the GUI opened while running the Sim. When you do open the GUI, it can safely be closed (it only closes that Window, it does not Stop the Binary/App itself).
+<br/><br/>
+
+#### 3.1.1 - Pre-Flight
 
 - Ensure you use the **correct SimBrief Airframe** Configuration provided by Fenix (with the correct Registration)!
-- Ensure that the **Units** used in SimBrief **match** the Units used in the EFB!
+- Ensure that the **Units** used in SimBrief **match** the Units used in the EFB/Aircraft!
 - Ensure your default State is either **Cold & Dark** or **Turn-Around with GPU or APU**!
-- Ensure your **EOBT** in SimBrief matches the Simulator Time!
 
 Besides these general Best Practices, there is nothing Special to consider - Plan your Flight as you always do.
 <br/><br/>
 
- #### Cockpit Preparation
+#### 3.1.2 - Cockpit Preparation
 
-- Make sure Fenix2GSX was already started **before** entering the Cockpit.
+- Make sure Fenix2GSX was already started **before** starting the Session!
+- MSFS2024: When **Walkaround** is configured to be **skipped**, Fenix2GSX refocuses MSFS Window repeatedly. This already starts when the Session is about to become ready. So refrain from doing something else in another Window while Walkaround is skipped.
 - **Wait** until Fenix2GSX has finished it Startup Steps like Repositioning (if configured), calling Jetway/Stairs (if configured) and restoring the last stored Shutdown FOB.<br/>You will be informed with the Cabin **"Ding" Sound** when it has finished these Steps. **Wait** for that Signal **before doing anything** in the EFB or powering up the Plane (when starting Cold & Dark).
-- Mind that selecting a **Panel-State** in the EFB also changes the **ACP State** - so that will override the Option to set VHF1 and INT to 100% at Startup!
-- After that **import the Flightplan** into the EFB to get the Automatic Service-Flow (**starting with Refuel**) going -OR- **before** you call any GSX Service manually (if you have disabled the Automations).
-- You can do the Import anytime you want, but when starting Cold & Dark and depending on the exact Timing you might get two Preliminary Loadsheet (only a "cosmetic" Issue). To prevent that either import right after power-up or after the MCDU has initialized.
-- If you plan to **skip** GSX Refuel, Catering and Boarding all together and want to load the Plane via EFB, **disable Call Refuel** Service in the Fenix2GSX GUI **before importing** the Flightplan. How and when you load the Plane via EFB is at your Discretion (**Do not** call GSX Refuel or Boarding - it is either through GSX or through EFB, but not both).
+- If you have disabled to call Jetway/Stairs on Session Start, you can use the **INT/RAD** Switch (move to the INT Position) to call them at your Discretion (before the Flightplan is imported).
+- Mind that selecting a **Panel-State** in the EFB also changes the **ACP State** - that will override Startup State set by Fenix2GSX.
+- After that **import the Flightplan** into the EFB to get the Automatic Service-Flow going -OR- **before** you call any GSX Service manually (if you have disabled the Automations).
+- It is recommended to **power-up** the Aircraft **before importing** the Flightplan
+- If you plan to use **any EFB Loading** Option, remember that you have the Departure Services configured in a certain Way!
 
-<br/>
+<br/><br/>
 
-#### Departure
+#### 3.1.3 - Departure Phase
 
-- If you have **choosen to disable** the Automations, call GSX Refuel and Boarding **at your Discretion**. The Integration Part of Fenix2GSX will still be active and will load the Plane in accordance to the GSX Animations.
+- If you have **choosen to disable** the Automations, call the GSX Services at your Discretion. Note that you do need to **call all Departure Services** which are set to 'Manual' (so that Fenix2GSX switches properly to the Pushback Phase).
 - If you **kept on** the Automations, it is advisable to **disable the GSX Menu** (=Icon not white in the Toolbar) to prevent the Menu being displayed when Services are called by Fenix2GSX. (When using the Default Toolbar, see Addon NOTAMs for Flow)
-- **Do not** use *Load Aircraft* in the EFB!
+- **Do not** use *Load Aircraft* in the EFB when you intent to use Fenix2GSX for loading the Aircraft!
 - **Do not** use *Reset All* regardless if loading through GSX or EFB!
 - Use of **Walkaround Mode** while Services are running is **possible with Constraints**:
   - Do not use Walkaround Mode when Doors are about to be opened/closed (else they can't be handled)
-- If you want to **start Boarding while Refuel** is active, move the **INT/RAD Switch** to the INT Position (and leave it there - it will flip back when recognized). Note that only the INT/RAD Switch for your Seat Position is monitored!
-- Else **Boarding** will start automatically **after Refuel and Catering** (if configured) are **finished**.
-- The PCA will be removed anytime the **APU is running** and the APU **Bleed is On**.
-- The Stairs will be removed **as soon as the Boarding** GSX Service is reported as **finished** (if configured).
--  The **Final Loadsheet** will be transmitted 90 - 150 Seconds **after the Boarding and Refueling** Services are reported as **finished**. On **Reception** the **Doors are closed** (if still open), you will hear the Cabin **"Ding" Sound** again.
-- The **Removal** of **Ground-Equipment** is triggered by **two Situations** after Boarding & Refuel are completed:
-  - Parking **Brake Set** AND External **Power Off** AND **Beacon On**.
-  - GSX **Pushback is called** (regardless if through GSX Menu or by INT/RAD Switch). Please **note** that this Trigger does **not make any Checks** and relies on your good Airmanship to not end up with an unpowered and free rolling Plane :wink:
-  - In either Case **Jetway, Stairs, Chocks, GPU and PCA** will be removed.
-  - People who use the "call the tug at the beginning of boarding" Feature should **either ensure** that their APU is running when the last Passenger boards/the last Cargo is loaded into the Plane **or uncheck** the "Automatically call Pushback when Tug is already connected" option in the Fenix2GSX settings. This way you won't end up without Power!
+- When and in which Order the GSX Services are called depends on your Configuration, per Default it is Refuel + Catering -> Water -> Boarding. You can use the **INT/RAD** Switch to call the next Service in the Queue - i.e. call Boarding earlier.
+- The PCA will be removed anytime the **APU is running** and the APU **Bleed is On** (regardless if you have configured Fenix2GSX to place it).
+- When **all** Departure Services are **completed** (typically after Boarding), Fenix2GSX will switch to the Pushback Phase. The **Final Loadsheet** will be transmitted 90 - 150 Seconds (Delay configurable) after the Services are completed. 
+- With default Settings, the Rear-Stair on Jetway Stand will be removed once the Services are completed.
 
-<br/>
+<br/><br/>
 
-#### Pushback
+#### 3.1.4 - Pushback Phase
 
-- You can request GSX Pushback with the **INT/RAD** Switch. It does not make any Difference if you call it that Way or through the GSX Menu.
-- But note: Fenix2GSX will automatically request Pushback (can be disabled) when the Tug was already connected while Boarding was active. So watch out 😜
-- **Only** request Pushback **when** it is **neccessary** - i.e. don't call it on Stands where you supposed to roll out!
-  - The **realiable** Way to remove the Ground-Equipment is via **Beacon** on such Taxi-Out Stands. You can try tro remove the Ground-Equipment by calling **Push-Back via INT/RAD** Switch (only) - but you have the **Chance of being Stuck**. Some Profile Creators do not know the proper Way to disable Pushback in the Airport Profile (or did not updated their Profile in that Way).
-- The *'Do you want to request Push-Back'* Question will be answered with 'Yes' by Fenix2GSX (if configured)
-- Requesting Pushback is the **latest** Point where you need to **enable the GSX Menu** (=Icon white in the Toolbar) in order to select the Direction and answer all other Questions GSX might have. (You can close the Menu with the "X")
-- When the Push is running, you can disable the Menu again - you can use the INT/RAD Switch to Stop or Confirm the Engine Start.
-- **Before** GSX requests to report good Engine Start the INT/RAD Switch will **Stop the Pushback** at the current Position (GSX Menu Option 1).
-- Only **confirm** the Engine Start if enabled in the GSX Options and GSX has requested to report it.
+- With default Settings, Jetway/Stairs are removed and Doors are closed once the **Final Loadsheet** is received.
+- You can call GSX Pushback once you're ready with the **INT/RAD** Switch. There are also Options to call it automatically when Beacon is on or the Tug was already attached during Boarding.
+- You need to **enable the GSX Menu again** for the Pushback Phase to interact with the Menu! Fenix2GSX does not answer the Deice Question or select Pushback Direction.
+- With default Settings, Fenix2GSX will **automatically reopen** the Pushback Direction Menu if the GSX Menu should time out (hides itself again).
+- With default Settings, the **Ground-Equipment** is removed once you turn on the Beacon (while External Power disconnected and Brake set).
+- In any Case, **Ground-Equipment** will be removed **automatically** in this Phase when GSX Pushback/Deice Service is running or when the Engines are running (=start combusting)
+- Ground-Equipment is only ever **removed when safe** - i.e. the GPU is only removed when External Power is disconnected or the Chocks when the Brake is set.
+- Consider to only call GSX Pushback (either Way) on **Taxi-Out Gates** with are correctly configured in the Airport Profile for that!
+- When the Push is running, you can disable the Menu again - you can use the **INT/RAD** Switch to Stop the Push or Confirm the Engine Start (that means Menu Option 1 is always selected when you move the Switch).
 - **DO NOT USE ABORT PUSHBACK** (And if only as the very very last Resort, early stopping the Pushback is meant to be commenced with "Stop". If you abort, please set your Parking Brake.)
 
-<br/>
+<br/><br/>
 
-#### Enroute
+#### 3.1.5 - Taxi-Out Phase
+
+- With default Settings, Fenix2GSX will **automatically answer the Cabin Call** while taxiing
+- There is no further Automation or Integration for the Deicing (on Deice Pads), but note that the Operator Selection is also active in this Phase!
+- If you loaded your Session **directly on the Runway**, Fenix2GSX will already start in this Phase. So do not spawn on a Runway if you plan to use Departure Services!
+
+<br/><br/>
+
+#### 3.1.6 - Flight Phase
 
 - Enjoy your Flight :wink: Note that Fenix2GSX can be (re)started while you are Airbone. It will continue with the Arrival Services as normal.
-
-<br/>
-
-#### Arrival
-(Arrival Services will only start when Engines are off and the Parking Brake is set)<br/>
-
-- Please **pre-select** the Gate in the GSX Menu **while** you're **taxing** to it. If enabled, it will automatically answer the Follow-Me Question with 'No' and select the Operator if needed (if configured to do so).
-- Assuming you use all Automations, that is the only Time you need to have the Menu enabled on Turn-Around until you need to Pushback again.
-- **Chocks** will be placed 10-20 Seconds after the **Beacon is off** (or when the Jetway/Stairs have connected - whichever comes first). When placed through Fenix2GSX the "MECH" Indicator on the ACP (INT Button) will flash briefly to indicate that. You can release the Parking Brakes then.
-- **Deboarding** is called (which will also move Jetway/Stairs) after the **Beacon is off** - *if* automatic Deboarding is configured. Note that there is no Check for the Seat-Belt Signs, deboarding will commence in either Way.
-- *Else* Fenix2GSX will only connect Jetway/Stairs (if that is enabled).
-- **GPU** and **PCA** will be connected **after Chocks** has been placed and Deboarding was requested.
-
-<br/>
-
-#### Turn-Around
-
-- **Wait** with generating a new Simbrief Flightplan until **Deboarding has started**.
-- **Wait** with importing the Flightplan in the EFB until **the EFB was resetted**. You will hear the **Ding** Sound when that happened and you can start importing.
-- Besides that: just import and it will start over again as described!
-- Note that Fenix2GSX will check only every 10 Seconds for a new Flightplan, so don't wonder if Refuel is not immediately called.
+- With default Settings, Fenix2GSX will **automatically answer the Cabin Call** on Approach
 
 <br/><br/>
 
-### Service Calls via INT/RAD Switch
+#### 3.1.7 - Taxi-In Phase
 
-You can also use the **INT/RAD** Switch on the ACP to trigger some Services in certain Situations. Move the Switch to the **INT Position** and **leave it there**. When Fenix2GSX reacts to the Request it will reset the Switch Postion as Confirmation! Services triggerable:
+- Once the Aircraft is on the Ground again and below 30 Knots, Fenix2GSX will switch to the Taxi-In Phase.
+- You can configure Fenix2GSX to (hard) Restart GSX when switching to that Phase
+- Please **pre-select** the Gate in the GSX Menu **while** you're **taxiing** to it. If enabled, it will automatically answer the Follow-Me Question with 'No' and select the Operator if needed.
+- When using all Automations, you can disable the GSX Menu again after Gate Selection.
 
-- **Request Boarding** - regardless if Auto-Boarding is configured and even when Catering & Refueling are still active.
-- **Request Pushback**, after Refueling & Boarding are finished (regardless of who called them). Please **note** that this Trigger does **not make any Checks** and relies on your good Airmanship to not end up with an unpowered and free rolling Plane :wink:<br/>
-Make sure to **enable the GSX Menu** again at that Point! Fenix2GSX **only requests** the Service, but **does not answer** any Pushback related Question in the GSX Menu.<br/>Note that you can only request Pushback with that - you can not use INT/RAD to trigger the GSX Menu Option "Continue Pushback".
-- **Stop/Confirm Pushback**. While the the **Pushback is running** you can **stop it** (that is Menu Option 1, "Stop here and complete pushback" - the correct Way of stopping the Push). When you have "**Good engine start confirmation**" enabled in GSX you can answer that GSX Question also **with that Switch** (**after GSX asks** you to do so).<br/>
+<br/><br/>
+
+#### 3.1.8 - Arrival Phase
+
+- The Arrival Phase will only begin once the Aircraft is parked: **Brake is set, Engines are off and Beacon is off**
+- **Chocks** will be placed 10-20 Seconds after the Aircraft is parked. When the Chocks were placed, "MECH" Indicator on both ACPs (INT Button) will flash briefly to indicate that. You can release the Parking Brakes then.
+- **GPU** and **PCA** (if configured) will be connected once the Jetway or Stairs are connected (or latest when Deboarding starts).
+- With default Settings, Fenix2GSX will **automatically call Deboard** (which in turn calls the Jetway/Stairs). If not configured, you can still call Deboarding manually with the **INT/RAD** Switch.
+- **Dismiss** the Deboard Pop-Up in the **EFB** - Deboarding is handled by Fenix2GSX at its Synchronization!
+- **Wait** for Deboarding to **finish** if you plan for a **Turn-Around** - *do not import* a new Flightplan yet!
+
+<br/><br/>
+
+#### 3.1.9 - Turn-Around Phase
+
+- The Turn-Around Phase will begin once Deboarding has been completed. Fenix2GSX will **reset the EFB** to ensure a clean State. It will play the **Cabin Ding** once it is ready for import.
+- As soon as you import a new Flightplan in the EFB, Fenix2GSX will start over with the Departure Phase.
+- Fenix2GSX will trigger a SimBrief Reload in GSX so that the VDGS Displays show the new and correct Flight Information.
+
+<br/><br/>
+
+### 3.2 - Service Calls via INT/RAD Switch
+
+You can also use the **INT/RAD** Switch on the ACP (both are monitored) to trigger some Services in certain Situations. Move the Switch to the **INT Position** and **leave it there**. When Fenix2GSX reacts to the Request it will reset the Switch Postion as Confirmation! Services triggerable:
+
+- **Request Jetway/Stairs** - Preparation Phase - If Jetway/Stairs are not called automatically on **Session Start**, you can call them manually with the Switch.
+- **Request next Departure Service** - Departure Phase - Call the **next Departure Service**, including Services set to '**Manual**'. In a typical Scenario, you can use the Switch to **start Boarding while Refueling** is still active.
+- **Request Pushback** - Pushback Phase - Calls the GSX Pushback Service and **removes Ground-Equipment**. When Pushback was already called but not started yet, you can use the Switch again to **reopen the Direction Menu**.
+- **Stop / Confirm Pushback** - Pushback Phase - Selects **Menu Option 1** in the GSX Menu, so depending on the current State (and GSX Settings) it will either **Stop Pushback** or **Confirms** the good **Engine-Start**.
 - **Request Deboarding**, after Parking Brake set, Engines off and Beacon off. If Automatic Jetway/Stair Operation is enabled, wait for them to be called. Only works when automatic Deboarding is disabled.
 
+<br/><br/><br/>
+
+## 4 - Addon NOTAMs
+
+### 4.1 - Self-Loading Cargo
+
+Fenix2GSX and **Self-Loading Cargo** (SLC) should work together: Based on User Reports, you need to disable '**Ground Crew**' in SLC!<br/>
+Generally you only want one Application to control the Service-Flow and Ground-Equipment.
+
 <br/><br/>
 
-### Addon NOTAMs
-
-#### Self-Loading Cargo
-
-There Issues reported when used together with **Self-Loading Cargo** (SLC). Based on User Reports disabling *"Ground Crew"* in SLC can help!<br/>
-You can try to play with some Advanced Options in the .config File to improve Timings.<br/><br/>
-
-#### FlowPro
+### 4.2 - FlowPro
 
 It is strongly recommended to disable the Option **Skip 'Ready to Fly'**. Else it might happen that Fenix2GSX starts in the Flight State.<br/>
 <img src="img/flowpro.png" width="400"><br/><br/>
@@ -247,45 +320,67 @@ In order to enable/disable the GSX Menu-Entry and **prevent** the GSX Menu to op
 <img src="img/flowproGSX.png" width="400">
 <br/><br/>
 NOTE: Please **uninstall** the Plugin **[Flow GSX Launcher](https://de.flightsim.to/file/46482/flow-gsx-launcher)**: it is outdated since that Widget is already included since Flow Version 2023.30.4.13.
-<br/><br/><br/>
+<br/><br/>
 
-#### FS2Crew
+### 4.3 - FS2Crew
 
 **FS2Crew (Fenix Edition)**: You basically don't need any Ground- or Door-Handling Features of Fs2Crew. This is what another User recommends as Settings to let Fenix2GSX and FS2Crew work together (thanks for sharing):<br/>
 <img src="img/Fs2Crew.png" width="1006"><br/><br/>
-If you deviate from that, that is fine, but don't bother me with Fenix2GSX is not working properly then 😜
+If you deviate from that, that is fine, but don't bother me with Fenix2GSX is not working properly then - Generally you only want one Application to control the Service-Flow and Ground-Equipment 😜
+
+<br/><br/><br/>
+
+## 5 - NOTAMs (Usage Tips)
+
+### 5.1 - Usage without GSX (Volume Control only)
+
+Just disable *Run GSX Controller* in the **App Settings** View - that disables all of the GSX Integration and Automation!<br/>
+Note that this also includes non GSX related Automations like skipping Walkaround or Cabin-Calls.
 
 <br/><br/>
 
-### Usage Tips / NOTAMs
+### 5.2 - Usage with native Integration
 
-Tip for **VATSIM / IVAO**: Disable the automatic Jetway Operation before loading the Session in MSFS, in Case you need to move to another Gate. If the Gate is free (or you have moved to a free one) you can renable Auto-Connect and the Jetway/Stairs will still connect then, when you don't have the Flightplan imported in the mean Time.<br/>
-You can also experiement with the advanced *autoConnectDelay* Option with setting that to a high / safe Value. You can cancel the Delay with the INT/RAD Switch.
+- You need to configure the Departure Services to 'Manual by User' so that the native Integration can call them
+- You need to have the same Services & Order configured under Departure Services as in the EFB (so if you set Fuel+Catering then Boarding in the EFB, do so in Fenix2GSX)
+- You can change the 'Wait for Refuel' EFB Setting, but **do not change** any other Setting (besides the Sequence as above)
+- **Do not** use the INT/RAD Switch to call the next Departure Service - the native Integration has to call the Services!
+- **Do not** call Refuel, Catering or Boarding manually - the native Integration has to call the Services!
+- The same applies when you decide to load/board the Aircraft via EFB only (so no GSX at all)! When the Aircraft loaded directly via the EFB, Fenix2GSX will directly switch to the Pushback Phase.
+
 <br/><br/>
-Fenix2GSX has a Detection built-in when starting with **Engines running** (i.e. you selected a Runway as Start). It won't provide any Departure Service apart from removing the Ground-Equipment. It will provide Arrival-Sevices after you've landed again (when you have imported a FlightPlan in the EFB before Take-Off)<br/><br/>
+
+### 5.2 - Usage on VATSIM/IVAO
+
+When flying on a Network it might happen that you need to change the Gate after you have started the Session. It is advisable to **disable** the automatic **Call for Jetway/Stairs** in case you need to switch Gates!<br/>
+You can manually call the Jetway/Stairs with the **INT/RAD** Switch once you're settled. *Note* that this only works as long as you don't have imported a Flightplan yet!
+
+<br/><br/><br/>
+
+## 6 - FCOM (Troubleshooting)
+
+1) Ensure you have fully read and understand the Readme 😉
+2) Ensure you have checked the Instructions below for common/known Issues
+3) Ensure your GSX Installation is working correctly - Fenix2GSX ain't gonna fix it!
+4) If you report an Issue because you are *really really* sure that Fenix2GSX is misbehaving: provide a **meaningful Description** of the Issue and attach the **Log-File** covering the Issue ('Log-Directory' in the Systray or `%appdata%\Fenix2GSX\log`). If there are **multiple Flights** in one Log (it is one Log per Day for 3 Days), provide a **rough Timestamp** where/when to look.
+
+
+**NOTE**: It is my personal Decision to provide support or not. So if you don't put any Effort in reading the Readme or properly reporting your Issue, I won't put any Effort in doing any Support or even responding at all. **You need** to help me in order for **me to help you**! 😉<br/><br/>
+
+
+You can use the '**App Monitor**' View of the UI to monitor the current State of Fenix2GSX:
+<img src="img/appmonitorpng" width="817"><br/><br/>
+
+- The **Sim State** Section reports on the Connection to MSFS - it should be all green.
+- The **GSX State** Section reports the State of GSX and it Services. Fenix2GSX can only do as good as the Information provided by GSX!
+- The **App State** Section reports most noteably reports the current Phase you are in and how many Departure Services are queued - besides the general State of its Services and Connection to the Fenix.
+- The **Message Log** Section prints all informational (and above) Messages from the Log - it gives you a rough Idea what Fenix2GSX is doing.
+
+**NOTE**: Although a **Screenshot** of the UI might be helpful in certain Situations, it is **not enough** to report an Issue! Always include the **Log-File**!
 
 <br/><br/>
 
-## Troubleshooting / FCOM
-
-First Order: Ensure you have fully read and understand the Readme 😉<br/>
-If that and any of the Instructions below did not help, and you are *really really* sure that Fenix2GSX is misbehaving and you provide a *meaningful* Description with the *Logs* attached to it (%appdata%\Fenix2GSX\log) - I might look into it if I find it worthwhile.<br/>
-Else the new "Support-Policy" introduced with 0.3.4 takes Effect: Issues (and Messages/Pings on other Platforms) are *directly ignored*!<br/>
-Almost every Problem I dealt with lately has something to do with weird Settings, broken Sim- or GSX-Setups or People just not reading anything I wrote.<br/><br/>
-
-Beginning with 0.3.6 the Connection Status in the GUI shows some additional Information about the Fenix2GSX and GSX State. If you encounter Problems, I'd recommend to watch these Values in the GUI while it happens:
-<img src="img/ui4-commented.png" width="817"><br/><br/>
-Especially the GSX Values are important here: These are the raw Values which Fenix2GSX reads through SimConnect from GSX and the Values it acts upon. So if the Values are faulty, there is nothing that Fenix2GSX can do.
-- These Values are not meant to be a Progress Display (just watch it in your EFB, if you need to)
-- Pax and Cargo must never be -1 while either Boarding or Deboarding is in Progress
-- Jetway and Stairs must never be 0 while at the Gate/Stand
-- Except "H", every other Service-State must never be 0 while at the Gate/Stand
-- The States, from left to right, are: **R**efuel, Fuel-**H**ose, **C**atering, **B**oarding, **P**ushback, **D**eboard
-- So "H" must switch to 1 when the Fuel-Hose was visually connected and stay that Way while Refueling
-
-<br/>
-
-### Does not Start
+### 6.1 - Does not Start
 
 - It does not open a Window if you expect that. The GUI is only needed for Configuration and can be opened by clicking on the Icon in the SysTray / Notification Area (these Icons beside your Clock)
 - Ensure you have rebooted your PC after .NET 8 was installed
@@ -293,70 +388,41 @@ Especially the GSX Values are important here: These are the raw Values which Fen
 - Please just don't "run as Admin" because you think that is needed. You can try if that helps, but it should run just fine without that!
 - Certain AV/Security Software might require setting an Exception
 
-<br/>
+<br/><br/>
 
-### There are no Log Files
+### 6.2 - There are no Log Files
 
 - Please just don't "run as Admin" because you think that is needed. You can try if that helps, but it should run just fine without that!
 
-<br/>
+<br/><br/>
 
-### Does not Connect / "Out of Bound" Exception / MSFS 2024
+### 6.3 - Fenix2GSX is stuck in a Reposition Loop
 
-- Reasons currently unknown, likely due to the Beta State of 2024. Try if removing the Mobiflight Event Module, re-runinng the Installer and then rebooting the PC helps.
+Some Issue in your Setup causes a Situation where Fenix2GSX can't read/evaluate the GSX Menu File. But during Reposition (and other Service Calls) Fenix2GSX checks actively to be in the right Menu before selecting anything - so it is stuck in a Loop because it can't get that Information.
 
-<br/>
-
-### Does not Connect / Exception 31
-
-The MobiFlight WASM Module is not installed correctly or at all:
-- Check if you have a Folder called `mobiflight-event-module` in your Community-Folder. In it there must be a File called `layout.json` (amongst other Files and Folders)
-- To download it manually: Go to [Releases](https://github.com/MobiFlight/MobiFlight-WASM-Module/releases) and download the File mobiflight-event-module-x.y.z.zip (under Assets)
-- Extract it to your Community-Folder (so that the Path to the layout.json File is `Community\mobiflight-event-module\layout.json`)
-
-<br/>
-
-### Fenix2GSX is stuck in a Reposition Loop
-
-Some Issue in your Setup causes a Situation where Fenix2GSX can't read/evaluate the GSX Menu File. But during Repostion Fenix2GSX checks actively to be in the right Menu before selecting anything - so it is stuck in a Loop because it can't get that Information.<br/>
-As a Workaround there are two Advanced/Hidden [Config Parameters](#advanced--hidden-options) you can try:
-1) If the Cause is that it just takes more Time on your System before everything is fully ready, you can try to increase the `startupDelay`
-2) If that does not help, or Fenix2GSX can never read/evaluate the GSX Menu File, you can try to set `ignoreMenuChecks` to true. Note that this disables Check meant as Safety-Measure - so you have to hope the Reposition does not do weird Things (and happens at all). But at least you won't be stuck in a Loop anymore 😅
+- This can happen if GSX is not correctly linked in the Community Folder, use the FSDT Installer to Relink it (and do Check!)
+- In past and rare Cases, a complete Reinstall of GSX was needed. Use the Offline Installer (see below) for that.
 
 But generally it would be advisable to eliminate the Root Cause. Maybe a Reinstall through the Offline Installer (see below) or even a complete fresh/clean installation of GSX - in Case your Installation is somehow "corrupted".
 
-<br/>
+<br/><br/>
 
-### Fenix2GSX in Flight/Taxi-In when starting on the Ground
+### 6.4 - Fenix2GSX in Flight/Taxi-In when starting on the Ground
 
-Try to increase the `startupDelay` Parameter in the [Config File](#advanced--hidden-options).<br/>
-Can also be caused by FlowPro - check the recommended [Settings](#flowpro).
+- Can be caused by FlowPro - check the recommended [Settings](#42---FlowPro).
 
-<br/>
+<br/><br/>
 
-### Jetway does not connect
+### 6.5 - Jetway does not connect
 
-There can be certain Situations where the Jetways stop responding. For me usually when I arrive again at an Airport I already departed from in the same Sim-Session.<br/>
-This an 100% Asobo-Problem. Any Application is then not able to call Jetways anymore via SimEvent ("TOGGLE_JETWAY"). When you are in such a Situation, confirm it by use "Toggle Jetway" in the Fenix EFB. If it still does not move, you experience that MSFS-"Feature".<br/>
+There can be certain Situations where the Jetways stops responding. This an 100% Asobo-Problem: Any Application, including GSX, is then not able to call Jetways anymore via SimEvent ("TOGGLE_JETWAY"). When you are in such a Situation, confirm it by use "Toggle Jetway" in the Fenix EFB. If it still does not move, you experience that MSFS-"Feature".<br/>
+This can be caused by too many SimObjects being spawned, check the Tips below to reduce the Object Count.<br/>
 The only Workaround is to request the Jetway via ATC Menu. But beware: That does not toggle the mentioned Event, so no Application (i.e. GSX) can detect that the Jetway is connected.<br/>
 The Workaround is only for the Visuals, GSX (and therefor Fenix2GSX) should handle the Situation and should be able to deboard the Plane (you won't see any Passengers either Way though).
 
-<br/>
+<br/><br/>
 
-### Refuel Stops / Problems with Boarding or Deboarding / other Erratic Behavior
-
-If it is only Boarding (e.g. only 10 Pax boarded) it might be something with your GSX Settings (In Game Menu -> Settings):
-- Ensure your *SimBrief Username* is set
-- Ensure *Ignore Time* is set
-- Try if disabling (or enabling) *Estimate passengers number* helps anything
-
-<br/>
-
-If it is only Refueling it might be something with your GSX Settings (In Game Menu -> Settings):
-- Check if *Always refuel progressively* is grayed out and unchecked
-- Check if *Detect custom aircraft system refueling* is grayed out and unchecked
-
-<br/>
+### 6.6 - Refuel Stops / Problems with Boarding or Deboarding / other Erratic Behavior
 
 It is also likely that you have Issues with the SimConnect Interface (the API which both GSX and Fenix2GSX use) being overloaded by too many SimObjects (one of these Things Asobo is incapable or unwilling of fixing).<br/>
 In most Cases this is caused by AI Aircraft or other Tools spawning SimObjects (e.g. Nool VDGS or even GSX itself). Reduce the Number of SimObjects and check if it works better then:
@@ -382,4 +448,6 @@ In most Cases this is caused by AI Aircraft or other Tools spawning SimObjects (
 
 <br/>
 
-There have been also Cases where the GSX Installation was somehow "corrupted". You can try to run the Check in the FSDT Installer multiple Times or use the [offline Installer](https://www.fsdreamteam.com/forum/index.php/topic,26826.0.html). Else a complete fresh / clean Installation of GSX might be required.<br/>
+**Offline Installer**
+
+There have been also Cases where the GSX Installation was somehow "corrupted". You can try to run the Check in the FSDT Installer multiple Times or use the [offline Installer](https://www.fsdreamteam.com/forum/index.php/topic,26826.0.html) (run a Check again after using that Installer). Else a complete fresh / clean Installation of GSX might be required.<br/>

@@ -1,0 +1,103 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <Nullable>annotations</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <PlatformTarget>x64</PlatformTarget>
+    <StartupObject>Fenix2GSX.Fenix2GSX</StartupObject>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd.HHmm"))</SourceRevisionId>
+    <Version>0.5.0</Version>
+    <Title>$(AssemblyName)</Title>
+    <Authors>Fragtality</Authors>
+    <Company>Fragtality</Company>
+    <ApplicationIcon>UI\Icons\AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Remove="UI\Icons\AppIcon.ico" />
+    <None Remove="UI\Icons\AppIconUpdate.ico" />
+    <None Remove="UI\Icons\automation.png" />
+    <None Remove="UI\Icons\chevron-down.png" />
+    <None Remove="UI\Icons\chevron-up.png" />
+    <None Remove="UI\Icons\cursor.png" />
+    <None Remove="UI\Icons\profiles.png" />
+    <None Remove="UI\Icons\settings.png" />
+    <None Remove="UI\Icons\upload.png" />
+    <None Remove="UI\Icons\volume.png" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="UI\Icons\AppIcon.ico" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="UI\Icons\AppIcon.ico" />
+    <EmbeddedResource Include="UI\Icons\AppIconUpdate.ico" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="CFIT.AppFramework" Version="2025.123.22.2578" />
+    <PackageReference Include="CFIT.AppLogger" Version="2025.123.22.2435" />
+    <PackageReference Include="CFIT.AppTools" Version="2025.123.22.2442" />
+    <PackageReference Include="CFIT.SimConnectLib" Version="2025.123.22.2461" />
+    <PackageReference Include="CoreAudio" Version="1.40.0" />
+    <PackageReference Include="System.Private.Uri" Version="4.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FenixInterface">
+      <HintPath>FenixInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.FlightSimulator.SimConnect">
+      <HintPath>Microsoft.FlightSimulator.SimConnect.dll</HintPath>
+	  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="UI\Icons\automation.png" />
+    <Resource Include="UI\Icons\chevron-down.png" />
+    <Resource Include="UI\Icons\chevron-up.png" />
+    <Resource Include="UI\Icons\cursor.png" />
+    <Resource Include="UI\Icons\remove.png" />
+    <Resource Include="UI\Icons\monitor.png" />
+    <EmbeddedResource Include="UI\Icons\edit.png" />
+    <EmbeddedResource Include="UI\Icons\add.png" />
+    <Resource Include="UI\Icons\profiles.png" />
+    <Resource Include="UI\Icons\settings.png" />
+    <Resource Include="UI\Icons\upload.png" />
+    <Resource Include="UI\Icons\volume.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Microsoft.FlightSimulator.SimConnect.dll">
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Microsoft.FlightSimulator.SimConnect.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="SimConnect.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="pwsh -ExecutionPolicy Unrestricted -file &quot;$(ProjectDir)..\NuPreBuild.ps1&quot; $(SolutionDir) $(ProjectDir) &quot;Fenix2GSX&quot; &quot;CFIT.AppLogger&quot; &quot;CFIT.AppTools&quot; &quot;CFIT.SimConnectLib&quot; &quot;CFIT.AppFramework&quot;" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="pwsh -ExecutionPolicy Unrestricted -file &quot;$(ProjectDir)BuildApp.ps1&quot; $(Configuration) $(SolutionDir) $(ProjectDir) &quot;Fenix2GSX&quot; &quot;AppConfig.json&quot;" />
+  </Target>
+
+</Project>

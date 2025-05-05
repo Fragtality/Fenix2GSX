@@ -1,0 +1,97 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Fenix2GSX.AppConfig;
+using Fenix2GSX.Audio;
+using System.Collections.Generic;
+using System.ComponentModel;
+
+namespace Fenix2GSX.UI.Views.Audio
+{
+    public partial class ModelAudio : ModelBase<Config>
+    {
+        public ModelAudio(AppService appService) : base(appService.Config, appService)
+        {
+            AppMappingCollection = new(this);
+            AppMappingCollection.CollectionChanged += (_, _) => { SaveConfig(); AudioController.ResetMappings = true; };
+
+            BlacklistCollection = new(this);
+            BlacklistCollection.CollectionChanged += (_, _) => SaveConfig();
+        }
+
+        protected override void InitializeModel()
+        {
+            this.PropertyChanged += OnPropertyChanged;
+            AudioController.DeviceManager.DevicesChanged += () => NotifyPropertyChanged(nameof(AudioDevices));
+        }
+
+        protected virtual void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e?.PropertyName == nameof(CurrentChannel))
+            {
+                NotifyPropertyChanged(nameof(SetStartupVolume));
+                NotifyPropertyChanged(nameof(StartupVolume));
+                NotifyPropertyChanged(nameof(StartupUnmute));
+            }
+        }
+
+        public virtual Dictionary<AcpSide, string> AcpSideOptions { get; } = new()
+        {
+            { AcpSide.CPT, "Captain" },
+            { AcpSide.FO, "First Officer" },
+        };
+
+        public virtual AcpSide AudioAcpSide { get => Source.AudioAcpSide; set { SetModelValue<AcpSide>(value); AudioController.ResetVolumes = true; } }
+
+        [ObservableProperty]
+        protected AudioChannel _CurrentChannel = AudioChannel.VHF1;
+
+        public virtual bool SetStartupVolume
+        {
+            get => Source.AudioStartupVolumes[CurrentChannel] >= 0.0;
+            set
+            {
+                double setValue = value ? 1.0 : -1.0;
+                Source.AudioStartupVolumes[CurrentChannel] = setValue;
+                Source.SaveConfiguration();
+                OnPropertyChanged(nameof(SetStartupVolume));
+                OnPropertyChanged(nameof(StartupVolume));
+            }
+        }
+
+        public virtual double StartupVolume
+        {
+            get => (Source.AudioStartupVolumes[CurrentChannel] >= 0.0 ? Source.AudioStartupVolumes[CurrentChannel] * 100.0 : 0);
+            set
+            {
+                Source.AudioStartupVolumes[CurrentChannel] = value / 100.0;
+                Source.SaveConfiguration();
+                OnPropertyChanged(nameof(StartupVolume));
+            }
+        }
+
+        public virtual bool StartupUnmute
+        {
+            get => Source.AudioStartupUnmute[CurrentChannel];
+            set
+            {
+                Source.AudioStartupUnmute[CurrentChannel] = value;
+                Source.SaveConfiguration();
+                OnPropertyChanged(nameof(StartupUnmute));
+            }
+        }
+
+        public virtual ModelAppMappings AppMappingCollection { get; }
+
+        public virtual List<string> AudioDevices
+        {
+            get
+            {
+                var list = new List<string> { "All" };
+                list.AddRange([.. AudioController.DeviceManager.GetDeviceNames()]);
+
+                return list;
+            }
+        }
+
+        public virtual ModelDeviceBlacklist BlacklistCollection { get; }
+    }
+}

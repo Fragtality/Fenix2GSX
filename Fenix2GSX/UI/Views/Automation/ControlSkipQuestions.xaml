@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="Fenix2GSX.UI.Views.Automation.ControlSkipQuestions"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fenix2GSX.UI.Views.Automation"
+             d:DataContext="{d:DesignInstance Type=local:ModelAutomation}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../StyleResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Column="0" Grid.Row="0" Margin="8,0,8,8" Style="{StaticResource GroupBoxDefault}">
+            <GroupBox.Header>Skip Questions / Pop-ups</GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding SkipCrewQuestion}" Style="{StaticResource CheckBoxSettingItem}"
+                      ToolTip="Suppress or Skip Question if Crew should be boarded or deboarded.">
+                    <TextBlock>Suppress GSX <Underline>Crew Question</Underline> on Boarding &amp; Deboarding</TextBlock>
+                </CheckBox>
+
+                <StackPanel Grid.Column="0" Grid.Row="1" Style="{StaticResource SettingItemPanel}" ToolTip="Answer the GSX Question if the Tug should be attached during Boarding.">
+                    <TextBlock Style="{StaticResource TextBlockDefault}">Answer <Underline>Tug Question</Underline> during Boarding with: </TextBlock>
+                    <ComboBox SelectedValue="{Binding AttachTugDuringBoarding}" ItemsSource="{Binding TugOptions}" SelectedValuePath="Key" DisplayMemberPath="Value" Margin="4,0,0,0" Style="{StaticResource ComboBoxDefault}"
+                              ToolTip="">
+                    </ComboBox>
+                </StackPanel>
+
+                <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding SkipFollowMe}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Automatically answer the Follow-Me Question after Gate Selection with 'No'.">
+                    <TextBlock>Skip <Underline>Follow-Me Question</Underline> on Gate Selection</TextBlock>
+                </CheckBox>
+
+                <CheckBox Grid.Column="0" Grid.Row="3" IsChecked="{Binding KeepDirectionMenuOpen}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Automatically re-open the Pushback Direction Menu if the GSX Menu times out during Pushback.">
+                    <TextBlock>Automatically reopen <Underline>Pushback Direction</Underline> Menu</TextBlock>
+                </CheckBox>
+                
+                <CheckBox Grid.Column="0" Grid.Row="4" IsChecked="{Binding AnswerCabinCallGround}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Answer the Fenix Cabin Ready Call received by the Crew during Taxi-Out (always on the left ACP).&#x0a;The CAB Send Button will be pushed, then VHF1 will be reselected and RESET is pushed.">
+                    <TextBlock>Answer <Underline>Cabin Call</Underline> during Taxi-Out</TextBlock>
+                </CheckBox>
+
+                <CheckBox Grid.Column="0" Grid.Row="5" IsChecked="{Binding AnswerCabinCallAir}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Answer the Fenix Cabin Ready Call received by the Crew during Approach (always on the left ACP).&#x0a;The CAB Send Button will be pushed, then VHF1 will be reselected and RESET is pushed.">
+                    <TextBlock>Answer <Underline>Cabin Call</Underline> during Approach</TextBlock>
+                </CheckBox>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

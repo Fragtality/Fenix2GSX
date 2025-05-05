@@ -1,0 +1,189 @@
+﻿<UserControl x:Class="Fenix2GSX.UI.Views.Automation.ControlGsxServices"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fenix2GSX.UI.Views.Automation"
+             d:DataContext="{d:DesignInstance Type=local:ModelAutomation}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../StyleResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Column="0" Grid.Row="0" Margin="8,0,8,8" Style="{StaticResource GroupBoxDefault}" ToolTip="Configure which GSX Services are called by Fenix2GSX and when they are called.">
+            <GroupBox.Header>Service Calls</GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding CallReposition}" Margin="6,8,6,6" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Automatically Reposition the Aircraft with GSX on Session Start.&#x0a;Note on MSFS2024: Reposition is already attempted before 'Ready to fly' is pressed.">
+                    <TextBlock><Underline>Reposition</Underline> Aircaft on Session Start</TextBlock>
+                </CheckBox>
+
+                <CheckBox Grid.Column="0" Grid.Row="1" IsChecked="{Binding CallDeboardOnArrival}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Automatically call Deboard when arrived at the Gate (Brake set, Engines off, Beacon off).&#x0a;GSX will call the Jetway and/or Stairs by itself when Deboarding is requested.">
+                    <TextBlock>Call Deboard on <Underline>Arrival</Underline> (after Engines &amp; Beacon off)</TextBlock>
+                </CheckBox>
+
+                <Grid Grid.Column="0" Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <DataGrid Grid.Column="0" Grid.Row="0" Name="GridDepartureServices" Margin="6,10,6,6" MinWidth="312" AutoGenerateColumns="False" HeadersVisibility="Column" SelectionMode="Single" IsReadOnly="True" HorizontalAlignment="Left" GridLinesVisibility="None"
+                              ToolTip="Departure Services: GSX Services and their Order to be called, monitored or skipped in the Deparute Phase.">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Service">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ServiceType}" Margin="1" Style="{StaticResource TextBlockDefault}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Activation">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ServiceActivationName}" Margin="1" Style="{StaticResource TextBlockDefault}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Min. Flight Time">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="1">
+                                            <Label Content="{Binding MinimumFlightDuration, Converter={StaticResource TimeSpanConverter}}" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="6,0,0,0" MinWidth="48"/>
+                                            <TextBlock Style="{StaticResource TextBlockDefault}">minutes</TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" Margin="0,34,0,0" VerticalAlignment="Top">
+                        <Button Name="ButtonUp" Style="{StaticResource BtnSquareSmall}" ToolTip="Move Up Service in the Call Order.">
+                            <Image Source="../../Icons/chevron-up.png" Style="{StaticResource ImgSquareSmall}"/>
+                        </Button>
+                        <Button Name="ButtonDown" Margin="0,6,0,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Move Down Service in the Call Order.">
+                            <Image Source="../../Icons/chevron-down.png" Style="{StaticResource ImgSquareSmall}"/>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Margin="6,6,0,0" Visibility="{Binding HasSelection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolVisibilityConverter}}">
+                        <TextBlock Name="LabelServiceName" Style="{StaticResource TextBlockDefault}"/>
+                        <ComboBox Name="SelectorActivation" ItemsSource="{Binding TextServiceActivations}" SelectedIndex="0" SelectedValuePath="Key" DisplayMemberPath="Value" Style="{StaticResource ComboBoxDefault}"
+                                  ToolTip="Select if and how to activate the Service:&#x0a;
+                                  Skip / Ignore: Service will neither be called nor monitored by Fenix2GSX&#x0a;
+                                  Manual by User: Service will be called externally by the User or another App (but must be completed to end the Departure Phase)&#x0a;
+                                  Previous called: Service will directly be called after the previous Service was called&#x0a;
+                                  Previous requested: Service will be called as soon as the previous Service is reported as 'requested' by GSX&#x0a;
+                                  Previous active: Service will be called as soon as the previous Service is reported as 'active' by GSX&#x0a;
+                                  Previous completed: Service will be called as soon as the previous Service is reported as 'completed' by GSX&#x0a;
+                                  All completed: Service will only be called after all previous Service are reported as 'completed' by GSX&#x0a;
+                                  Note: The first Service will always be called directly (if not set to skipped or manual), as it has no previous Service!"/>
+                        <TextBox Name="InputDuration" Margin="8,0,0,0" Style="{StaticResource TextBoxCentered}" ToolTip="Only call/monitor the Service if the scheduled Flight Time is greater than the specified Value."/>
+                        <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}" ToolTip="Only call/monitor the Service if the scheduled Flight Time is greater than the specified Value.">minutes</TextBlock>
+                    </StackPanel>
+
+                    <Button Grid.Column="1" Grid.Row="1" Name="ButtonEdit" Margin="0,6,0,0" Style="{StaticResource BtnSquareSmall}" Visibility="{Binding HasSelection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolVisibilityConverter}}"
+                            ToolTip="Edit Service Activation">
+                        <Image Name="ImageEdit" Style="{StaticResource ImgSquareSmall}"/>
+                    </Button>
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Column="0" Grid.Row="1" Style="{StaticResource GroupBoxDefault}">
+            <GroupBox.Header>Refuel</GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Column="0" Grid.Row="0" Style="{StaticResource SettingItemPanel}" ToolTip="Refuel the Aircraft with a fixed Rate. Refueling Duration is variable (depending on planned Fuel)">
+                    <TextBlock Style="{StaticResource TextBlockDefault}">Fixed Refuel Rate:</TextBlock>
+                    <TextBox Name="InputRefuelRate" Margin="6,0,0,0" Style="{StaticResource TextBoxCentered}" IsEnabled="{Binding UseFixedRefuelRate}" IsReadOnly="{Binding UseRefuelTimeTarget}"/>
+                    <TextBlock Text="{Binding DisplayUnitString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
+                    <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">per sec</TextBlock>
+                </StackPanel>
+
+                <StackPanel Grid.Column="0" Grid.Row="1" Style="{StaticResource SettingItemPanel}" ToolTip="Refuel the Aircraft with a variable Rate. Refueling Duration is fixed (independent of planned Fuel)">
+                    <CheckBox IsChecked="{Binding UseRefuelTimeTarget}" Margin="0" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="">
+                        <TextBlock>Use dynamic Rate for fixed <Underline>Time Target</Underline>:</TextBlock>
+                    </CheckBox>
+                    <TextBox Name="InputTimeTarget" Margin="6,0,0,0" Style="{StaticResource TextBoxCentered}" IsEnabled="{Binding UseRefuelTimeTarget}" IsReadOnly="{Binding UseFixedRefuelRate}"/>
+                    <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
+                </StackPanel>
+
+                <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding SkipFuelOnTankering}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Do not call and ignore GSX Refuel Service if the Fuel on Board is already equal or higher than the planned Fuel Value.">
+                    <TextBlock><Underline>Skip Refuel</Underline> when FOB is higher than planned (for Tankering)</TextBlock>
+                </CheckBox>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Column="0" Grid.Row="2" Style="{StaticResource GroupBoxDefault}">
+            <GroupBox.Header>Pushback &amp; Tug</GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Column="0" Grid.Row="0" Margin="6,8,6,6" Style="{StaticResource SettingItemPanel}" ToolTip="Automatically call Pushback after all Departure Services have finished - in Case the Tug was already attached during Boarding.">
+                    <TextBlock Style="{StaticResource TextBlockDefault}">
+                        Call for Pushback when <Underline>Tug was attached</Underline> during Boarding:
+                    </TextBlock>
+                    <ComboBox SelectedValue="{Binding CallPushbackWhenTugAttached}" SelectedValuePath="Tag" Margin="8,0,0,0" Style="{StaticResource ComboBoxDefault}">
+                        <ComboBoxItem Tag="0">Never</ComboBoxItem>
+                        <ComboBoxItem Tag="1">Services completed</ComboBoxItem>
+                        <ComboBoxItem Tag="2">Final transmitted</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <CheckBox Grid.Column="0" Grid.Row="1" IsChecked="{Binding CallPushbackOnBeacon}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Automatically call Pushback when the Beacon is turned on (AND Brake set &amp; Power disconnected).">
+                    <TextBlock>Call for Pushback when <Underline>Beacon</Underline> is turned on</TextBlock>
+                </CheckBox>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="Fenix2GSX.UI.Views.Automation.ControlGateDoors"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Fenix2GSX.UI.Views.Automation"
+             d:DataContext="{d:DesignInstance Type=local:ModelAutomation}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../StyleResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Column="0" Grid.Row="0" Margin="8,0,8,8" Style="{StaticResource GroupBoxDefault}">
+            <GroupBox.Header>Door Handling</GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding CloseDoorsOnFinal}" Margin="6,8,6,6" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Automatically close all Doors when the Final Loadsheet is transmitted.">
+                    <TextBlock>Close Doors when <Underline>Final Loadsheet</Underline> is transmitted</TextBlock>
+                </CheckBox>
+                
+                <CheckBox Grid.Column="0" Grid.Row="1" IsChecked="{Binding DoorStairHandling}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Open the Passenger Doors when the Stairs have finished moving and close the Doors as soon as they begin to move again.">
+                    <TextBlock>Open / Close <Underline>Passenger Doors</Underline> when GSX <Underline>Stairs</Underline> are connected / removed</TextBlock>
+                </CheckBox>
+                
+                <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding DoorStairIncludeL2}" Style="{StaticResource CheckBoxSettingItemIndented}"
+                          ToolTip="Also open/close the L2 Door on the A321 if it is configured in your GSX Aircraft Profile (= using 3 Stairs on the A321).">
+                    <TextBlock>Include <Underline>L2</Underline> Door (A321)</TextBlock>
+                </CheckBox>
+                
+                <CheckBox Grid.Column="0" Grid.Row="3" IsChecked="{Binding DoorCargoHandling}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Open and Close the Forward &amp; Aft Cargo Door for GSX Boarding and Deboarding (unrelated to who called the GSX Service).">
+                    <TextBlock>Open / Close <Underline>Cargo Doors</Underline> for GSX Boarding &amp; Deboarding</TextBlock>
+                </CheckBox>
+                
+                <CheckBox Grid.Column="0" Grid.Row="4" IsChecked="{Binding DoorsCargoKeepOpenOnLoaded}" Style="{StaticResource CheckBoxSettingItemIndented}"
+                          ToolTip="Do not close the Cargo Doors when GSX' Cargo Loading reached 100%.&#x0a;Note: The Cargo Doors will still be closed once GSX Boarding is reported as completed!">
+                    <TextBlock>Keep Cargo Doors <Underline>open after Loading</Underline> has finished (on Boarding)</TextBlock>
+                </CheckBox>
+                
+                <CheckBox Grid.Column="0" Grid.Row="5" IsChecked="{Binding DoorsCargoKeepOpenOnUnloaded}" Style="{StaticResource CheckBoxSettingItemIndented}"
+                          ToolTip="Do not close the Cargo Doors when GSX' Cargo Unloading reached 100% and do not close after GSX Deboarding has finished.">
+                    <TextBlock>Keep Cargo Doors <Underline>open after Unloading</Underline> has finished (on Deboarding)</TextBlock>
+                </CheckBox>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Column="0" Grid.Row="1" Style="{StaticResource GroupBoxDefault}">
+            <GroupBox.Header>Jetway &amp; Stair Control</GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding CallJetwayStairsOnPrep}" Margin="6,8,6,6" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Automatically call Jetway and/or Stairs (which ever is available) on Session Start.&#x0a;If not called automatically, you can use the INT/RAD Switch to call the Jetway/Stairs in the Preparation Phase (before the OFP is imported).">
+                    <TextBlock>Connect Jetway and Stairs on <Underline>Session Start</Underline></TextBlock>
+                </CheckBox>
+                
+                <CheckBox Grid.Column="0" Grid.Row="1" IsChecked="{Binding CallJetwayStairsDuringDeparture}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Automatically call Jetway and/or Stairs (which ever is available) if they are not already connected when the Departure Phase begins (after OFP Import).">
+                    <TextBlock>Connect Jetway and Stairs when <Underline>Departure Services</Underline> are started</TextBlock>
+                </CheckBox>
+
+                <StackPanel Grid.Column="0" Grid.Row="2" Style="{StaticResource SettingItemPanel}" ToolTip="Remove all Stairs after all Departure Services have finished (so typically after GSX Boarding completed).">
+                    <TextBlock Style="{StaticResource TextBlockDefault}">Remove <Italic>Stairs</Italic> when <Underline>Departure Services</Underline> have finished</TextBlock>
+                    <ComboBox SelectedValue="{Binding RemoveStairsAfterDepature}" SelectedValuePath="Tag" Margin="8,0,0,0" Style="{StaticResource ComboBoxDefault}">
+                        <ComboBoxItem Tag="0">Never</ComboBoxItem>
+                        <ComboBoxItem Tag="1">Always</ComboBoxItem>
+                        <ComboBoxItem Tag="2">Only Jetway</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <CheckBox Grid.Column="0" Grid.Row="3" IsChecked="{Binding RemoveJetwayStairsOnFinal}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Remove both Jetway and Stairs as soon as the Final Loadsheet was transmitted to the Aircraft.">
+                    <TextBlock>Remove Jetway and Stairs when <Underline>Final Loadsheet</Underline> is transmitted</TextBlock>
+                </CheckBox>
+                
+                <CheckBox Grid.Column="0" Grid.Row="4" IsChecked="{Binding CallJetwayStairsOnArrival}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Automatically call Jetway and/or Stairs (which ever is available) on Arrival (= Engines off, Beacon off and Brake set)">
+                    <TextBlock>Connect Jetway and Stairs on <Underline>Arrival</Underline></TextBlock>
+                </CheckBox>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

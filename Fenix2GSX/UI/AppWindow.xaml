@@ -1,0 +1,64 @@
+﻿<Window x:Class="Fenix2GSX.UI.AppWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Fenix2GSX.UI"
+        mc:Ignorable="d"
+        Title="Fenix2GSX" MinWidth="780" SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="StyleResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="8">
+            <Button Name="ButtonMonitor" Style="{StaticResource MenuButton}" ToolTip="Monitor the State of the Sim, GSX and Fenix2GSX.">
+                <StackPanel Style="{StaticResource MenuButtonPanel}">
+                    <Label Style="{StaticResource MenuButtonLabel}">App Monitor</Label>
+                    <Image Source="Icons/monitor.png" Style="{StaticResource MenuButtonImage}"/>
+                </StackPanel>
+            </Button>
+            <Button Name="ButtonAutomation" Style="{StaticResource MenuButton}" ToolTip="Main Settings for automating Interactions with GSX &amp; the Aircraft.">
+                <StackPanel Style="{StaticResource MenuButtonPanel}">
+                    <Label Style="{StaticResource MenuButtonLabel}">Automation</Label>
+                    <Image Source="Icons/automation.png" Style="{StaticResource MenuButtonImage}"/>
+                </StackPanel>
+            </Button>
+            <Button Name="ButtonProfiles" Style="{StaticResource MenuButton}" ToolTip="Use different Automation Settings depending on the current Aircraft.">
+                <StackPanel Style="{StaticResource MenuButtonPanel}">
+                    <Label Style="{StaticResource MenuButtonLabel}">Aircraft Profiles</Label>
+                    <Image Source="Icons/profiles.png" Style="{StaticResource MenuButtonImage}"/>
+                </StackPanel>
+            </Button>
+            <Button Name="ButtonAudio" Style="{StaticResource MenuButton}" ToolTip="Control the Volume of Applications from the ACP Panel in the Cockpit.">
+                <StackPanel Style="{StaticResource MenuButtonPanel}">
+                    <Label Style="{StaticResource MenuButtonLabel}">Volume Control</Label>
+                    <Image Source="Icons/volume.png" Style="{StaticResource MenuButtonImage}"/>
+                </StackPanel>
+            </Button>
+            <Button Name="ButtonSettings" Style="{StaticResource MenuButton}" ToolTip="General Application Settings not associated to a specific Aircraft Profile.">
+                <StackPanel Style="{StaticResource MenuButtonPanel}">
+                    <Label Style="{StaticResource MenuButtonLabel}">App Settings</Label>
+                    <Image Source="Icons/settings.png" Style="{StaticResource MenuButtonImage}"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Name="PanelVersion" Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Center" Margin="8">
+            <TextBlock Name="LabelVersionCheck" FontWeight="DemiBold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ContentControl Grid.Row="2" Name="ViewControl">
+            
+        </ContentControl>
+    </Grid>
+</Window>
