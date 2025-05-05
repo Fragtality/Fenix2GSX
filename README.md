@@ -46,8 +46,7 @@ When **Upgrading** from Versions **before 0.5.0**:
 - The MobiFlight Module is not required anymore, the Installer will offer an Option to remove it - if MF Connector and PilotsDeck are not detected.
 - Even then it is *your Responsibility* to know if the MobiFlight Module is not required for other Addons on your System and safe to remove!
 
-<br/><br/>
-
+<br/>
 Fenix2GSX will display a **little Exclamation Mark** on its SysTray/Notification Area Icon if a **new Version** (both Stable and Development) is available. There is no Version Pop-Up and there will never be.
 <br/><br/>
 
