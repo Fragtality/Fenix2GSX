@@ -94,7 +94,7 @@ The Configuration is done through the **GUI**, open it by **clicking on the Syst
 Everything is stored persistently in the *AppConfig.json* File in the Application's Folder - so backup that File in order to backup your Settings!<br/>
 
 <br/><br/>
-<img src="img/ui.png" width="400"><br/><br/>
+<img src="img/ui.png"><br/><br/>
 Allmost all Settings regarding GSX, Fenix and the general Automation can be found in the '**Automation**' View. All Settings in this View are stored in a Profile.<br/>
 You can have many different Profiles which are automatically loaded depending on the current Aircraft's Registration, Title or Airline. To manage these Profiles use the '**Aircraft Profiles**' View.<br/>
 In order map Applications to the different ACP Audio Channels, use the '**Volume Control**' View. The Volume Control Settings are global - thay apply to all Profiles. Volume Control is generally independent from the GSX Integration/Automation.<br/>
