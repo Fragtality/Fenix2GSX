@@ -29,8 +29,7 @@ Full and proper GSX Integration and Automation for the Fenix A320 (all Variants,
 [Download here](https://github.com/Fragtality/Fenix2GSX/releases/latest)
 
 (Under Assests, the Fenix2GSX-Installer-vXYZ.exe File)
-
-<br/><br/>
+<br/>
 
 ### 1.2 - Installation, Update & Removal
 
