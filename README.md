@@ -47,6 +47,7 @@ When **Upgrading** from Versions **before 0.5.0**:
 - Even then it is *your Responsibility* to know if the MobiFlight Module is not required for other Addons on your System and safe to remove!
 
 <br/>
+
 Fenix2GSX will display a **little Exclamation Mark** on its SysTray/Notification Area Icon if a **new Version** (both Stable and Development) is available. There is no Version Pop-Up and there will never be.
 <br/><br/>
 
@@ -114,14 +115,14 @@ The Settings are grouped into different Categories:<br/><br/>
 Handling if and when the Jetway and or the Stairs are called or removed.<br/>
 It also allows you to completely disable the Door Automation. But even then the Doors will automatically be closed when Pushback or Deice become active!
 
-<br/><br/>
+<br/>
 
 **Ground Equipment**
 
 Configure the Chock-Delay, PCA Handling or the Removal when the Beacon is turned on.<br/>
 Note: Basic Ground Equipment Handling (GPU, Chocks) is always active and can not be disabled. Fenix2GSX will automatically place or remove the Equipment on Startup, during Pushback and on Arrival.
 
-<br/><br/>
+<br/>
 
 **GSX Services**
 
@@ -131,18 +132,20 @@ Configure how the GSX Services are handled:
 - How Refueling is handled: with a fixed Rate or a fixed Time Target (or if it is called at all to support Tankering)
 - If and when Pushback should be called automatically
 
+<br/>
+
 **Operator Selection**
 
 Enable or Disable the automatic Operator Selection. You can also define Preferences to control which Operator is picked by Fenix2GSX! If no preferred Operator is found, it will use the 'GSX Choice' in the Menu.<br/>
 The Strings you add to the Preferred Operator List will be used in a (case insensitive) Substring-Search - so does Name listed in the Menu contains that Text. The List is evaluated from Top to Bottom - so the higher of two available Operator is choosen.
 
-<br/><br/>
+<br/>
 
 **Skip Questions**
 
 All Options related to skip / automatically Answer certain GSX Questions or Aircraft Interactions: Crew Question, Tug Question, Follow-Me Question, Fenix Cabin-Calls and reopen the Pushback Menu.
 
-<br/><br/>
+<br/>
 
 **Aircraft Options**
 
