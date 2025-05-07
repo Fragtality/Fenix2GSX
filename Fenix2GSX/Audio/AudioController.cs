@@ -52,17 +52,6 @@ namespace Fenix2GSX.Audio
             { AudioChannel.CAB, "L:A_ASP_CAB_VOLUME" },
             { AudioChannel.PA, "L:A_ASP_PA_VOLUME" },
         };
-        public static ConcurrentDictionary<AudioChannel, string> VarsVolumeLatchesCapt { get; } = new()
-        {
-            { AudioChannel.VHF1, "L:I_ASP_VHF_1_REC" },
-            { AudioChannel.VHF2, "L:I_ASP_VHF_2_REC" },
-            { AudioChannel.VHF3, "L:I_ASP_VHF_3_REC" },
-            { AudioChannel.HF1, "L:I_ASP_HF_1_REC" },
-            { AudioChannel.HF2, "L:I_ASP_HF_2_REC" },
-            { AudioChannel.INT, "L:I_ASP_INT_REC" },
-            { AudioChannel.CAB, "L:I_ASP_CAB_REC" },
-            { AudioChannel.PA, "L:I_ASP_PA_REC" },
-        };
         public static ConcurrentDictionary<AudioChannel, string> VarsVolumeLatchSwitchesCapt { get; } = new()
         {
             { AudioChannel.VHF1, "L:S_ASP_VHF_1_REC_LATCH" },
@@ -85,17 +74,6 @@ namespace Fenix2GSX.Audio
             { AudioChannel.CAB, "L:A_ASP2_CAB_VOLUME" },
             { AudioChannel.PA, "L:A_ASP2_PA_VOLUME" },
         };
-        public static ConcurrentDictionary<AudioChannel, string> VarsVolumeLatchesFo { get; } = new()
-        {
-            { AudioChannel.VHF1, "L:I_ASP2_VHF_1_REC" },
-            { AudioChannel.VHF2, "L:I_ASP2_VHF_2_REC" },
-            { AudioChannel.VHF3, "L:I_ASP2_VHF_3_REC" },
-            { AudioChannel.HF1, "L:I_ASP2_HF_1_REC" },
-            { AudioChannel.HF2, "L:I_ASP2_HF_2_REC" },
-            { AudioChannel.INT, "L:I_ASP2_INT_REC" },
-            { AudioChannel.CAB, "L:I_ASP2_CAB_REC" },
-            { AudioChannel.PA, "L:I_ASP2_PA_REC" },
-        };
         public static ConcurrentDictionary<AudioChannel, string> VarsVolumeLatchSwitchesFo { get; } = new()
         {
             { AudioChannel.VHF1, "L:S_ASP2_VHF_1_REC_LATCH" },
@@ -112,10 +90,8 @@ namespace Fenix2GSX.Audio
         public AudioController(Config config) : base(config)
         {
             AllVars.Add(VarsVolumeKnobsCapt);
-            AllVars.Add(VarsVolumeLatchesCapt);
             AllVars.Add(VarsVolumeLatchSwitchesCapt);
             AllVars.Add(VarsVolumeKnobsFo);
-            AllVars.Add(VarsVolumeLatchesFo);
             AllVars.Add(VarsVolumeLatchSwitchesFo);
 
             DeviceManager = new(this);

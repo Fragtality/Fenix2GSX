@@ -425,8 +425,8 @@ namespace Fenix2GSX.GSX
                     }
                     else if (SmartButtonRequest
                             || activation == GsxServiceActivation.AfterCalled
-                            || activation == GsxServiceActivation.AfterRequested && (DepartureServicesCalled.Last()?.State >= GsxServiceState.Requested || DepartureServicesCalled.Count == 0)
-                            || activation == GsxServiceActivation.AfterActive && (DepartureServicesCalled.Last()?.State >= GsxServiceState.Active || DepartureServicesCalled.Count == 0)
+                            || activation == GsxServiceActivation.AfterRequested && (DepartureServicesCalled.Last()?.State >= GsxServiceState.Requested || DepartureServicesCalled.Last()?.IsSkipped == true || DepartureServicesCalled.Count == 0)
+                            || activation == GsxServiceActivation.AfterActive && (DepartureServicesCalled.Last()?.State >= GsxServiceState.Active || DepartureServicesCalled.Last()?.IsSkipped == true || DepartureServicesCalled.Count == 0)
                             || (activation == GsxServiceActivation.AfterPrevCompleted && (DepartureServicesCalled.Last()?.IsCompleted == true || DepartureServicesCalled.Last()?.IsSkipped == true || DepartureServicesCalled.Count == 0))
                             || (activation == GsxServiceActivation.AfterAllCompleted && DepartureServicesCalled.All(s => s.IsCompleted || s.IsSkipped)))
                     {

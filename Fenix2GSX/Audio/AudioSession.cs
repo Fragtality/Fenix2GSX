@@ -132,8 +132,8 @@ namespace Fenix2GSX.Audio
         {
             SetSimSubscription(AcpSide.CPT, SubVolume, AudioController.VarsVolumeKnobsCapt, OnVolumeChange);
             SetSimSubscription(AcpSide.FO, SubVolume, AudioController.VarsVolumeKnobsFo, OnVolumeChange);
-            SetSimSubscription(AcpSide.CPT, SubMute, AudioController.VarsVolumeLatchesCapt, OnMuteChange);
-            SetSimSubscription(AcpSide.FO, SubMute, AudioController.VarsVolumeLatchesFo, OnMuteChange);
+            SetSimSubscription(AcpSide.CPT, SubMute, AudioController.VarsVolumeLatchSwitchesCapt, OnMuteChange);
+            SetSimSubscription(AcpSide.FO, SubMute, AudioController.VarsVolumeLatchSwitchesFo, OnMuteChange);
         }
 
         protected virtual void SetSimSubscription(AcpSide side, ConcurrentDictionary<AcpSide, ISimResourceSubscription> dict, ConcurrentDictionary<AudioChannel, string> varDict, Action<ISimResourceSubscription,object> action)

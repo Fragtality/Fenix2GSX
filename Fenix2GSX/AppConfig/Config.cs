@@ -1,5 +1,6 @@
 ﻿using CFIT.AppFramework.AppConfig;
 using CFIT.AppLogger;
+using CoreAudio;
 using Fenix2GSX.Aircraft;
 using Fenix2GSX.Audio;
 using FenixInterface;
@@ -35,6 +36,9 @@ namespace Fenix2GSX.AppConfig
         public virtual bool RunGsxService { get; set; } = true;
         public virtual bool RestartGsxOnTaxiIn { get; set; } = false;
         public virtual bool RunAudioService { get; set; } = true;
+        public virtual string AudioDebugFile { get; set; } = "log\\AudioDebug.txt";
+        public virtual DataFlow AudioDeviceFlow { get; set; } = DataFlow.Render;
+        public virtual DeviceState AudioDeviceState { get; set; } = DeviceState.Active;
         public virtual int AudioServiceRunInterval { get; set; } = 1000;
         public virtual int AudioProcessStartupDelay { get; set; } = 2000;
         public virtual int AudioDeviceCheckInterval { get; set; } = 5000;

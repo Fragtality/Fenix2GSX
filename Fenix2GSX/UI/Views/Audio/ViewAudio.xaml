@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Column="0" Grid.Row="0" Style="{StaticResource GroupBoxDefault}">
@@ -174,6 +175,31 @@
                         <Image Source="../../Icons/remove.png" Style="{StaticResource ImgSquareSmall}"/>
                     </Button>
                 </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Column="0" Grid.Row="4" Style="{StaticResource GroupBoxDefault}">
+            <GroupBox.Header>Troubleshooting</GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBlockDefault}" ToolTip="Only for Troubleshooting, change as advised.">Device-Filter DataFlow:</TextBlock>
+                <ComboBox  Grid.Column="1" Grid.Row="0" Name="SelectorAudioDataFlow" SelectedValue="{Binding AudioDeviceFlow}" ItemsSource="{Binding DeviceDataFlows}" SelectedValuePath="Key" DisplayMemberPath="Value" Margin="8,0,0,0" Style="{StaticResource ComboBoxDefault}" ToolTip="Only for Troubleshooting, change as advised."/>
+
+                <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBlockDefault}" ToolTip="Only for Troubleshooting, change as advised.">Device-Filter State:</TextBlock>
+                <ComboBox  Grid.Column="1" Grid.Row="1" Name="SelectorAudioState" SelectedValue="{Binding AudioDeviceState}" ItemsSource="{Binding DeviceStates}" SelectedValuePath="Key" DisplayMemberPath="Value" Margin="8,0,0,0" Style="{StaticResource ComboBoxDefault}" ToolTip="Only for Troubleshooting, change as advised."/>
+
+                <Button Grid.Column="0" Grid.Row="2" Command="{Binding CommandDebugInfo}" Margin="6,6,6,6" Padding="2">
+                    Write Debug Info
+                </Button>
             </Grid>
         </GroupBox>
     </Grid>

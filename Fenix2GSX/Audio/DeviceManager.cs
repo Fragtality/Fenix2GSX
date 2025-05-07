@@ -5,7 +5,9 @@ using Fenix2GSX.AppConfig;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Fenix2GSX.Audio
 {
@@ -75,7 +77,17 @@ namespace Fenix2GSX.Audio
         {
             List<MMDevice> devices = [];
             sessionCount = 0;
-            var deviceList = DeviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            MMDeviceCollection deviceList = null;
+            try
+            {
+                deviceList = DeviceEnumerator.EnumerateAudioEndPoints(Config.AudioDeviceFlow, Config.AudioDeviceState);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+            }
+            if (deviceList == null)
+                return devices;
 
             foreach (var device in deviceList)
             {
@@ -108,7 +120,17 @@ namespace Fenix2GSX.Audio
         public virtual List<string> GetDeviceNames()
         {
             List<string> devices = [];
-            var deviceList = DeviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            MMDeviceCollection deviceList = null;
+            try
+            {
+                deviceList = DeviceEnumerator.EnumerateAudioEndPoints(Config.AudioDeviceFlow, Config.AudioDeviceState);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+            }
+            if (deviceList == null)
+                return devices;
 
             foreach (var device in deviceList)
             {
@@ -154,6 +176,79 @@ namespace Fenix2GSX.Audio
                 Logger.LogException(ex);
             }
             return list;
+        }
+
+        public virtual void WriteDebugInformation()
+        {
+            try
+            {
+                StringBuilder debugInfo = new();
+                
+                try
+                {
+                    debugInfo.AppendLine($"Configured Audio Mappings: {Config.AudioMappings.Count}");
+                    int i = 0;
+                    foreach (var mapping in Config.AudioMappings)
+                        debugInfo.AppendLine($"\tMapping #{i++} - {mapping}");
+                }
+                catch (Exception ex)
+                {
+                    debugInfo.AppendLine($"Mapping Enumeration raised Exception: '{ex.GetType()}' - '{ex.Message}' - '{ex.TargetSite}' - {ex.StackTrace}");
+                }
+
+                try
+                {
+                    debugInfo.AppendLine("");
+                    debugInfo.AppendLine("Process Enumeration ...");
+                    int i = 0;
+                    foreach (var mapping in Config.AudioMappings)
+                    {
+                        var proc = Sys.GetProcess(mapping.Binary);
+                        var procId = proc?.Id ?? 0;
+                        var procRunning = proc?.ProcessName == mapping.Binary;
+                        debugInfo.AppendLine($"\tProcess for Mapping #{i++} - Binary '{mapping.Binary}' (Running: {procRunning} | ID: {procId})");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    debugInfo.AppendLine($"Process Enumeration raised Exception: '{ex.GetType()}' - '{ex.Message}' - '{ex.TargetSite}' - {ex.StackTrace}");
+                }
+
+                MMDeviceCollection deviceList = null;
+                try
+                {
+                    debugInfo.AppendLine("");
+                    deviceList = DeviceEnumerator.EnumerateAudioEndPoints(Config.AudioDeviceFlow, Config.AudioDeviceState);
+                    debugInfo.AppendLine($"EnumerateAudioEndPoints(): Enumerated {deviceList.Count} Audio Devices (Flow: {Config.AudioDeviceFlow} | State: {Config.AudioDeviceState}).");
+                }
+                catch (Exception ex)
+                {
+                    debugInfo.AppendLine($"Device Enumeration raised Exception: '{ex.GetType()}' - '{ex.Message}' - '{ex.TargetSite}' - {ex.StackTrace}");
+                }
+                if (deviceList == null)
+                    return;
+
+                foreach (var device in deviceList)
+                {
+                    try
+                    {
+                        debugInfo.AppendLine($"Scanning Device '{device.DeviceFriendlyName}' (Sessions: {device?.AudioSessionManager2?.Sessions?.Count} | Blacklisted: {Config.AudioDeviceBlacklist.Where(d => d.StartsWith(device.DeviceFriendlyName, StringComparison.InvariantCultureIgnoreCase)).Any()})");
+                        int i = 1;
+                        foreach (var session in device.AudioSessionManager2.Sessions)
+                            debugInfo.AppendLine($"\tSession #{i++} - Name: {session.DisplayName} | ID: {session.ProcessID} | SessionInstance: {session.SessionInstanceIdentifier}");
+                    }
+                    catch (Exception ex)
+                    {
+                        debugInfo.AppendLine($"Device raised Exception: '{ex.GetType()}' - '{ex.Message}' - '{ex.TargetSite}' - {ex.StackTrace}");
+                    }
+                }
+            
+                File.WriteAllText(Config.AudioDebugFile, debugInfo.ToString());
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+            }
         }
     }
 }

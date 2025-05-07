@@ -41,5 +41,10 @@ namespace Fenix2GSX.AppConfig
         {
             return Channel.GetHashCode() ^ Device.GetHashCode() ^ Binary.GetHashCode() ^ UseLatch.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"Channel: {Channel} - Binary '{Binary}' @ Device '{DeviceName}' (UseLatch: {UseLatch})";
+        }
     }
 }

@@ -53,7 +53,13 @@ namespace Fenix2GSX.GSX.Services
         public override async Task Call()
         {
             await base.Call();
-            if (IsCalled)
+        }
+
+        protected override void NotifyStateChange()
+        {
+            base.NotifyStateChange();
+
+            if (IsFenixAircraft && State == GsxServiceState.Active)
                 Controller.SubScriptSupress.WriteValue(1);
         }
 
