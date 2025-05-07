@@ -37,6 +37,14 @@ namespace Fenix2GSX.GSX.Services
         AfterAllCompleted = 6,
     }
 
+    public enum GsxServiceConstraint
+    {
+        NoneAlways = 0,
+        FirstLeg = 1,
+        TurnAround = 2,
+        CompanyHub = 3,
+    }
+
     public enum GsxServiceState
     {
         Unknown = 0,

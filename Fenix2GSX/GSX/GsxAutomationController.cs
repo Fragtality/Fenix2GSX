@@ -39,6 +39,7 @@ namespace Fenix2GSX.GSX
         protected virtual SimStore SimStore => Controller.SimStore;
         protected virtual Config Config => Controller.Config;
         protected virtual AircraftProfile Profile => Controller.AircraftProfile;
+        public virtual string DepartureIcao { get; protected set; } = "";
         public virtual bool IsInitialized { get; protected set; } = false;
         protected virtual bool RunFlag { get; set; } = true;
         public virtual bool IsStarted { get; protected set; } = false;
@@ -82,6 +83,7 @@ namespace Fenix2GSX.GSX
             if (!IsInitialized)
             {
                 IsInitialized = true;
+                this.OnStateChange += CheckStateChange;
             }
         }
 
@@ -99,6 +101,9 @@ namespace Fenix2GSX.GSX
             foreach (var service in GsxServices)
                 service.Value.ResetState();
 
+            foreach (var activation in Profile.DepartureServices.Values)
+                activation.ActivationCount = 0;
+
             GroundCounter = 0;
             IsOnGround = true;
 
@@ -108,6 +113,7 @@ namespace Fenix2GSX.GSX
             ChockDelay = 0;
             ChockFlashed = false;
             CabinDinged = false;
+            DepartureIcao = "";
 
             DepartureServicesCompleted = false;
             DepartureServicesCalled?.Clear();
@@ -132,6 +138,7 @@ namespace Fenix2GSX.GSX
             ChockDelay = 0;
             ChockFlashed = false;
             CabinDinged = false;
+            DepartureIcao = "";
 
             DepartureServicesCompleted = false;
             DepartureServicesCalled.Clear();
@@ -187,6 +194,12 @@ namespace Fenix2GSX.GSX
             }
             else if (SimGroundState == IsOnGround && GroundCounter > 0)
                 GroundCounter = 0;
+        }
+
+        protected virtual async void CheckStateChange(AutomationState state)
+        {
+            if (state == AutomationState.Departure)
+                DepartureIcao = await Controller.Flightplan.GetDestinationIcao();
         }
 
         protected virtual async Task EvaluateState()
@@ -423,6 +436,21 @@ namespace Fenix2GSX.GSX
                         Logger.Debug($"Skipping Service {DepartureServicesCurrent.ServiceType}");
                         DepartureServicesEnumerator.MoveNext();
                     }
+                    else if (DepartureServicesCurrent.ActivationCount > 0 && DepartureServicesCurrent.ServiceConstraint == GsxServiceConstraint.FirstLeg)
+                    {
+                        Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Constraint '{DepartureServicesCurrent.ServiceConstraintName}'");
+                        MoveDepartureQueue(current, true);
+                    }
+                    else if (DepartureServicesCurrent.ActivationCount == 0 && DepartureServicesCurrent.ServiceConstraint == GsxServiceConstraint.TurnAround)
+                    {
+                        Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Constraint '{DepartureServicesCurrent.ServiceConstraintName}'");
+                        MoveDepartureQueue(current, true);
+                    }
+                    else if (DepartureServicesCurrent.ServiceConstraint == GsxServiceConstraint.CompanyHub && !Profile.IsCompanyHub(DepartureIcao))
+                    {
+                        Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Constraint '{DepartureServicesCurrent.ServiceConstraintName}'");
+                        MoveDepartureQueue(current, true);
+                    }
                     else if (SmartButtonRequest
                             || activation == GsxServiceActivation.AfterCalled
                             || activation == GsxServiceActivation.AfterRequested && (DepartureServicesCalled.Last()?.State >= GsxServiceState.Requested || DepartureServicesCalled.Last()?.IsSkipped == true || DepartureServicesCalled.Count == 0)
@@ -459,6 +487,7 @@ namespace Fenix2GSX.GSX
         protected virtual void MoveDepartureQueue(GsxService service, bool asSkipped = false)
         {
             DepartureServicesCalled.Add(service);
+            DepartureServicesCurrent.ActivationCount++;
             if (asSkipped)
                 service.IsSkipped = true;
             DepartureServicesEnumerator.MoveNext();

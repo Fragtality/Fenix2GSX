@@ -85,6 +85,14 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Constraint">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ServiceConstraintName}" MinWidth="128" Margin="8,1,1,1" Style="{StaticResource TextBlockDefault}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" Margin="0,34,0,0" VerticalAlignment="Top">
@@ -110,6 +118,12 @@
                                   Note: The first Service will always be called directly (if not set to skipped or manual), as it has no previous Service!"/>
                         <TextBox Name="InputDuration" Margin="8,0,0,0" Style="{StaticResource TextBoxCentered}" ToolTip="Only call/monitor the Service if the scheduled Flight Time is greater than the specified Value."/>
                         <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}" ToolTip="Only call/monitor the Service if the scheduled Flight Time is greater than the specified Value.">minutes</TextBlock>
+                        <ComboBox Margin="8,0,0,0" Name="SelectorConstraint" ItemsSource="{Binding TextServiceConstraints}" SelectedIndex="0" SelectedValuePath="Key" DisplayMemberPath="Value" Style="{StaticResource ComboBoxDefault}"
+                                  ToolTip="Select a Constraint for calling the Service:&#x0a;
+                                  None: No Constraint applied, the Service is called every time (Time Constraint still applies)&#x0a;
+                                  Only Departure: The Service is only called on the first Departure (resetted by Fenix2GSX Restart or new Session)&#x0a;
+                                  Only Turn: The Service is only called on Turn Arounds (resetted by Fenix2GSX Restart or new Session)&#x0a;
+                                  Only on Hub: The Service is only called when the Departure ICAO (as of SimBrief) has a Match in the Company Hub List&#x0a;"/>
                     </StackPanel>
 
                     <Button Grid.Column="1" Grid.Row="1" Name="ButtonEdit" Margin="0,6,0,0" Style="{StaticResource BtnSquareSmall}" Visibility="{Binding HasSelection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolVisibilityConverter}}"

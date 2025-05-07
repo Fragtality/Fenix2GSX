@@ -27,6 +27,8 @@ namespace Fenix2GSX.AppConfig
         public virtual string Msfs2024WindowTitle { get; set; } = "Microsoft Flight Simulator 2024 - ";
         public virtual string FenixAircraftString { get; set; } = "FNX_3";
         public virtual string FenixBinary { get; set; } = "FenixSystem";
+        public virtual string SimbriefUrlBase { get; set; } = "https://www.simbrief.com";
+        public virtual string SimbriefUrlPath { get; set; } = "/api/xml.fetcher.php?username={0}&json=v2";
         public virtual int UiRefreshInterval { get; set; } = 500;
         public virtual double FenixWeightBag { get; set; } = 15;
         public virtual double FuelCompareVariance { get; set; } = 25;

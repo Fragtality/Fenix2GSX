@@ -33,6 +33,7 @@ namespace Fenix2GSX.Aircraft
         public virtual string Registration => FenixInterface.Registration;
         public virtual bool IsFlightPlanLoaded => FenixInterface.IsFlightPlanLoaded;
         public virtual bool IsLoaded => FenixInterface.IsLoaded;
+        public virtual string SimbriefUser => FenixInterface.SimbriefUser;
         public virtual TimeSpan FlightDuration => FenixInterface.FlightDuration;
         public virtual bool IsEfbBoardingCompleted => !string.IsNullOrWhiteSpace(EfbBoardingState) && (EfbBoardingState?.Equals("ended", System.StringComparison.InvariantCultureIgnoreCase) == true || EfbBoardingState?.Equals("completed", System.StringComparison.InvariantCultureIgnoreCase) == true);
         public virtual string EfbBoardingState => FenixInterface?.EfbBoardingState;

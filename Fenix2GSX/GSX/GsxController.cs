@@ -27,6 +27,7 @@ namespace Fenix2GSX.GSX
         public virtual GsxMenu Menu { get; }
         protected virtual DateTime NextMenuStartupCheck { get; set; } = DateTime.MaxValue;
         public virtual AircraftInterface AircraftInterface { get; }
+        public virtual Flightplan Flightplan { get; } = new Flightplan();
         public virtual bool AircraftBinary => Sys.GetProcessRunning(Config.FenixBinary);
         public virtual IConfig IConfig => Config;
         public virtual AircraftProfile AircraftProfile { get; protected set; } = null;

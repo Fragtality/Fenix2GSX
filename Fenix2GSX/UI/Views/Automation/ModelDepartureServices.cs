@@ -17,6 +17,7 @@ namespace Fenix2GSX.UI.Views.Automation
             base.InitializeMemberBindings();
 
             CreateMemberBinding<GsxServiceActivation, GsxServiceActivation>(nameof(ServiceConfig.ServiceActivation), new NoneConverter());
+            CreateMemberBinding<GsxServiceConstraint, GsxServiceConstraint>(nameof(ServiceConfig.ServiceConstraint), new NoneConverter());
         }
 
         public override bool UpdateSource(ServiceConfig oldItem, ServiceConfig newItem)
@@ -27,6 +28,7 @@ namespace Fenix2GSX.UI.Views.Automation
                 {
                     oldItem.ServiceActivation = newItem.ServiceActivation;
                     oldItem.MinimumFlightDuration = newItem.MinimumFlightDuration;
+                    oldItem.ServiceConstraint = newItem.ServiceConstraint;
                     return true;
                 }
             }

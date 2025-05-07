@@ -9,8 +9,9 @@ namespace Fenix2GSX.UI.Views.Automation
         GroundEquip = 1,
         GsxServices = 2,
         OperatorSelection = 3,
-        SkipQuestions = 4,
-        AircraftOptions = 5,
+        CompanyHubs = 4,
+        SkipQuestions = 5,
+        AircraftOptions = 6,
     }
 
     public partial class ViewAutomation : UserControl, IView
@@ -23,6 +24,7 @@ namespace Fenix2GSX.UI.Views.Automation
             { SettingControl.GroundEquip, "Ground Equipment" },
             { SettingControl.GsxServices, "GSX Services" },
             { SettingControl.OperatorSelection, "Operator Selection" },
+            { SettingControl.CompanyHubs, "Company Hubs" },
             { SettingControl.SkipQuestions, "Skip Questions" },
             { SettingControl.AircraftOptions, "Aircraft Options" },
         };
@@ -37,6 +39,7 @@ namespace Fenix2GSX.UI.Views.Automation
             SettingControls.Add(SettingControl.GroundEquip, new ControlGroundEquip(ViewModel));
             SettingControls.Add(SettingControl.GsxServices, new ControlGsxServices(ViewModel));
             SettingControls.Add(SettingControl.OperatorSelection, new ControlOperatorSelection(ViewModel));
+            SettingControls.Add(SettingControl.CompanyHubs, new ControlCompanyHubs(ViewModel));
             SettingControls.Add(SettingControl.SkipQuestions, new ControlSkipQuestions(ViewModel));
             SettingControls.Add(SettingControl.AircraftOptions, new ControlAircraftOptions(ViewModel));
 

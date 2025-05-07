@@ -1,5 +1,7 @@
-﻿using Fenix2GSX.GSX.Services;
+﻿using CFIT.AppLogger;
+using Fenix2GSX.GSX.Services;
 using FenixInterface;
+using System;
 using System.Collections.Generic;
 
 namespace Fenix2GSX.AppConfig
@@ -65,6 +67,7 @@ namespace Fenix2GSX.AppConfig
         public virtual bool DoorsCargoKeepOpenOnUnloaded { get; set; } = false;
         public virtual bool OperatorAutoSelect { get; set; } = true;
         public virtual List<string> OperatorPreferences { get; set; } = [];
+        public virtual List<string> CompanyHubs { get; set; } = [];
         public virtual bool SkipFuelOnTankering { get; set; } = true;
         public virtual bool CallReposition { get; set; } = true;
         public virtual bool CallJetwayStairsOnPrep { get; set; } = true;
@@ -93,5 +96,25 @@ namespace Fenix2GSX.AppConfig
             { 3, new ServiceConfig(GsxServiceType.Water, GsxServiceActivation.AfterRequested) },
             { 4, new ServiceConfig(GsxServiceType.Boarding, GsxServiceActivation.AfterAllCompleted) },
         };
+
+        public virtual bool IsCompanyHub(string icao)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(icao))
+                    return false;
+
+                foreach (var hub in CompanyHubs)
+                {
+                    if (hub.StartsWith(icao, StringComparison.InvariantCultureIgnoreCase))
+                        return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+            }
+            return false;
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using CFIT.AppFramework.UI.ViewModels.Commands;
-using Fenix2GSX.AppConfig;
+﻿using Fenix2GSX.AppConfig;
 using Fenix2GSX.GSX.Services;
 using System;
 using System.Collections.Generic;
@@ -26,12 +25,16 @@ namespace Fenix2GSX.UI.Views.Automation
 
             OperatorPreferences = new ModelOperatorPreferences(this);
             OperatorPreferences.CollectionChanged += (_, _) => SaveConfig();
+
+            CompanyHubs = new ModelCompanyHubs(this);
+            CompanyHubs.CollectionChanged += (_, _) => SaveConfig();
         }
 
         protected virtual void UpdateTimer_Tick(object? sender, EventArgs e)
         {
             DepartureServices.NotifyCollectionChanged();
             OperatorPreferences.NotifyCollectionChanged();
+            CompanyHubs.NotifyCollectionChanged();
             UpdateTimer.Stop();
         }
 
@@ -82,6 +85,7 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual bool CallDeboardOnArrival { get => Source.CallDeboardOnArrival; set => SetModelValue<bool>(value); }
         public virtual ModelDepartureServices DepartureServices { get; }
         public virtual Dictionary<GsxServiceActivation, string> TextServiceActivations => ServiceConfig.TextServiceActivations;
+        public virtual Dictionary<GsxServiceConstraint, string> TextServiceConstraints => ServiceConfig.TextServiceConstraints;
 
         public virtual double RefuelRateKgSec { get => ConvertKgToDisplayUnit(Source.RefuelRateKgSec); set => SetModelValue<double>(ConvertFromDisplayUnitKg(value)); }
         public virtual bool UseFixedRefuelRate => !UseRefuelTimeTarget;
@@ -102,8 +106,9 @@ namespace Fenix2GSX.UI.Views.Automation
         //Operator Selection
         public virtual bool OperatorAutoSelect { get => Source.OperatorAutoSelect; set => SetModelValue<bool>(value); }
         public virtual ModelOperatorPreferences OperatorPreferences { get; }
-        public virtual CommandWrapper<int> OperatorUpCommand { get; }
-        public virtual CommandWrapper<int> OperatorDownCommand { get; }
+
+        //Company Hubs
+        public virtual ModelCompanyHubs CompanyHubs { get; }
 
         //Skip Questions
         public virtual bool SkipCrewQuestion { get => Source.SkipCrewQuestion; set => SetModelValue<bool>(value); }
