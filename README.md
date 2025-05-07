@@ -141,6 +141,13 @@ The Strings you add to the Preferred Operator List will be used in a (case insen
 
 <br/>
 
+**Company Hubs**
+
+Manage a List of ICAO Codes which define "Company Hubs" for this Aircraft Profile. 1 to 4 Letters per Code.<br/>
+The Codes are matched in the Order of the List, from Top to Bottom. For each Code, the Departure ICAO is matched if it starts (!) with the Code - so you can define whole Regions.
+
+<br/>
+
 **Skip Questions**
 
 All Options related to skip / automatically Answer certain GSX Questions or Aircraft Interactions: Crew Question, Tug Question, Follow-Me Question, Fenix Cabin-Calls and reopen the Pushback Menu.
