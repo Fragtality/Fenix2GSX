@@ -7,6 +7,8 @@
   "Msfs2024WindowTitle": "Microsoft Flight Simulator 2024 - ",
   "FenixAircraftString": "FNX_3",
   "FenixBinary": "FenixSystem",
+  "SimbriefUrlBase": "https://www.simbrief.com",
+  "SimbriefUrlPath": "/api/xml.fetcher.php?username={0}\u0026json=v2",
   "UiRefreshInterval": 500,
   "FenixWeightBag": 15,
   "FuelCompareVariance": 25,
@@ -140,6 +142,7 @@
       "DoorsCargoKeepOpenOnUnloaded": false,
       "OperatorAutoSelect": true,
       "OperatorPreferences": [],
+      "CompanyHubs": [],
       "SkipFuelOnTankering": true,
       "CallReposition": true,
       "CallJetwayStairsOnPrep": true,
@@ -164,32 +167,37 @@
         "0": {
           "ServiceType": 2,
           "ServiceActivation": 2,
+          "ServiceConstraint": 0,
           "MinimumFlightDuration": "00:00:00"
         },
         "1": {
           "ServiceType": 3,
           "ServiceActivation": 2,
+          "ServiceConstraint": 0,
           "MinimumFlightDuration": "00:00:00"
         },
         "2": {
           "ServiceType": 10,
           "ServiceActivation": 0,
+          "ServiceConstraint": 0,
           "MinimumFlightDuration": "00:00:00"
         },
         "3": {
           "ServiceType": 9,
           "ServiceActivation": 3,
+          "ServiceConstraint": 0,
           "MinimumFlightDuration": "00:00:00"
         },
         "4": {
           "ServiceType": 4,
           "ServiceActivation": 6,
+          "ServiceConstraint": 0,
           "MinimumFlightDuration": "00:00:00"
         }
       }
     }
   ],
-  "ConfigVersion": 2,
+  "ConfigVersion": 3,
   "LogInterval": 3,
   "SizeLimit": 1048576,
   "LogCount": 3,

@@ -423,8 +423,16 @@ namespace Fenix2GSX.GSX.Menu
         public virtual async Task SelectOperator()
         {
             var gsxOperator = GsxOperator.OperatorSelection(AircraftProfile, MenuLines);
-            Logger.Information($"Selecting Operator '{gsxOperator.Title}' (GSX Choice: {gsxOperator.GsxChoice})");
-            await Select(gsxOperator.Number, false);
+            if (gsxOperator != null)
+            {
+                Logger.Information($"Selecting Operator '{gsxOperator.Title}' (GSX Choice: {gsxOperator.GsxChoice})");
+                await Select(gsxOperator.Number, false);
+            }
+            else
+            {
+                Logger.Warning($"Selecting Operator #1 - no Matches found");
+                await Select(1, false);
+            }
         }
 
         public virtual void FreeResources()
