@@ -14,6 +14,7 @@
         public string Title { get; } = title;
         public bool HasTitle => !string.IsNullOrWhiteSpace(Title);
         public bool OpenMenu { get; set; } = open;
+        public bool NoHide { get; set; } = false;
         public bool WaitReady { get; set; } = open;
         public GsxMenuCommandType Type { get; } = type;
 

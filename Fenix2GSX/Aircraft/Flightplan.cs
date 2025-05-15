@@ -1,5 +1,6 @@
 ﻿using CFIT.AppLogger;
 using Fenix2GSX.AppConfig;
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json.Nodes;
@@ -27,8 +28,16 @@ namespace Fenix2GSX.Aircraft
 
         protected virtual async Task<JsonNode> GetJsonNode()
         {
-            Logger.Debug($"Requesting SimBrief ...");
-            return JsonNode.Parse(await HttpClient.GetStringAsync(string.Format(Config.SimbriefUrlPath, SimbriefUser), Token));
+            if (long.TryParse(SimbriefUser, out _))
+            {
+                Logger.Debug($"Requesting SimBrief (via Userid) ...");
+                return JsonNode.Parse(await HttpClient.GetStringAsync(string.Format(Config.SimbriefUrlPathId, SimbriefUser), Token));
+            }
+            else
+            {
+                Logger.Debug($"Requesting SimBrief (via Username) ...");
+                return JsonNode.Parse(await HttpClient.GetStringAsync(string.Format(Config.SimbriefUrlPathName, SimbriefUser), Token));
+            }
         }
 
         protected virtual bool GetJsonString(JsonNode node, out string value)
@@ -48,15 +57,16 @@ namespace Fenix2GSX.Aircraft
             try
             {
                 var json = await GetJsonNode();
+                Logger.Debug($"Received Result");
                 if (GetJsonString(json["origin"]!["icao_code"], out string icao))
                 {
                     Logger.Debug($"Departure ICAO received: {icao}");
                     return icao;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Logger.Warning($"Error while fetching SimBrief Departure ICAO");
+                Logger.Warning($"Error while fetching SimBrief Departure ICAO (Exception: {ex.GetType().Name})");
             }
 
             return "";

@@ -25,7 +25,7 @@ namespace Fenix2GSX.GSX
         public virtual bool IsMsfs2024 => SimController.IsMsfs2024Running;
         public virtual string PathInstallation { get; }
         public virtual GsxMenu Menu { get; }
-        protected virtual DateTime NextMenuStartupCheck { get; set; } = DateTime.MaxValue;
+        protected virtual DateTime NextMenuStartupCheck { get; set; } = DateTime.MinValue;
         public virtual AircraftInterface AircraftInterface { get; }
         public virtual Flightplan Flightplan { get; } = new Flightplan();
         public virtual bool AircraftBinary => Sys.GetProcessRunning(Config.FenixBinary);
@@ -192,7 +192,8 @@ namespace Fenix2GSX.GSX
 
                     if (!Menu.FirstReadyReceived && NextMenuStartupCheck <= DateTime.Now && IsGsxRunning)
                     {
-                        await Menu.Open(false);
+                        Logger.Debug($"Menu Startup Check");
+                        await Menu.Open(true);
                         NextMenuStartupCheck = DateTime.Now + TimeSpan.FromMilliseconds(Config.TimerGsxStartupMenuCheck);
                     }
 
@@ -327,7 +328,7 @@ namespace Fenix2GSX.GSX
             CouatlVarsValid = false;
             CouatlVarsReceived = false;
             CouatlConfigSet = false;
-            NextMenuStartupCheck = DateTime.MaxValue;
+            NextMenuStartupCheck = DateTime.MinValue;
         }
 
         protected override void FreeResources()

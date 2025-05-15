@@ -615,10 +615,13 @@ namespace Fenix2GSX.GSX
                 else if (ServicePushBack.PushStatus >= 5 && ServicePushBack.PushStatus < 9)
                     await ServicePushBack.EndPushback();
             }
-            else if (Profile.KeepDirectionMenuOpen && ServicePushBack.IsTugConnected && ServicePushBack.State == GsxServiceState.Callable && Controller.Menu.MenuState == GsxMenuState.TIMEOUT)
+            else if (Profile.KeepDirectionMenuOpen && ServicePushBack.State == GsxServiceState.Callable && ServicePushBack.IsTugConnected && Controller.Menu.MenuState == GsxMenuState.TIMEOUT)
             {
                 Logger.Debug($"Reopen Direction Menu");
                 await ServicePushBack.Call();
+                await Controller.Menu.MsgMenuReady.ReceiveAsync();
+                if (Controller.Menu.MatchTitle(GsxConstants.MenuPushbackInterrupt) && Controller.Menu.MenuLines[2].StartsWith(GsxConstants.MenuPushbackChange, StringComparison.InvariantCultureIgnoreCase))
+                    await Controller.Menu.Select(3, false, false);
             }
         }
 
@@ -667,7 +670,10 @@ namespace Fenix2GSX.GSX
             if (!ServiceDeboard.IsCalled &&
                 (Profile.CallDeboardOnArrival || (!Profile.CallDeboardOnArrival && SmartButtonRequest)))
             {
-                Logger.Information("Automation: Call Deboard on Arrival");
+                if (SmartButtonRequest)
+                    Logger.Information("Call Deboard by INT/RAD");
+                else
+                    Logger.Information("Automation: Call Deboard on Arrival");
                 await ServiceDeboard.Call();
             }
             else if (!ServiceDeboard.IsCalled && !IsGateConnected && Profile.CallJetwayStairsOnArrival)

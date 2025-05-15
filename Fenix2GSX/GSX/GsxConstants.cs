@@ -62,6 +62,7 @@
         public static string MenuTugAttach { get; } = "Attach Pushback Tug"; 
         public static string MenuPushbackInterrupt { get; } = "Interrupt pushback";
         public static string MenuPushbackDirection { get; } = "Select pushback direction";
+        public static string MenuPushbackChange { get; } = "Change Direction";
         public static string MenuDeiceOnPush { get; } = "Ice warning: do you request the de-icing treatment";
         public static string MenuPushbackConfirm { get; } = "Interrupt pushback";
         public static string MenuPushbackRequest { get; } = "Do you want to request"; 

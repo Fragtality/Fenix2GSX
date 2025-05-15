@@ -8,7 +8,8 @@
   "FenixAircraftString": "FNX_3",
   "FenixBinary": "FenixSystem",
   "SimbriefUrlBase": "https://www.simbrief.com",
-  "SimbriefUrlPath": "/api/xml.fetcher.php?username={0}\u0026json=v2",
+  "SimbriefUrlPathName": "/api/xml.fetcher.php?username={0}\u0026json=v2",
+  "SimbriefUrlPathId": "/api/xml.fetcher.php?userid={0}\u0026json=v2",
   "UiRefreshInterval": 500,
   "FenixWeightBag": 15,
   "FuelCompareVariance": 25,
@@ -197,7 +198,7 @@
       }
     }
   ],
-  "ConfigVersion": 3,
+  "ConfigVersion": 4,
   "LogInterval": 3,
   "SizeLimit": 1048576,
   "LogCount": 3,

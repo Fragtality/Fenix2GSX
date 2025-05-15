@@ -86,8 +86,7 @@ namespace Fenix2GSX.GSX.Services
             else if (PushStatus > 0 && PushStatus < 5)
             {
                 var sequence = new GsxMenuSequence();
-                sequence.Commands.Add(new(5, GsxConstants.MenuGate, true));
-                sequence.Commands.Add(GsxMenuCommand.CreateDummy());
+                sequence.Commands.Add(new(5, GsxConstants.MenuGate, true) { NoHide = true });
                 await Controller.Menu.RunSequence(sequence);
             }
         }

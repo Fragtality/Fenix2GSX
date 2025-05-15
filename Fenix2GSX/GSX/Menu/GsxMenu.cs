@@ -50,7 +50,7 @@ namespace Fenix2GSX.GSX.Menu
         protected virtual bool FollowMeAnswered { get; set; } = false;
         protected virtual bool MenuOpenRequesting { get; set; } = false;
         protected virtual bool MenuOpenAfterReady { get; set; } = false;
-        protected virtual MessageReceiver<MsgGsxMenuReady> MsgMenuReady { get; set; }
+        public virtual MessageReceiver<MsgGsxMenuReady> MsgMenuReady { get; protected set; }
 
 
         public event Action<string> MenuTitleChanged;
@@ -188,7 +188,10 @@ namespace Fenix2GSX.GSX.Menu
             Logger.Debug($"Received Menu Event: {MenuState}");
 
             if (!FirstReadyReceived && MenuState == GsxMenuState.READY)
+            {
+                Logger.Debug($"First Menu Ready received");
                 FirstReadyReceived = true;
+            }
 
             if (MenuState == GsxMenuState.READY)
                 await UpdateMenu();
@@ -348,8 +351,16 @@ namespace Fenix2GSX.GSX.Menu
             if (command.OpenMenu)
             {
                 Logger.Verbose($"wait menu");
-                if (await OpenHide(command.WaitReady) == false)
-                    return result;
+                if (command.NoHide)
+                {
+                    if (await Open(command.WaitReady) == false)
+                        return result;
+                }
+                else
+                {
+                    if (await OpenHide(command.WaitReady) == false)
+                        return result;
+                }
             }
             else if (command.WaitReady && MenuState != GsxMenuState.READY)
             {
