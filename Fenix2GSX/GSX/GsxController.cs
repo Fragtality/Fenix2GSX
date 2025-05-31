@@ -183,14 +183,16 @@ namespace Fenix2GSX.GSX
                 Logger.Debug($"AircraftInterface loaded. Searching Profile ...");
                 LoadAircraftProfile();
 
-                Logger.Debug($"GsxService active");
+                Logger.Debug($"GsxService active (VarsReceived: {CouatlVarsReceived} | FirstReady: {Menu.FirstReadyReceived})");
                 IsActive = true;
                 while (SimConnect.IsSessionRunning && IsExecutionAllowed && !Token.IsCancellationRequested)
                 {
+                    Logger.Verbose($"Controller Tick - VarsReceived: {CouatlVarsReceived} | FirstReady: {Menu.FirstReadyReceived} | VarsValid: {CouatlVarsValid} | IsGsxRunning: {IsGsxRunning}");
+
                     if (!CouatlVarsReceived)
                         OnCouatlVariable(null, null);
 
-                    if (!Menu.FirstReadyReceived && NextMenuStartupCheck <= DateTime.Now && IsGsxRunning)
+                    if (CouatlVarsValid && !Menu.FirstReadyReceived && NextMenuStartupCheck <= DateTime.Now && IsGsxRunning)
                     {
                         Logger.Debug($"Menu Startup Check");
                         await Menu.Open(true);
@@ -219,9 +221,18 @@ namespace Fenix2GSX.GSX
                 if (ex is not TaskCanceledException)
                     Logger.LogException(ex);
             }
-            IsActive = false;
 
-            AircraftInterface.Stop();
+            try
+            {
+                IsActive = false;
+                Stop();
+            }
+            catch (Exception ex)
+            {
+                if (ex is not TaskCanceledException)
+                    Logger.LogException(ex);
+            }
+            
             Logger.Debug($"GsxService ended");
         }
 
@@ -315,6 +326,7 @@ namespace Fenix2GSX.GSX
         {
             AutomationController.Stop();
             AircraftInterface.Reset();
+            AircraftInterface.Stop();
             Menu.Reset();
 
             base.Stop();

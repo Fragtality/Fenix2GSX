@@ -67,7 +67,7 @@ namespace Fenix2GSX.GSX.Menu
 
                 MsgMenuReady = Controller.ReceiverStore.Add<MsgGsxMenuReady>();
 
-                Controller.MsgCouatlStarted.OnMessage += OnCouatlStarted;
+                Controller.MsgCouatlStopped.OnMessage += OnCouatlStopped;
 
                 MenuCallbacks.Add(GsxConstants.MenuTugAttach, OnTugQuestion);
                 MenuCallbacks.Add(GsxConstants.MenuPushbackRequest, OnPushQuestion);
@@ -146,9 +146,9 @@ namespace Fenix2GSX.GSX.Menu
                 await Select(1, false, false, 2);
         }
 
-        protected virtual void OnCouatlStarted(MsgGsxCouatlStarted msg)
+        protected virtual void OnCouatlStopped(MsgGsxCouatlStopped msg)
         {
-            _ = OpenHide();
+            FirstReadyReceived = false;
         }
 
         public virtual void Reset()
@@ -448,7 +448,7 @@ namespace Fenix2GSX.GSX.Menu
 
         public virtual void FreeResources()
         {
-            Controller.MsgCouatlStarted.OnMessage -= OnCouatlStarted;
+            Controller.MsgCouatlStopped.OnMessage -= OnCouatlStopped;
 
             Controller.SimStore.Remove(GsxConstants.EventMenu).OnReceived -= OnMenuEvent;
             Controller.SimStore.Remove(GsxConstants.VarMenuOpen);

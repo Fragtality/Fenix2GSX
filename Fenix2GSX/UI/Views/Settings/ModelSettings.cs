@@ -25,10 +25,7 @@ namespace Fenix2GSX.UI.Views.Settings
         public virtual double FuelCompareVariance { get => ConvertKgToDisplayUnit(Source.FuelCompareVariance); set => SetModelValue<double>(ConvertFromDisplayUnitKg(value)); }
         public virtual bool FuelRoundUp100 { get => Source.FuelRoundUp100; set => SetModelValue<bool>(value); }
         public virtual int CargoPercentChangePerSec { get => Source.CargoPercentChangePerSec; set => SetModelValue<int>(value); }
-        public virtual int DoorCargoFwdBoardDelay { get => Source.DoorCargoFwdBoardDelay; set => SetModelValue<int>(value); }
-        public virtual int DoorCargoAftBoardDelay { get => Source.DoorCargoAftBoardDelay; set => SetModelValue<int>(value); }
-        public virtual int DoorCargoFwdDeboardDelay { get => Source.DoorCargoFwdDeboardDelay; set => SetModelValue<int>(value); }
-        public virtual int DoorCargoAftDeboardDelay { get => Source.DoorCargoAftDeboardDelay; set => SetModelValue<int>(value); }
+        public virtual int DoorCargoDelay { get => Source.DoorCargoDelay; set => SetModelValue<int>(value); }
         public virtual bool SkipWalkAround { get => Source.SkipWalkAround; set => SetModelValue<bool>(value); }
         public virtual bool RestartGsxOnTaxiIn { get => Source.RestartGsxOnTaxiIn; set => SetModelValue<bool>(value); }
         public virtual bool EfbResetOnStartup { get => Source.EfbResetOnStartup; set => SetModelValue<bool>(value); }

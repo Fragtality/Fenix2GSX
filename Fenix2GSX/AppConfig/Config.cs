@@ -96,10 +96,7 @@ namespace Fenix2GSX.AppConfig
         public virtual bool FuelRoundUp100 { get; set; } = true;
         public virtual Dictionary<string, double> FuelFobSaved { get; set; } = [];
         public virtual int CargoPercentChangePerSec { get; set; } = 5;
-        public virtual int DoorCargoFwdBoardDelay { get; set; } = 30;
-        public virtual int DoorCargoAftBoardDelay { get; set; } = 2;
-        public virtual int DoorCargoFwdDeboardDelay { get; set; } = 8;
-        public virtual int DoorCargoAftDeboardDelay { get; set; } = 2;
+        public int DoorCargoDelay { get; set; } = 7;
         public virtual bool InterceptGpuAndChocksOnBeacon { get; set; } = true;
         public virtual int OperatorWaitTimeout { get; set; } = 1500;
         public virtual int OperatorSelectTimeout { get; set; } = 10000;

@@ -57,7 +57,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <DataGrid Grid.Column="0" Grid.Row="0" Name="GridDepartureServices" Margin="6,10,6,6" MinWidth="312" AutoGenerateColumns="False" HeadersVisibility="Column" SelectionMode="Single" IsReadOnly="True" HorizontalAlignment="Left" GridLinesVisibility="None"
-                              ToolTip="Departure Services: GSX Services and their Order to be called, monitored or skipped in the Deparute Phase.">
+                              ToolTip="Departure Services: GSX Services and their Order to be called, monitored or skipped in the Departure Phase.">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Service">
                                 <DataGridTemplateColumn.CellTemplate>

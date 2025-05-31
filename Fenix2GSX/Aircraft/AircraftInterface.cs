@@ -119,6 +119,7 @@ namespace Fenix2GSX.Aircraft
 
         public virtual void Stop()
         {
+            Reset();
             FenixInterface.Stop();
         }
 

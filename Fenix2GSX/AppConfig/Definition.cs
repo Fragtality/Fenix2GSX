@@ -5,7 +5,7 @@ namespace Fenix2GSX.AppConfig
 {
     public class Definition : ProductDefinitionBase
     {
-        public override int BuildConfigVersion { get; } = 4;
+        public override int BuildConfigVersion { get; } = 5;
         public override string ProductName => "Fenix2GSX";
         public override string ProductExePath => Path.Join(Path.Join(ProductPath, "bin"), ProductExe);
         public override bool ProductVersionCheckDev => true;

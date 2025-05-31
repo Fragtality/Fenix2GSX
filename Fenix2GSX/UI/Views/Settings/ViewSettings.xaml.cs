@@ -16,10 +16,7 @@ namespace Fenix2GSX.UI.Views.Settings
             ViewModel.BindStringNumber(nameof(ViewModel.FuelResetDefaultKg), InputFuelDefault);
             ViewModel.BindStringNumber(nameof(ViewModel.FuelCompareVariance), InputFuelVariance);
             ViewModel.BindStringInteger(nameof(ViewModel.CargoPercentChangePerSec), InputCargoRate);
-            ViewModel.BindStringInteger(nameof(ViewModel.DoorCargoFwdBoardDelay), InputDelayFwdBoard);
-            ViewModel.BindStringInteger(nameof(ViewModel.DoorCargoAftBoardDelay), InputDelayAftBoard);
-            ViewModel.BindStringInteger(nameof(ViewModel.DoorCargoFwdDeboardDelay), InputDelayFwdDeboard);
-            ViewModel.BindStringInteger(nameof(ViewModel.DoorCargoAftDeboardDelay), InputDelayAftDeboard);
+            ViewModel.BindStringInteger(nameof(ViewModel.DoorCargoDelay), InputDoorCargoDelay);
         }
 
         public virtual void Start()

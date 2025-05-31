@@ -106,10 +106,7 @@
   "FuelRoundUp100": true,
   "FuelFobSaved": {},
   "CargoPercentChangePerSec": 5,
-  "DoorCargoFwdBoardDelay": 30,
-  "DoorCargoAftBoardDelay": 2,
-  "DoorCargoFwdDeboardDelay": 8,
-  "DoorCargoAftDeboardDelay": 2,
+  "DoorCargoDelay": 7,
   "InterceptGpuAndChocksOnBeacon": true,
   "OperatorWaitTimeout": 1500,
   "OperatorSelectTimeout": 10000,
@@ -198,7 +195,7 @@
       }
     }
   ],
-  "ConfigVersion": 4,
+  "ConfigVersion": 5,
   "LogInterval": 3,
   "SizeLimit": 1048576,
   "LogCount": 3,

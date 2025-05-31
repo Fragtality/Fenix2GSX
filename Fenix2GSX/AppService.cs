@@ -84,14 +84,14 @@ namespace Fenix2GSX
             {
                 Logger.Debug($"Starting Process {App.Config.BinaryGsx2020}");
                 string dir = Path.Join(GsxService.PathInstallation, "couatl64");
-                Sys.StartProcess(Path.Join(dir, App.Config.BinaryGsx2020), dir);
+                Sys.StartProcess(Path.Join(dir, $"{App.Config.BinaryGsx2020}.exe"), dir);
             }
 
             if (SimService.IsMsfs2024 && !Sys.GetProcessRunning(App.Config.BinaryGsx2024))
             {
                 Logger.Debug($"Starting Process {App.Config.BinaryGsx2024}");
                 string dir = Path.Join(GsxService.PathInstallation, "couatl64");
-                Sys.StartProcess(Path.Join(dir, App.Config.BinaryGsx2024), dir);
+                Sys.StartProcess(Path.Join(dir, $"{App.Config.BinaryGsx2024}.exe"), dir);
             }
         }
 

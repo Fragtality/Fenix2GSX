@@ -101,9 +101,6 @@ namespace Fenix2GSX.GSX
             foreach (var service in GsxServices)
                 service.Value.ResetState();
 
-            foreach (var activation in Profile.DepartureServices.Values)
-                activation.ActivationCount = 0;
-
             GroundCounter = 0;
             IsOnGround = true;
 
@@ -121,6 +118,9 @@ namespace Fenix2GSX.GSX
             {
                 DepartureServicesEnumerator = Profile.DepartureServices.GetEnumerator();
                 DepartureServicesEnumerator.MoveNext();
+
+                foreach (var activation in Profile.DepartureServices.Values)
+                    activation.ActivationCount = 0;
             }
         }
 
@@ -152,11 +152,14 @@ namespace Fenix2GSX.GSX
             RunFlag = true;
             DepartureServicesEnumerator = Profile.DepartureServices.GetEnumerator();
             DepartureServicesEnumerator.MoveNext();
+            foreach (var activation in Profile.DepartureServices.Values)
+                activation.ActivationCount = 0;
             Logger.Information($"Automation Service started");
 
-            while (RunFlag && !Controller.Token.IsCancellationRequested)
+            while (RunFlag && Controller.IsActive && !Controller.Token.IsCancellationRequested)
             {
                 CheckGround();
+                Logger.Verbose($"Automation Tick - State: {State} | ServicesValid: {ServicesValid}");
                 if (Controller.IsGsxRunning && Controller.Menu.FirstReadyReceived && GroundCounter == 0)
                 {
                     await EvaluateState();
@@ -176,7 +179,7 @@ namespace Fenix2GSX.GSX
 
         public virtual void Stop()
         {
-            IsStarted= false;
+            IsStarted = false;
             RunFlag = false;
         }
 
