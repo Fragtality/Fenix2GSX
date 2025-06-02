@@ -101,6 +101,9 @@
   "MenuOpenTimeout": 5000,
   "EfbCheckInterval": 1500,
   "EfbResetOnStartup": true,
+  "DingOnStartup": true,
+  "DingOnFinal": true,
+  "DingOnTurnaround": true,
   "WeightDisplayUnit": 0,
   "FuelResetDefaultKg": 3000,
   "FuelRoundUp100": true,
@@ -195,7 +198,7 @@
       }
     }
   ],
-  "ConfigVersion": 5,
+  "ConfigVersion": 6,
   "LogInterval": 3,
   "SizeLimit": 1048576,
   "LogCount": 3,

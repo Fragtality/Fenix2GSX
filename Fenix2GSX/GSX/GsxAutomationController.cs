@@ -289,7 +289,8 @@ namespace Fenix2GSX.GSX
                 {
                     Aircraft.UnloadOfp();
                     StateChange(AutomationState.TurnAround);
-                    Aircraft.DingCabin();
+                    if (Config.DingOnTurnaround)
+                        Aircraft.DingCabin();
                 }
             }
             //Turnaround => Departure
@@ -373,7 +374,8 @@ namespace Fenix2GSX.GSX
 
             if (!CabinDinged && ExecutedReposition && (ServiceJetway.IsRunning || ServiceStairs.IsRunning))
             {
-                Aircraft.DingCabin();
+                if (Config.DingOnStartup)
+                    Aircraft.DingCabin();
                 CabinDinged = true;
             }
         }
