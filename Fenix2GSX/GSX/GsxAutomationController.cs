@@ -65,7 +65,7 @@ namespace Fenix2GSX.GSX
         protected virtual GsxServiceDeboarding ServiceDeboard => GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding;
         protected virtual GsxServiceDeice ServiceDeice => GsxServices[GsxServiceType.Deice] as GsxServiceDeice;
         public virtual bool IsGateConnected => ServiceJetway.IsConnected || ServiceStairs.IsConnected;
-        public virtual bool ServicesValid => ServiceStairs.State != GsxServiceState.Unknown && ServiceJetway.State != GsxServiceState.Unknown || !IsOnGround;
+        public virtual bool ServicesValid => ServiceStairs.State != GsxServiceState.Unknown || ServiceJetway.State != GsxServiceState.Unknown || !IsOnGround;
 
         public virtual bool ExecutedReposition { get; protected set; } = false;
         public virtual bool DepartureServicesCompleted { get; protected set; } = false;
