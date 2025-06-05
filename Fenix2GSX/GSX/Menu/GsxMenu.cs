@@ -329,7 +329,7 @@ namespace Fenix2GSX.GSX.Menu
             int counter = 0;
             foreach (var command in sequence.Commands)
             {
-                if (!Controller.IsGsxRunning)
+                if (!Controller.IsGsxRunning && !sequence.IgnoreGsxState)
                     break;
 
                 if (await RunCommand(command) == true)

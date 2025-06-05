@@ -66,6 +66,8 @@ namespace Fenix2GSX.GSX.Services
         public override void FreeResources()
         {
             SubBoardService.OnReceived -= OnStateChange;
+            SubPaxTotal.OnReceived -= NotifyPaxChange;
+            SubCargoPercent.OnReceived -= NotifyCargoChange;
 
             SimStore.Remove(GsxConstants.VarServiceBoarding);
             SimStore.Remove(GsxConstants.VarPaxTarget);
