@@ -477,7 +477,9 @@ namespace Fenix2GSX.GSX
                     if (current.IsCompleted)
                         Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} already completed");
                     else if (current.IsCalled || current.IsRunning)
+                    {
                         Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} called externally");
+                    }
                     else
                     {
                         Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Time Constraint");

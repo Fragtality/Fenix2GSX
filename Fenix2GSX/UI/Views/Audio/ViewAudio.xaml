@@ -142,7 +142,7 @@
 
                 <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,6,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <Button Name="ButtonAddMapping" Margin="0,0,0,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Add/Update App Mapping">
-                        <Image Name="ImageAddMapping" Source="../../Icons/plus-circle.png" Style="{StaticResource ImgSquareSmall}"/>
+                        <Image Name="ImageAddMapping" Source="../../Icons/add.png" Style="{StaticResource ImgSquareSmall}"/>
                     </Button>
                     <Button Name="ButtonRemoveMapping" Margin="6,0,6,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Remove App Mapping">
                         <Image Source="../../Icons/remove.png" Style="{StaticResource ImgSquareSmall}"/>
@@ -169,7 +169,7 @@
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Margin="6,0,6,6" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <TextBox Name="InputDevice" Style="{StaticResource TextBoxLeft}" MinWidth="248" MinHeight="24" ToolTip="The Name of the Audio Device to be ignored.&#x0a;Every Device whose Name begins with the entered Text will be ignored.&#x0a;TIP: Press Ctrl+C on the Device Selection above to copy the exact Name of a Device!"/>
                     <Button Name="ButtonAddDevice" Margin="6,0,0,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Add Device to Blacklist">
-                        <Image Name="ImageAddDevice" Source="../../Icons/plus-circle.png" Style="{StaticResource ImgSquareSmall}"/>
+                        <Image Name="ImageAddDevice" Source="../../Icons/add.png" Style="{StaticResource ImgSquareSmall}"/>
                     </Button>
                     <Button Name="ButtonRemoveDevice" Margin="6,0,6,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Remove Device from Blacklist">
                         <Image Source="../../Icons/remove.png" Style="{StaticResource ImgSquareSmall}"/>

@@ -36,6 +36,7 @@ namespace Fenix2GSX.GSX.Menu
         public virtual List<string> MenuLines { get; } = [];
 
         public virtual bool FirstReadyReceived { get; protected set; } = false;
+        public virtual bool IsSequenceActive { get; protected set; } = false;
         protected virtual bool WasOperatorSelected { get; set; } = false;
         public virtual bool IsMenuReady => MenuState == GsxMenuState.READY || MenuState == GsxMenuState.HIDE;
         public virtual bool IsGateMenu => MatchTitle(GsxConstants.MenuGate);
@@ -290,10 +291,20 @@ namespace Fenix2GSX.GSX.Menu
             return msg != null;
         }
 
-        public virtual async Task<bool> OpenHide(bool waitReady = true)
+        public virtual async Task<bool> OpenHide()
         {
-            bool result = await Open(waitReady);
-            Hide();
+            bool result = false;
+            try
+            {
+                result = await Open(true);
+                await Task.Delay(75);
+                Hide();
+            }
+            catch (Exception ex)
+            {
+                if (ex is not TaskCanceledException)
+                    Logger.LogException(ex);
+            }
             return result;
         }
 
@@ -317,12 +328,13 @@ namespace Fenix2GSX.GSX.Menu
             if (hide == 1)
                 Hide();
             else if (hide == 2)
-                await OpenHide(false);
+                await OpenHide();
         }
 
         public virtual async Task<bool> RunSequence(GsxMenuSequence sequence)
         {
             bool result = false;
+            IsSequenceActive = true;
             sequence.IsExecuting = true;
             WasOperatorSelected = false;
 
@@ -340,6 +352,7 @@ namespace Fenix2GSX.GSX.Menu
                 sequence.CallbackCompleted?.Invoke(sequence);
             
             sequence.IsExecuting = false;
+            IsSequenceActive = false;
             sequence.IsSuccess = result;
             return result;
         }
@@ -358,7 +371,7 @@ namespace Fenix2GSX.GSX.Menu
                 }
                 else
                 {
-                    if (await OpenHide(command.WaitReady) == false)
+                    if (await OpenHide() == false)
                         return result;
                 }
             }

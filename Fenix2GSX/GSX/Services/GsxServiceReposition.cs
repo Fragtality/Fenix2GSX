@@ -11,6 +11,8 @@ namespace Fenix2GSX.GSX.Services
             sequence.Commands.Add(new(10, GsxConstants.MenuGate, true));
             sequence.Commands.Add(new(1, GsxConstants.MenuParkingSelect) { WaitReady = true });
             sequence.Commands.Add(GsxMenuCommand.CreateDummy());
+            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
+            sequence.Commands.Add(GsxMenuCommand.CreateReset());
             sequence.IgnoreGsxState = true;
 
             return sequence;

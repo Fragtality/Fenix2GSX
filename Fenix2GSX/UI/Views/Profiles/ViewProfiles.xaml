@@ -72,7 +72,7 @@
 
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
                     <Button Name="ButtonAdd" Margin="0,0,2,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Add/Update Profile">
-                        <Image Name="ImageAdd" Source="../../Icons/plus-circle.png" Style="{StaticResource ImgSquareSmall}"/>
+                        <Image Name="ImageAdd" Source="../../Icons/add.png" Style="{StaticResource ImgSquareSmall}"/>
                     </Button>
                     <Button Name="ButtonRemove" Margin="6,0,6,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Remove Profile">
                         <Image Source="../../Icons/remove.png" Style="{StaticResource ImgSquareSmall}"/>
