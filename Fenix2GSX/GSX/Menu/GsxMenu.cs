@@ -240,7 +240,7 @@ namespace Fenix2GSX.GSX.Menu
                 await TaskTools.RunLogged(() => callback.Value.Invoke(this), Controller.Token);
 
             if (MenuOpenAfterReady)
-                _ = Task.Delay(1000, Controller.Token).ContinueWith((_) => OpenHide());
+                _ = Task.Delay(1000, Controller.Token).ContinueWith((_) => Open());
         }
 
         public virtual void Hide()
