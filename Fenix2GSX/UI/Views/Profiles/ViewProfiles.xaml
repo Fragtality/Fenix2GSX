@@ -12,6 +12,17 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../../StyleResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="LabelProperty" TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="FontWeight" Value="DemiBold" />
+                <Setter Property="FontSize" Value="12" />
+            </Style>
+            <Style x:Key="LabelValue" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="FontSize" Value="12" />
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid HorizontalAlignment="Stretch">
@@ -36,22 +47,17 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0" Grid.Row="0" Style="{StaticResource LabelMonitorPanel}" ToolTip="The Airline's Name reported by the SimVar 'ATC AIRLINE'.">
-                    <Label>Airline:</Label>
-                    <Label Content="{Binding CurrentAirline}"/>
-                </StackPanel>
-                <StackPanel Grid.Column="0" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="The Aircraft's Registration reported by the Fenix EFB.">
-                    <Label>Registration:</Label>
-                    <Label Content="{Binding CurrentRegistration}"/>
-                </StackPanel>
-                <StackPanel Grid.Column="0" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="The Aircraft's Title reported by the SimVar 'TITLE'.">
-                    <Label>Title:</Label>
-                    <Label Content="{Binding CurrentTitle}"/>
-                </StackPanel>
-                <StackPanel Grid.Column="0" Grid.Row="3" Style="{StaticResource LabelMonitorPanel}" ToolTip="The Aircraft Profile currently used by Fenix2GSX.">
-                    <Label>Active Profile:</Label>
-                    <Label Content="{Binding CurrentProfile}"/>
-                </StackPanel>
+                <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource LabelProperty}" ToolTip="The Airline's Name reported by the SimVar 'ATC AIRLINE'.">Airline:</Label>
+                <TextBlock Grid.Column="1" Grid.Row="0" Style="{StaticResource LabelValue}" Text="{Binding CurrentAirline}"/>
+
+                <Label Grid.Column="0" Grid.Row="1" Style="{StaticResource LabelProperty}" ToolTip="The Aircraft's Registration reported by the Fenix EFB.">Registration:</Label>
+                <TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource LabelValue}" Text="{Binding CurrentRegistration}"/>
+
+                <Label Grid.Column="0" Grid.Row="2" Style="{StaticResource LabelProperty}" ToolTip="The Aircraft's Title reported by the SimVar 'TITLE'.">Title:</Label>
+                <TextBlock Grid.Column="1" Grid.Row="2" Style="{StaticResource LabelValue}" Text="{Binding CurrentTitle}"/>
+
+                <Label Grid.Column="0" Grid.Row="3" Style="{StaticResource LabelProperty}" ToolTip="The Aircraft Profile currently used by Fenix2GSX.">Active Profile:</Label>
+                <TextBlock Grid.Column="1" Grid.Row="3" Style="{StaticResource LabelValue}" Text="{Binding CurrentProfile}"/>
             </Grid>
         </GroupBox>
 
