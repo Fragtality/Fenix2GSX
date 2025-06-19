@@ -137,14 +137,16 @@ Configure how the GSX Services are handled:
 **Operator Selection**
 
 Enable or Disable the automatic Operator Selection. You can also define Preferences to control which Operator is picked by Fenix2GSX! If no preferred Operator is found, it will use the 'GSX Choice' in the Menu.<br/>
-The Strings you add to the Preferred Operator List will be used in a (case insensitive) Substring-Search - so does Name listed in the Menu contains that Text. The List is evaluated from Top to Bottom - so the higher of two available Operator is choosen.
+The Preferred Operator List Operator List works only on the *Name* of the Operator as seen in the *GSX Menu*!<br/>
+The Strings you add to the Preferred Operator List will be used in a (case insensitive) Substring-Search - so does *Name* listed in the *Menu* contains that Text. The List is evaluated from Top to Bottom - so the higher of two available Operator is choosen.
 
 <br/>
 
 **Company Hubs**
 
-Manage a List of ICAO Codes which define "Company Hubs" for this Aircraft Profile. 1 to 4 Letters per Code.<br/>
-The Codes are matched in the Order of the List, from Top to Bottom. For each Code, the Departure ICAO is matched if it starts (!) with the Code - so you can define whole Regions.
+Manage a List of *Airport* ICAO Codes which define "Company Hubs" for this Aircraft Profile. 1 to 4 Letters per Code.<br/>
+The Codes are matched in the Order of the List, from Top to Bottom. For each Code, the Departure ICAO is matched if it starts (!) with the Code - so you can define whole Regions.<br/>
+If your current Departure Airport is matched, Departure Services with the "Only on Hub" Constraint will be called.
 
 <br/>
 
@@ -164,7 +166,7 @@ By default, Fenix2GSX saves the FOB per Aircraft Registration upon Arrival. When
 #### 2.3.2 - Aircraft Profiles
 
 The Idea behind Aircraft Profiles is to have *different Automation Settings* for *different Operators* without having the Need to change the Settings manually every time.<br/>
-The *Profile Name* is only for display Purposes, it doesn't have a functional Impact. The *Match Type* defines on what Aircraft Information the *Match String* will be compared to.<br/>
+The *Profile Name* is only for display Purposes, it doesn't have a functional Impact. The *Match Type* defines on what Aircraft Information the *Match String* will be compared to. The Match String can contain multiple Values separated by a Pipe `|` - for Example `Condor|CFG` for a Match String for the Airline.<br/>
 When the Session starts and the Connection to the Fenix EFB was successful, Fenix2GSX will automatically switch to the Profile with the best Match:
 1) The Aircraft Registration (as reported by the EFB) is matching exactly (case insensitive)
 2) The Aircraft Title (as reported by the Sim) contains the Match String (case insensitive)
@@ -308,6 +310,7 @@ You can also use the **INT/RAD** Switch on the ACP (both are monitored) to trigg
 - **Request Pushback** - Pushback Phase - Calls the GSX Pushback Service and **removes Ground-Equipment**. When Pushback was already called but not started yet, you can use the Switch again to **reopen the Direction Menu**.
 - **Stop / Confirm Pushback** - Pushback Phase - Selects **Menu Option 1** in the GSX Menu, so depending on the current State (and GSX Settings) it will either **Stop Pushback** or **Confirms** the good **Engine-Start**.
 - **Request Deboarding**, after Parking Brake set, Engines off and Beacon off. If Automatic Jetway/Stair Operation is enabled, wait for them to be called. Only works when automatic Deboarding is disabled.
+- **Skip Turnaround** while you are in the Turnaround Phase. You should still prefer to trigger the Departure Phase by importing a new OFP in the EFB!
 
 <br/><br/><br/>
 
