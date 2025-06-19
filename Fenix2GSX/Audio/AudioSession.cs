@@ -6,7 +6,6 @@ using Fenix2GSX.AppConfig;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Fenix2GSX.Audio
@@ -14,6 +13,7 @@ namespace Fenix2GSX.Audio
     public class AudioSession(AudioController controller, AudioMapping mapping)
     {
         protected virtual AudioController Controller { get; } = controller;
+        protected virtual SessionManager Manager => Controller.SessionManager;
         public virtual AudioMapping Mapping => new(Channel, Device, Binary, UseLatch);
         public virtual AudioChannel Channel { get; } = mapping.Channel;
         public virtual string Device { get; } = mapping.Device;
@@ -22,7 +22,7 @@ namespace Fenix2GSX.Audio
         public virtual uint ProcessId { get; protected set; } = 0;
         public virtual int ProcessCount { get; protected set; } = 0;
         public virtual bool IsActive => ProcessId > 0 && Controller.HasInitialized && Controller.IsExecutionAllowed;
-        public virtual bool IsRunning => Sys.GetProcessRunning(Binary);
+        public virtual bool IsRunning => Manager?.ProcessList?.Any(p => p.ProcessName.Equals(Binary, StringComparison.InvariantCultureIgnoreCase)) == true;
         public virtual int SearchCounter { get; set; } = 0;
         public virtual ConcurrentDictionary<string, float> SavedVolumes { get; } = [];
         public virtual ConcurrentDictionary<string, bool> SavedMutes { get; } = [];
@@ -56,14 +56,17 @@ namespace Fenix2GSX.Audio
 
             if (running && ProcessId == 0)
             {
-                ProcessId = (uint)Sys.GetProcess(Binary).Id;
-                Logger.Debug($"Binary '{Binary}' started (PID: {ProcessId})");
-                SetSimSubscriptions();
-                result = 1;
+                ProcessId = (uint)Manager.ProcessList.Where(p => p.ProcessName.Equals(Binary, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault().Id;
+                if (ProcessId != 0)
+                {
+                    Logger.Debug($"Binary '{Binary}' started (PID: {ProcessId})");
+                    SetSimSubscriptions();
+                    result = 1;
+                }
             }
             else if (running && ProcessId > 0)
             {
-                int count = Process.GetProcessesByName(Binary)?.Length ?? 0;
+                int count = Manager?.ProcessList?.Where(p => p.ProcessName.Equals(Binary, StringComparison.InvariantCultureIgnoreCase)).Count() ?? 0;
                 if (ProcessCount != count)
                 {
                     result = 1;

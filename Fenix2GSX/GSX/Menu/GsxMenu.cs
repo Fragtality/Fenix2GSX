@@ -110,7 +110,7 @@ namespace Fenix2GSX.GSX.Menu
                 await Select(1, true, false, 2);
             else if (AircraftProfile.AttachTugDuringBoarding == 1)
                 await Select(2, true, false, 2);
-            Controller.SubScriptSupress.WriteValue(0);
+            await Controller.SubScriptSupress.WriteValue(0);
         }
 
         protected virtual async Task OnFollowMeQuestion(GsxMenu menu)
@@ -269,14 +269,14 @@ namespace Fenix2GSX.GSX.Menu
             {
                 Logger.Debug($"Open Menu ...");
                 MsgMenuReady.Clear();
-                SubMenuOpen.WriteValue(1);
+                await SubMenuOpen.WriteValue(1);
                 if (waitReady)
                 {
                     msg = await MsgMenuReady.ReceiveAsync(false, Config.MenuOpenTimeout);
                     if (msg == null)
                     {
                         Logger.Debug($"Retry Open ...");
-                        SubMenuOpen.WriteValue(1);
+                        await SubMenuOpen.WriteValue(1);
                         msg = await MsgMenuReady.ReceiveAsync(false, Config.MenuOpenTimeout);
                     }
                 }
@@ -323,7 +323,7 @@ namespace Fenix2GSX.GSX.Menu
             }
 
             Logger.Debug($"Menu Select Item {number} => Value {number - 1}");
-            SubMenuChoice.WriteValue(number - 1);
+            await SubMenuChoice.WriteValue(number - 1);
 
             if (hide == 1)
                 Hide();

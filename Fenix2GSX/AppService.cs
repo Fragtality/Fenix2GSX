@@ -2,6 +2,7 @@
 using CFIT.AppFramework.Services;
 using CFIT.AppLogger;
 using CFIT.AppTools;
+using CFIT.SimConnectLib.Definitions;
 using Fenix2GSX.AppConfig;
 using Fenix2GSX.Audio;
 using Fenix2GSX.GSX;
@@ -31,11 +32,12 @@ namespace Fenix2GSX
             AudioService = new AudioController(Config);
         }
 
-        protected override void InitReceivers()
+        protected override Task InitReceivers()
         {
             base.InitReceivers();
             ReceiverStore.Add<MsgSessionReady>().OnMessage += OnSessionReady;
             ReceiverStore.Add<MsgSessionEnded>().OnMessage += OnSessionEnded;
+            return Task.CompletedTask;
         }
 
         protected virtual void OnSessionEnded(MsgSessionEnded obj)
@@ -51,6 +53,8 @@ namespace Fenix2GSX
                 Logger.Debug($"Stop AudioService");
                 AudioService.Stop();
             }
+
+            Config.SetDisplayUnit(Config.DisplayUnitDefault);
         }
 
         protected virtual void OnSessionReady(MsgSessionReady obj)
@@ -80,14 +84,14 @@ namespace Fenix2GSX
             Logger.Debug($"Awaiting Couatl Restart ({Config.DelayGsxBinaryStart}ms) ...");
             await Task.Delay(Config.DelayGsxBinaryStart, App.Token);
 
-            if (SimService.IsMsfs2020 && !Sys.GetProcessRunning(App.Config.BinaryGsx2020))
+            if (SimService.Manager.GetSimVersion() == SimVersion.MSFS2020 && !Sys.GetProcessRunning(App.Config.BinaryGsx2020))
             {
                 Logger.Debug($"Starting Process {App.Config.BinaryGsx2020}");
                 string dir = Path.Join(GsxService.PathInstallation, "couatl64");
                 Sys.StartProcess(Path.Join(dir, $"{App.Config.BinaryGsx2020}.exe"), dir);
             }
 
-            if (SimService.IsMsfs2024 && !Sys.GetProcessRunning(App.Config.BinaryGsx2024))
+            if (SimService.Manager.GetSimVersion() == SimVersion.MSFS2024 && !Sys.GetProcessRunning(App.Config.BinaryGsx2024))
             {
                 Logger.Debug($"Starting Process {App.Config.BinaryGsx2024}");
                 string dir = Path.Join(GsxService.PathInstallation, "couatl64");
@@ -112,11 +116,12 @@ namespace Fenix2GSX
             }
         }
 
-        protected override void FreeResources()
+        protected override Task FreeResources()
         {
             base.FreeResources();
             ReceiverStore.Remove<MsgSessionReady>().OnMessage -= OnSessionReady;
             ReceiverStore.Remove<MsgSessionEnded>().OnMessage -= OnSessionEnded;
+            return Task.CompletedTask;
         }
     }
 }

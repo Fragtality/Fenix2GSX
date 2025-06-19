@@ -92,12 +92,12 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 
-                <DataGrid Grid.Column="0" Grid.Row="0" Name="GridAudioMappings" Margin="6,6,6,6" MinWidth="384" AutoGenerateColumns="False" HeadersVisibility="Column" SelectionMode="Single" IsReadOnly="True" HorizontalAlignment="Left" GridLinesVisibility="None">
+                <DataGrid Grid.Column="0" Grid.Row="0" Name="GridAudioMappings" Margin="6,6,6,6">
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="Channel" MinWidth="64">
+                        <DataGridTemplateColumn Header="Channel" MinWidth="96">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Channel}" HorizontalAlignment="Center" Margin="1" Style="{StaticResource TextBlockDefault}"/>
+                                    <TextBlock Text="{Binding Channel}" HorizontalAlignment="Center" Style="{StaticResource TextBlockDefault}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -105,15 +105,15 @@
                         <DataGridTemplateColumn Header="App" MinWidth="148">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Binary}" Margin="1" Style="{StaticResource TextBlockDefault}"/>
+                                    <TextBlock Text="{Binding Binary}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="Device" MinWidth="148">
+                        <DataGridTemplateColumn Header="Device" MinWidth="164">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding DeviceName}" Margin="1" Style="{StaticResource TextBlockDefault}"/>
+                                    <TextBlock Text="{Binding DeviceName}" Margin="6,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -121,7 +121,7 @@
                         <DataGridTemplateColumn Header="Use Mute">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox IsChecked="{Binding UseLatch}" IsHitTestVisible="False" HorizontalAlignment="Center" Margin="1" Style="{StaticResource CheckBoxDefault}"/>
+                                    <CheckBox IsChecked="{Binding UseLatch}" IsHitTestVisible="False" HorizontalAlignment="Center" Margin="2,0,0,0" Style="{StaticResource CheckBoxDefault}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -162,7 +162,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ListView Grid.Column="0" Grid.Row="0" Name="ListDeviceBlacklist" MinWidth="248" MinHeight="64" Margin="6" HorizontalAlignment="Left" VerticalAlignment="Center"
+                <ListView Grid.Column="0" Grid.Row="0" Name="ListDeviceBlacklist" MinWidth="248" MinHeight="64" Margin="6" HorizontalAlignment="Left" VerticalAlignment="Center" SelectionMode="Single"
                           ToolTip="Devices on this List will be skipped when searching for Audio Sessions of Apps.&#x0a;
                           Devices which raise Errors during Session-Scan will temporarly be ignored while Fenix2GSX runs."/>
 

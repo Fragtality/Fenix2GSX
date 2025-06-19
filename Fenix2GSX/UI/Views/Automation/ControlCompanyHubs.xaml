@@ -41,8 +41,8 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <ListView Grid.Column="0" Name="ListHubs" MinWidth="164" MinHeight="148" HorizontalAlignment="Left" VerticalAlignment="Center"
-                              ToolTip="List of Company Hubs and their Priority used in Departure Service Calls."/>
+                    <ListView Grid.Column="0" Name="ListHubs" MinWidth="164" MinHeight="148" HorizontalAlignment="Left" VerticalAlignment="Center" SelectionMode="Single"
+                              ToolTip="List of Company Hubs (Airports) and their Priority used in Departure Service Calls."/>
 
                     <StackPanel Grid.Column="1" Orientation="Vertical" Margin="6,0,0,0" VerticalAlignment="Top">
                         <Button Name="ButtonUp" Style="{StaticResource BtnSquareSmall}" ToolTip="Move Up Hub Priority">
@@ -55,9 +55,9 @@
                 </Grid>
 
                 <StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal" Margin="6,0,6,6" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <TextBox Name="InputHub" Style="{StaticResource TextBoxLeft}" MinWidth="164" MinHeight="24" ToolTip="ICAO Code for Company Hub (1-4 Letters)"/>
+                    <TextBox Name="InputHub" Style="{StaticResource TextBoxLeft}" MinWidth="164" MinHeight="24" ToolTip="Airport ICAO Code for Company Hub (1-4 Letters)"/>
                     <Button Name="ButtonAdd" Margin="6,0,0,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Add/Update Company Hub">
-                        <Image Name="ImageAdd" Source="../../Icons/plus-circle.png" Style="{StaticResource ImgSquareSmall}"/>
+                        <Image Name="ImageAdd" Source="../../Icons/add.png" Style="{StaticResource ImgSquareSmall}"/>
                     </Button>
                     <Button Name="ButtonRemove" Margin="6,0,6,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Remove Company Hub">
                         <Image Source="../../Icons/remove.png" Style="{StaticResource ImgSquareSmall}"/>

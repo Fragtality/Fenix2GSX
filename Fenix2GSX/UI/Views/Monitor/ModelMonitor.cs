@@ -3,6 +3,7 @@ using CFIT.AppLogger;
 using CFIT.AppTools;
 using CFIT.SimConnectLib;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Fenix2GSX.Aircraft;
 using Fenix2GSX.AppConfig;
 using Fenix2GSX.Audio;
@@ -12,6 +13,8 @@ using Fenix2GSX.GSX.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -54,6 +57,12 @@ namespace Fenix2GSX.UI.Views.Monitor
         public virtual void Stop()
         {
             UpdateTimer?.Stop();
+        }
+
+        [RelayCommand]
+        public virtual void LogDir()
+        {
+            try { Process.Start(new ProcessStartInfo(Path.Join(Config.Definition.ProductPath, Config.Definition.ProductLogPath)) { UseShellExecute = true }); } catch { }
         }
 
         protected virtual void UpdateBoolState(string propertyValue, string propertyColor, bool value, bool reverseColor = false)
@@ -157,7 +166,7 @@ namespace Fenix2GSX.UI.Views.Monitor
 
         protected virtual void UpdateGsx()
         {
-            UpdateBoolState(nameof(GsxRunning), nameof(GsxRunningColor), GsxController.IsProcessRunning);
+            UpdateBoolState(nameof(GsxRunning), nameof(GsxRunningColor), GsxController.CheckBinaries());
             UpdateState<string>(nameof(GsxStarted), GsxController.CouatlState);
             UpdateColor(nameof(GsxStartedColor), GsxController.CouatlVarsValid);
             UpdateState<GsxMenuState>(nameof(GsxMenu), GsxController.Menu.MenuState);
@@ -243,7 +252,7 @@ namespace Fenix2GSX.UI.Views.Monitor
             UpdateBoolState(nameof(AppAudioController), nameof(AppAudioControllerColor), AudioController.IsActive);
 
             UpdateState<AutomationState>(nameof(AppAutomationState), AutomationController?.State ?? AutomationState.SessionStart);
-            UpdateState<string>(nameof(AppAutomationDepartureServices), $"{AutomationController?.CountDepartureServicesCompleted ?? 0} / {AutomationController?.CountDepartureServicesQueued ?? 0}" ?? "0 / 0");
+            UpdateState<string>(nameof(AppAutomationDepartureServices), $"{AutomationController?.ServiceCountCompleted ?? 0} / {AutomationController?.ServiceCountRunning ?? 0} / {AutomationController?.ServiceCountTotal ?? 0}" ?? "0 / 0 / 0");
 
             try
             {

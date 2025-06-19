@@ -23,5 +23,11 @@ namespace Fenix2GSX
                 return -1;
             }
         }
+
+        protected override void InitAppWindow()
+        {
+            base.InitAppWindow();
+            AppContext.SetSwitch("Switch.System.Windows.Controls.Grid.StarDefinitionsCanExceedAvailableSpace", true);
+        }
     }
 }

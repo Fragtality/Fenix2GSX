@@ -26,7 +26,9 @@
     <None Remove="UI\Icons\automation.png" />
     <None Remove="UI\Icons\chevron-down.png" />
     <None Remove="UI\Icons\chevron-up.png" />
+    <None Remove="UI\Icons\copy.png" />
     <None Remove="UI\Icons\cursor.png" />
+    <None Remove="UI\Icons\play.png" />
     <None Remove="UI\Icons\profiles.png" />
     <None Remove="UI\Icons\settings.png" />
     <None Remove="UI\Icons\upload.png" />
@@ -43,10 +45,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="CFIT.AppFramework" Version="2025.161.21.332" />
-    <PackageReference Include="CFIT.AppLogger" Version="2025.161.21.281" />
-    <PackageReference Include="CFIT.AppTools" Version="2025.161.21.295" />
-    <PackageReference Include="CFIT.SimConnectLib" Version="2025.161.21.318" />
+    <PackageReference Include="CFIT.AppFramework" Version="2025.170.22.2711" />
+    <PackageReference Include="CFIT.AppLogger" Version="2025.170.22.2653" />
+    <PackageReference Include="CFIT.AppTools" Version="2025.170.22.2664" />
+    <PackageReference Include="CFIT.SimConnectLib" Version="2025.170.22.2696" />
     <PackageReference Include="CoreAudio" Version="1.40.0" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
   </ItemGroup>
@@ -65,7 +67,9 @@
     <Resource Include="UI\Icons\automation.png" />
     <Resource Include="UI\Icons\chevron-down.png" />
     <Resource Include="UI\Icons\chevron-up.png" />
+    <Resource Include="UI\Icons\copy.png" />
     <Resource Include="UI\Icons\cursor.png" />
+    <Resource Include="UI\Icons\play.png" />
     <Resource Include="UI\Icons\remove.png" />
     <Resource Include="UI\Icons\monitor.png" />
     <EmbeddedResource Include="UI\Icons\edit.png" />

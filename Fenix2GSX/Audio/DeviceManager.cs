@@ -24,10 +24,10 @@ namespace Fenix2GSX.Audio
 
         public event Action DevicesChanged;
 
-        protected virtual void Add(List<MMDevice> devices)
+        protected virtual void Add(Dictionary<string, MMDevice> devices)
         {
             foreach (var device in devices)
-                Devices.Add(device.DeviceFriendlyName, device);
+                Devices.Add(device.Key, device.Value);
         }
 
         public virtual void Clear()
@@ -35,23 +35,20 @@ namespace Fenix2GSX.Audio
             Devices.Clear();
         }
 
-        public virtual bool Scan(bool force = false)
+        public virtual bool Scan()
         {
             bool result = false;
 
             try
             {
-                if (DateTime.Now >= LastDeviceScan + TimeSpan.FromMilliseconds(Config.AudioDeviceCheckInterval) || force)
+                if (DateTime.Now >= LastDeviceScan + TimeSpan.FromMilliseconds(Config.AudioDeviceCheckInterval))
                 {
-                    if (force)
-                        Logger.Debug($"Scanning Audio Devices");
-                    else
-                        Logger.Verbose($"Scanning Audio Devices");
+                    Logger.Debug($"Scanning Audio Devices");
                     var deviceList = EnumerateDevices(out int sessionCount);
 
-                    if (LastDeviceCount != deviceList.Count || LastSessionCount != sessionCount || force)
+                    if (LastDeviceCount != deviceList.Count || LastSessionCount != sessionCount)
                     {
-                        Logger.Debug($"Device Enumeration needed - DeviceCount {LastDeviceCount != deviceList.Count} | SessionCount {LastSessionCount != sessionCount} | Forced {force}");
+                        Logger.Debug($"Device Enumeration needed - DeviceCount {LastDeviceCount != deviceList.Count} | SessionCount {LastSessionCount != sessionCount}");
                         result = true;
                         Clear();
                         Add(deviceList);
@@ -73,9 +70,9 @@ namespace Fenix2GSX.Audio
             return result;
         }
 
-        protected virtual List<MMDevice> EnumerateDevices(out int sessionCount)
+        protected virtual Dictionary<string, MMDevice> EnumerateDevices(out int sessionCount)
         {
-            List<MMDevice> devices = [];
+            Dictionary<string, MMDevice> devices = [];
             sessionCount = 0;
             MMDeviceCollection deviceList = null;
             try
@@ -93,18 +90,22 @@ namespace Fenix2GSX.Audio
             {
                 try
                 {
-                    if (Config.AudioDeviceBlacklist.Where(d => d.StartsWith(device.DeviceFriendlyName, StringComparison.InvariantCultureIgnoreCase)).Any())
+                    string deviceName = device.DeviceFriendlyName;
+                    if (Config.AudioDeviceBlacklist.Where(d => d.StartsWith(deviceName, StringComparison.InvariantCultureIgnoreCase)).Any())
                     {
-                        Logger.Debug($"Ignoring Device '{device.DeviceFriendlyName}' (on Blacklist)");
+                        Logger.Debug($"Ignoring Device '{deviceName}' (on Blacklist)");
                         continue;
                     }
 
-                    Logger.Verbose($"Testing Sessions on '{device.DeviceFriendlyName}'");
-                    foreach (var session in device.AudioSessionManager2.Sessions)
-                        Logger.Verbose($"Name: {session.DisplayName} | ID: {session.ProcessID} | SessionInstance: {session.SessionInstanceIdentifier}");
+                    if (Config.LogLevel == LogLevel.Verbose)
+                    {
+                        Logger.Verbose($"Testing Sessions on '{deviceName}'");
+                        foreach (var session in device.AudioSessionManager2.Sessions)
+                            Logger.Verbose($"Name: {session.DisplayName} | ID: {session.ProcessID} | SessionInstance: {session.SessionInstanceIdentifier}");
+                    }
                     sessionCount += device.AudioSessionManager2.Sessions.Count;
 
-                    devices.Add(device);
+                    devices.Add(deviceName, device);
                 }
                 catch (Exception ex)
                 {
@@ -167,7 +168,8 @@ namespace Fenix2GSX.Audio
                     if (query.Any())
                     {
                         list.AddRange(query);
-                        Logger.Debug($"Found {list.Count} Sessions on Device '{device.DeviceFriendlyName}'");
+                        if (Config.LogLevel == LogLevel.Verbose)
+                            Logger.Verbose($"Found {list.Count} Sessions on Device '{device.DeviceFriendlyName}'");
                     }
                 }
             }

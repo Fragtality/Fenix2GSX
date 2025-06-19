@@ -39,6 +39,7 @@ namespace Fenix2GSX.Audio
         public virtual bool HasInitialized { get; protected set; } = false;
         public virtual DeviceManager DeviceManager { get; }
         public virtual SessionManager SessionManager { get; }
+        protected virtual DateTime NextProcessCheck { get; set; } = DateTime.MinValue;
         public virtual bool ResetVolumes { get; set; } = false;
         public virtual bool ResetMappings { get; set; } = false;
         public static ConcurrentDictionary<AudioChannel, string> VarsVolumeKnobsCapt { get; } = new()
@@ -98,7 +99,7 @@ namespace Fenix2GSX.Audio
             SessionManager = new(this);
         }
 
-        protected override void InitReceivers()
+        protected override Task InitReceivers()
         {
             base.InitReceivers();
 
@@ -106,9 +107,11 @@ namespace Fenix2GSX.Audio
             foreach (var dict in AllVars)
                 foreach (var name in dict.Values)
                     SimStore.AddVariable(name);
+
+            return Task.CompletedTask;
         }
 
-        protected override void FreeResources()
+        protected override Task FreeResources()
         {
             base.FreeResources();
 
@@ -118,9 +121,10 @@ namespace Fenix2GSX.Audio
                     SimStore.Remove(name);
 
             DeviceManager.Clear();
+            return Task.CompletedTask;
         }
 
-        protected virtual void SetStartupVolumes()
+        protected virtual async Task SetStartupVolumes()
         {
             try
             {
@@ -129,13 +133,13 @@ namespace Fenix2GSX.Audio
                     if (Config.AudioStartupVolumes[channel] >= 0.0)
                     {
                         var knobVars = Config.AudioAcpSide == AcpSide.CPT ? VarsVolumeKnobsCapt : VarsVolumeKnobsFo;
-                        SimStore[knobVars[channel]].WriteValue(Config.AudioStartupVolumes[channel]);
+                        await SimStore[knobVars[channel]].WriteValue(Config.AudioStartupVolumes[channel]);
                     }
 
                     if (Config.AudioStartupUnmute[channel])
                     {
                         var latchVars = Config.AudioAcpSide == AcpSide.CPT ? VarsVolumeLatchSwitchesCapt : VarsVolumeLatchSwitchesFo;
-                        SimStore[latchVars[channel]].WriteValue(1);
+                        await SimStore[latchVars[channel]].WriteValue(1);
                     }
                 }
             }
@@ -156,10 +160,13 @@ namespace Fenix2GSX.Audio
                 SessionManager.RegisterMappings();
                 bool rescanNeeded = false;
                 IsActive = true;
-                SetStartupVolumes();
+                await SetStartupVolumes();
                 while (SimConnect.IsSessionRunning && IsExecutionAllowed && !Token.IsCancellationRequested)
                 {
                     rescanNeeded = SessionManager.HasInactiveSessions || SessionManager.HasEmptySearches || ResetMappings;
+                    if (rescanNeeded)
+                        Logger.Debug($"Rescan Needed - InactiveSessions {SessionManager.HasInactiveSessions} | EmptySearches {SessionManager.HasEmptySearches} | ResetMappings {ResetMappings}");
+
                     if (ResetMappings)
                     {
                         SessionManager.UnregisterMappings();
@@ -167,14 +174,22 @@ namespace Fenix2GSX.Audio
                         ResetMappings = false;
                     }
 
-                    if (SessionManager.CheckProcesses(rescanNeeded))
+                    if (rescanNeeded || NextProcessCheck <= DateTime.Now)
                     {
-                        rescanNeeded = true;
-                        await Task.Delay(Config.AudioProcessStartupDelay, Token);
+                        if (SessionManager.CheckProcesses(rescanNeeded))
+                        {
+                            if (!rescanNeeded)
+                                Logger.Debug($"Rescan Needed - CheckProcess had Changes");
+                            rescanNeeded = true;
+                            await Task.Delay(Config.AudioProcessStartupDelay, Token);
+                        }
+                        NextProcessCheck = DateTime.Now + TimeSpan.FromMilliseconds(Config.AudioProcessCheckInterval);
                     }
 
-                    if (DeviceManager.Scan(rescanNeeded))
+                    if (DeviceManager.Scan())
                         rescanNeeded = true;
+                    if (rescanNeeded)
+                        Logger.Debug($"Rescan Needed - DeviceEnum");
 
                     HasInitialized = true;
 
@@ -198,7 +213,7 @@ namespace Fenix2GSX.Audio
             Logger.Debug($"AudioService ended");
         }
 
-        public override void Stop()
+        public override Task Stop()
         {
             base.Stop();
 
@@ -207,6 +222,7 @@ namespace Fenix2GSX.Audio
             HasInitialized = false;
             DeviceManager.Clear();
             SessionManager.Clear();
+            return Task.CompletedTask;
         }
     }
 }

@@ -3,6 +3,7 @@ using CFIT.AppTools;
 using Fenix2GSX.AppConfig;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Fenix2GSX.Audio
@@ -15,6 +16,7 @@ namespace Fenix2GSX.Audio
         protected virtual ConcurrentDictionary<AudioChannel, List<AudioSession>> MappedAudioSessions { get; } = [];
         public virtual bool HasEmptySearches => MappedAudioSessions.Any(c => c.Value.Any(s => s.SearchCounter > Config.AudioProcessMaxSearchCount));
         public virtual bool HasInactiveSessions => MappedAudioSessions.Any(c => c.Value.Any(s => s.SessionControls.Any(sc => sc.State != CoreAudio.AudioSessionState.AudioSessionStateActive)));
+        public virtual List<Process> ProcessList { get; } = [];
 
         public virtual void RegisterMappings()
         {
@@ -62,6 +64,9 @@ namespace Fenix2GSX.Audio
         public virtual bool CheckProcesses(bool force = false)
         {
             bool result = false;
+
+            ProcessList.Clear();
+            ProcessList.AddRange(Process.GetProcesses());
 
             foreach (var channel in MappedAudioSessions)
                 foreach (var session in channel.Value)

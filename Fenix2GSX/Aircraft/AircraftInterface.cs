@@ -1,5 +1,6 @@
 ﻿using CFIT.AppFramework.ResourceStores;
 using CFIT.AppLogger;
+using CFIT.AppTools;
 using CFIT.SimConnectLib;
 using CFIT.SimConnectLib.SimResources;
 using CFIT.SimConnectLib.SimVars;
@@ -26,13 +27,16 @@ namespace Fenix2GSX.Aircraft
         
         protected virtual ISimResourceSubscription SubAirline { get; set; }
         protected virtual ISimResourceSubscription SubTitle { get; set; }
+        protected virtual ISimResourceSubscription SubLivery { get; set; }
         protected virtual ISimResourceSubscription SubSpeed { get; set; }
 
         public virtual string Airline => SubAirline?.GetString();
-        public virtual string Title => SubTitle?.GetString();
+        public virtual string Title => !string.IsNullOrWhiteSpace(SubLivery?.GetString()) ? SubLivery.GetString() : SubTitle?.GetString() ?? "";
         public virtual string Registration => FenixInterface.Registration;
         public virtual bool IsFlightPlanLoaded => FenixInterface.IsFlightPlanLoaded;
         public virtual bool IsLoaded => FenixInterface.IsLoaded;
+        public virtual bool IsRefueling => FenixInterface.IsRefueling;
+        public virtual DisplayUnit UnitAircraft => FenixInterface.UnitAircraft;
         public virtual string SimbriefUser => FenixInterface.SimbriefUser;
         public virtual TimeSpan FlightDuration => FenixInterface.FlightDuration;
         public virtual bool IsEfbBoardingCompleted => !string.IsNullOrWhiteSpace(EfbBoardingState) && (EfbBoardingState?.Equals("ended", System.StringComparison.InvariantCultureIgnoreCase) == true || EfbBoardingState?.Equals("completed", System.StringComparison.InvariantCultureIgnoreCase) == true);
@@ -65,11 +69,14 @@ namespace Fenix2GSX.Aircraft
             {
                 SubAirline = SimStore.AddVariable("ATC AIRLINE", SimUnitType.String);
                 SubTitle = SimStore.AddVariable("TITLE", SimUnitType.String);
+                if (Sys.GetProcessRunning(Config.BinaryMsfs2024))
+                    SubLivery = SimStore.AddVariable("LIVERY NAME", SimUnitType.String);
                 SubSpeed = SimStore.AddVariable("GPS GROUND SPEED", SimUnitType.Knots);
                 
                 SimStore.AddVariable(FenixConstants.VarAcpIntCallCpt, SimUnitType.Number);
                 SimStore.AddVariable(FenixConstants.VarAcpIntCallFo, SimUnitType.Number);
 
+                Controller.WalkaroundWasSkipped += OnWalkaroundWasSkipped;
                 Controller.AutomationController.OnStateChange += OnAutomationState;
                 Controller.GsxServices[GsxServiceType.Stairs].OnStateChanged += OnStairChange;
                 (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnActive += OnRefuelActive;
@@ -92,6 +99,7 @@ namespace Fenix2GSX.Aircraft
         {
             FenixInterface.FreeResources();
 
+            Controller.WalkaroundWasSkipped -= OnWalkaroundWasSkipped;
             Controller.AutomationController.OnStateChange -= OnAutomationState;
             Controller.GsxServices[GsxServiceType.Stairs].OnStateChanged -= OnStairChange;
             (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnActive -= OnRefuelActive;
@@ -109,6 +117,8 @@ namespace Fenix2GSX.Aircraft
 
             SimStore.Remove("ATC AIRLINE");
             SimStore.Remove("TITLE");
+            if (Sys.GetProcessRunning(Config.BinaryMsfs2024))
+                SimStore.Remove("LIVERY NAME");
             SimStore.Remove("GPS GROUND SPEED");
         }
 
@@ -123,9 +133,9 @@ namespace Fenix2GSX.Aircraft
             FenixInterface.Stop();
         }
 
-        public virtual void ResetSmartButton()
+        public virtual async Task ResetSmartButton()
         {
-            FenixInterface.ResetSmartButton();
+            await FenixInterface.ResetSmartButton();
         }
 
         public virtual void Reset()
@@ -138,16 +148,19 @@ namespace Fenix2GSX.Aircraft
             FenixInterface.ResetFlight();
         }
 
-        public virtual void UnloadOfp()
+        public virtual async Task UnloadOfp()
         {
-            FenixInterface.UnloadOfp();
+            await FenixInterface.UnloadOfp();
+        }
+
+        protected virtual async Task OnWalkaroundWasSkipped()
+        {
+            await FenixInterface.OnStatePreparation();
         }
 
         protected virtual void OnAutomationState(AutomationState state)
         {
-            if (state == AutomationState.Preparation)
-                FenixInterface.OnStatePreparation();
-            else if (state == AutomationState.TaxiOut)
+            if (state == AutomationState.TaxiOut)
                 FenixInterface.OnStateTaxiOut();
             else if (state == AutomationState.TaxiIn)
                 FenixInterface.OnStateTaxiIn();
@@ -155,34 +168,34 @@ namespace Fenix2GSX.Aircraft
                 FenixInterface.OnStateArrival();
         }
 
-        protected virtual void OnStairChange(GsxService service)
+        protected virtual async void OnStairChange(GsxService service)
         {
-            FenixInterface.OnStairChange((int)GsxServices[GsxServiceType.Stairs].State, (int)GsxServices[GsxServiceType.Jetway].State);
+            await FenixInterface.OnStairChange((int)GsxServices[GsxServiceType.Stairs].State, (int)GsxServices[GsxServiceType.Jetway].State);
         }
 
-        protected virtual void OnRefuelActive(GsxService service)
+        protected virtual async void OnRefuelActive(GsxService service)
         {
-            FenixInterface.OnRefuelActive();
+            await FenixInterface.OnRefuelActive();
         }
 
-        protected virtual void OnBoardingActive(GsxService service)
+        protected virtual async void OnBoardingActive(GsxService service)
         {
-            FenixInterface.BoardingStart();
+            await FenixInterface.BoardingStart();
         }
 
-        protected virtual void OnBoardingCompleted(GsxService service)
+        protected virtual async void OnBoardingCompleted(GsxService service)
         {
-            FenixInterface.BoardingStop();
+            await FenixInterface.BoardingStop();
         }
 
-        protected virtual void OnPaxChangeBoarding(GsxServiceBoarding service)
+        protected virtual async void OnPaxChangeBoarding(GsxServiceBoarding service)
         {
-            FenixInterface.OnPaxChangeBoarding(service.PaxTotal);
+            await FenixInterface.OnPaxChangeBoarding(service.PaxTotal);
         }
 
-        protected virtual void OnCargoChangeBoarding(GsxServiceBoarding service)
+        protected virtual async void OnCargoChangeBoarding(GsxServiceBoarding service)
         {
-            FenixInterface.OnCargoChangeBoarding(service.CargoPercent);
+            await FenixInterface.OnCargoChangeBoarding(service.CargoPercent);
         }
 
         protected virtual void OnDeboardingActive(GsxService service)
@@ -190,39 +203,39 @@ namespace Fenix2GSX.Aircraft
             FenixInterface.OnDeboardingActive();
         }
 
-        protected virtual void OnDeboardingCompleted(GsxService service)
+        protected virtual async void OnDeboardingCompleted(GsxService service)
         {
-            FenixInterface.OnDeboardingCompleted();
+            await FenixInterface.OnDeboardingCompleted();
         }
 
-        protected virtual void OnPaxChangeDeboarding(GsxServiceDeboarding serviceDeboarding)
+        protected virtual async void OnPaxChangeDeboarding(GsxServiceDeboarding serviceDeboarding)
         {
-            FenixInterface.OnPaxChangeDeboarding(serviceDeboarding.PaxTotal);
+            await FenixInterface.OnPaxChangeDeboarding(serviceDeboarding.PaxTotal);
         }
 
-        protected virtual void OnCargoChangeDeboarding(GsxServiceDeboarding service)
+        protected virtual async void OnCargoChangeDeboarding(GsxServiceDeboarding service)
         {
-            FenixInterface.OnCargoChangeDeboarding(service.CargoPercent);
+            await FenixInterface.OnCargoChangeDeboarding(service.CargoPercent);
         }
 
-        public virtual void SetPca(bool set)
+        public virtual async Task SetPca(bool set)
         {
-            FenixInterface.SetPca(set);
+            await FenixInterface.SetPca(set);
         }
 
-        public virtual void SetChocks(bool set, bool force = false)
+        public virtual async Task SetChocks(bool set, bool force = false)
         {
-            FenixInterface.SetChocks(set, force);
+            await FenixInterface.SetChocks(set, force);
         }
 
-        public virtual void SetGroundPower(bool set, bool force = false)
+        public virtual async Task SetGroundPower(bool set, bool force = false)
         {
-            FenixInterface.SetGroundPower(set, force);
+            await FenixInterface.SetGroundPower(set, force);
         }
 
-        public virtual void CloseAllDoors()
+        public virtual async Task CloseAllDoors()
         {
-            FenixInterface.CloseAllDoors();
+            await FenixInterface.CloseAllDoors();
         }
 
         public virtual int GetPaxBoarding()
@@ -240,14 +253,19 @@ namespace Fenix2GSX.Aircraft
             FenixInterface.RefuelStart();
         }
 
-        public virtual void RefuelComplete()
+        public virtual async Task RefuelStop()
         {
-            FenixInterface.RefuelComplete();
+            await FenixInterface.RefuelStop();
         }
 
-        public virtual void DingCabin()
+        public virtual async Task RefuelComplete()
         {
-            _ = FenixInterface.DingCabin();
+            await FenixInterface.RefuelComplete();
+        }
+
+        public virtual async Task DingCabin()
+        {
+            await FenixInterface.DingCabin();
         }
 
         public virtual async Task FlashMechCall()
@@ -259,13 +277,13 @@ namespace Fenix2GSX.Aircraft
             for (int i = 0; i <= seconds; i++)
             {
                 value = seconds % 2 == 0 ? 1 : 0;
-                SimStore[FenixConstants.VarAcpIntCallCpt].WriteValue(value);
-                SimStore[FenixConstants.VarAcpIntCallFo].WriteValue(value);
+                await SimStore[FenixConstants.VarAcpIntCallCpt].WriteValue(value);
+                await SimStore[FenixConstants.VarAcpIntCallFo].WriteValue(value);
                 await Task.Delay(1000, Controller.Token);
             }
 
-            SimStore[FenixConstants.VarAcpIntCallCpt].WriteValue(0);
-            SimStore[FenixConstants.VarAcpIntCallFo].WriteValue(0);
+            await SimStore[FenixConstants.VarAcpIntCallCpt].WriteValue(0);
+            await SimStore[FenixConstants.VarAcpIntCallFo].WriteValue(0);
         }
     }
 }

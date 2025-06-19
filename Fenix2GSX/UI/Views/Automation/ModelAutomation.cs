@@ -9,16 +9,23 @@ namespace Fenix2GSX.UI.Views.Automation
 {
     public partial class ModelAutomation : ModelBase<AircraftProfile>
     {
-        protected virtual DispatcherTimer UpdateTimer { get; }
+        protected virtual DispatcherTimer ProfileUpdateTimer { get; }
+        protected virtual DispatcherTimer UnitUpdateTimer { get; }
         public override AircraftProfile Source => GsxController?.AircraftProfile;
 
         public ModelAutomation(AppService appService) : base(appService.GsxService?.AircraftProfile, appService)
         {
-            UpdateTimer = new()
+            ProfileUpdateTimer = new()
             {
                 Interval = TimeSpan.FromMilliseconds(100),
             };
-            UpdateTimer.Tick += UpdateTimer_Tick;
+            ProfileUpdateTimer.Tick += ProfileUpdateTimer_Tick;
+
+            UnitUpdateTimer = new()
+            {
+                Interval = TimeSpan.FromMilliseconds(100),
+            };
+            UnitUpdateTimer.Tick += UnitUpdateTimer_Tick;
 
             DepartureServices = new ModelDepartureServices(this) { AddAllowed = false };
             DepartureServices.CollectionChanged += (_, _) => SaveConfig();
@@ -30,35 +37,48 @@ namespace Fenix2GSX.UI.Views.Automation
             CompanyHubs.CollectionChanged += (_, _) => SaveConfig();
         }
 
-        protected virtual void UpdateTimer_Tick(object? sender, EventArgs e)
+        protected virtual void ProfileUpdateTimer_Tick(object? sender, EventArgs e)
         {
+            InhibitConfigSave = true;
             DepartureServices.NotifyCollectionChanged();
             OperatorPreferences.NotifyCollectionChanged();
             CompanyHubs.NotifyCollectionChanged();
-            UpdateTimer.Stop();
+            InhibitConfigSave = false;
+            ProfileUpdateTimer.Stop();
+        }
+
+        protected virtual void UnitUpdateTimer_Tick(object? sender, EventArgs e)
+        {
+            InhibitConfigSave = true;
+            NotifyPropertyChanged(nameof(RefuelRateKgSec));
+            NotifyPropertyChanged(nameof(DisplayUnitCurrentString));
+            InhibitConfigSave = false;
+            UnitUpdateTimer.Stop();
         }
 
         protected override void InitializeModel()
         {
             GsxController.ProfileChanged += OnProfileChanged;
-            Config.PropertyChanged += OnPropertyChanged;
+            Config.PropertyChanged += OnConfigPropertyChanged;
         }
 
         protected virtual void OnProfileChanged(AircraftProfile profile)
         {
             NotifyPropertyChanged(string.Empty);
-            UpdateTimer.Start();
+            ProfileUpdateTimer.Start();
         }
 
-        protected virtual void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        protected virtual void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e?.PropertyName == nameof(DisplayUnit))
-            {
-                NotifyPropertyChanged(nameof(RefuelRateKgSec));
-            }
+            if ((e?.PropertyName == nameof(Config.DisplayUnitCurrent) || e?.PropertyName == nameof(Config.DisplayUnitCurrentString))
+                && !UnitUpdateTimer.IsEnabled)
+                UnitUpdateTimer.Start();
+            if (e?.PropertyName == nameof(Config.CurrentProfile))
+                NotifyPropertyChanged(nameof(ProfileName));
         }
 
-        public virtual string ProfileName => Source?.Name;
+        public virtual string ProfileName => Config?.CurrentProfile?.Name ?? "";
+        public virtual string DisplayUnitCurrentString => Config.DisplayUnitCurrentString;
 
         //Gate & Doors
         public virtual bool DoorStairHandling { get => Source.DoorStairHandling; set => SetModelValue<bool>(value); }
@@ -87,11 +107,12 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual Dictionary<GsxServiceActivation, string> TextServiceActivations => ServiceConfig.TextServiceActivations;
         public virtual Dictionary<GsxServiceConstraint, string> TextServiceConstraints => ServiceConfig.TextServiceConstraints;
 
-        public virtual double RefuelRateKgSec { get => ConvertKgToDisplayUnit(Source.RefuelRateKgSec); set => SetModelValue<double>(ConvertFromDisplayUnitKg(value)); }
+        public virtual double RefuelRateKgSec { get => Config.ConvertKgToDisplayUnit(Source.RefuelRateKgSec); set => SetModelValue<double>(Config.ConvertFromDisplayUnitKg(value)); }
         public virtual bool UseFixedRefuelRate => !UseRefuelTimeTarget;
         public virtual bool UseRefuelTimeTarget { get => Source.UseRefuelTimeTarget; set { SetModelValue<bool>(value); NotifyPropertyChanged(nameof(UseFixedRefuelRate)); } }
         public virtual int RefuelTimeTargetSeconds { get => Source.RefuelTimeTargetSeconds; set => SetModelValue<int>(value); }
         public virtual bool SkipFuelOnTankering { get => Source.SkipFuelOnTankering; set => SetModelValue<bool>(value); }
+        public virtual bool RefuelFinishOnHose { get => Source.RefuelFinishOnHose; set => SetModelValue<bool>(value); }
 
         public virtual Dictionary<int, string> TugOptions { get; } = new()
         {

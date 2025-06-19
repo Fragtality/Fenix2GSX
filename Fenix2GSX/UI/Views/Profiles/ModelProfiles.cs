@@ -1,5 +1,6 @@
 ﻿using CFIT.AppFramework.UI.ViewModels;
 using CFIT.AppFramework.UI.ViewModels.Commands;
+using CFIT.AppLogger;
 using CFIT.AppTools;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Fenix2GSX.Aircraft;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text.Json;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 
@@ -25,11 +27,12 @@ namespace Fenix2GSX.UI.Views.Profiles
         protected virtual AircraftInterface AircraftInterface => GsxController?.AircraftInterface;
         protected virtual bool ForceRefresh { get; set; } = false;
         public virtual ICommandWrapper SetActiveCommand { get; }
+        public virtual ICommandWrapper CloneCommand { get; }
 
         public ModelProfiles(AppService source, Selector selector) : base(source)
         {
             Selector = selector;
-            ProfileCollection = new ModelProfileCollection(Config.AircraftProfiles);
+            ProfileCollection = new();
             ViewModelSelector = new(Selector, ProfileCollection, AppWindow.IconLoader);
 
             Selector.SelectionChanged += (_, _) => NotifyPropertyChanged(nameof(IsEditAllowed));
@@ -38,6 +41,9 @@ namespace Fenix2GSX.UI.Views.Profiles
 
             SetActiveCommand = new CommandWrapper(() => GsxController.SetAircraftProfile((Selector?.SelectedValue as AircraftProfile)?.Name), () => Selector?.SelectedValue is AircraftProfile);
             SetActiveCommand.Subscribe(Selector);
+
+            CloneCommand = new CommandWrapper(CloneProfile, () => Selector?.SelectedValue is AircraftProfile profile && profile.MatchType != ProfileMatchType.Default);
+            CloneCommand.Subscribe(Selector);
         }
 
         protected virtual void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -49,6 +55,43 @@ namespace Fenix2GSX.UI.Views.Profiles
         {
             if (!Config.AircraftProfiles.Any(p => p.Name == GsxController.AircraftProfile?.Name))
                 GsxController.LoadAircraftProfile();
+        }
+
+        protected virtual void CloneProfile()
+        {
+            try
+            {
+                Logger.Debug($"Cloning Profile ...");
+                if (Selector?.SelectedValue is not AircraftProfile profile)
+                {
+                    Logger.Warning($"The selected Value is not an AircraftProfile");
+                    return;
+                }
+
+                if (profile.MatchType == ProfileMatchType.Default)
+                {
+                    Logger.Warning($"Can not clone Default Profiles");
+                    return;
+                }
+
+                string json = JsonSerializer.Serialize<AircraftProfile>(profile);
+                var clone = JsonSerializer.Deserialize<AircraftProfile>(json);
+                clone.Name = $"Clone of {profile.Name}";
+
+                if (Config.AircraftProfiles.Any(p => p.Name.Equals(clone.Name, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    Logger.Warning($"The Profile '{clone.Name}' is already configured");
+                    return;
+                }
+
+                Config.AircraftProfiles.Add(clone);
+                ProfileCollection.NotifyCollectionChanged();
+                Logger.Debug($"Cloned Profile '{profile.Name}'");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+            }
         }
 
         protected override void InitializeModel()

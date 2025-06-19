@@ -48,7 +48,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <ListView Grid.Column="0" Name="ListOperators"  MinWidth="164" MinHeight="148" HorizontalAlignment="Left" VerticalAlignment="Center"
+                    <ListView Grid.Column="0" Name="ListOperators"  MinWidth="164" MinHeight="148" HorizontalAlignment="Left" VerticalAlignment="Center" SelectionMode="Single"
                               ToolTip="List of preferred Operator Names and their Priority to be selected."/>
 
                     <StackPanel Grid.Column="1" Orientation="Vertical" Margin="6,0,0,0" VerticalAlignment="Top">
@@ -64,7 +64,7 @@
                 <StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal" Margin="6,0,6,6" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <TextBox Name="InputOperator" Style="{StaticResource TextBoxLeft}" MinWidth="164" MinHeight="24" ToolTip="Operator Name or Part thereof to match against the GSX Menu Options"/>
                     <Button Name="ButtonAdd" Margin="6,0,0,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Add/Update Operator Name">
-                        <Image Name="ImageAdd" Source="../../Icons/plus-circle.png" Style="{StaticResource ImgSquareSmall}"/>
+                        <Image Name="ImageAdd" Source="../../Icons/add.png" Style="{StaticResource ImgSquareSmall}"/>
                     </Button>
                     <Button Name="ButtonRemove" Margin="6,0,6,0" Style="{StaticResource BtnSquareSmall}" ToolTip="Remove Operator Name">
                         <Image Source="../../Icons/remove.png" Style="{StaticResource ImgSquareSmall}"/>

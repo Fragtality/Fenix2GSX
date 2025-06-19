@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Fenix2GSX.UI.Views.Settings"
              d:DataContext="{d:DesignInstance Type=local:ModelSettings}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="768" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -43,47 +43,60 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Column="0" Grid.Row="0" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="The Unit to be used in the UI. Unrelated to the Unit used in SimBrief and the Aircraft.">
-                    UI Weight Unit:
+                <TextBlock Grid.Column="0" Grid.Row="0" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Which Source is used to get the Unit used in the UI.">
+                    UI Unit Source:
                 </TextBlock>
-                <ComboBox Grid.Column="1" Grid.Row="0" SelectedValue="{Binding DisplayUnit}" ItemsSource="{Binding TextDisplayUnit}" SelectedValuePath="Key" DisplayMemberPath="Value"
-                          Margin="6" Style="{StaticResource ComboBoxDefault}" ToolTip="The Unit to be used in the UI. Unrelated to the Unit used in SimBrief and the Aircraft."/>
+                <ComboBox Grid.Column="1" Grid.Row="0" SelectedValue="{Binding DisplayUnitSource}" MinWidth="64" MaxWidth="96" ItemsSource="{Binding DisplayUnitSourceItems}" SelectedValuePath="Key" DisplayMemberPath="Value"
+                          Margin="6" Style="{StaticResource ComboBoxDefault}" HorizontalAlignment="Left" ToolTip="Which Source is used to get the Unit used in the UI."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="1" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="The Weight per Passenger Bag used in Simbrief to calculate Cargo Weight.">
+                <TextBlock Grid.Column="0" Grid.Row="1" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="The Unit to used in the UI when no other Unit Source is available.">
+                    UI Default Unit:
+                </TextBlock>
+                <ComboBox Grid.Column="1" Grid.Row="1" SelectedValue="{Binding DisplayUnitDefault}" MinWidth="64" MaxWidth="96" ItemsSource="{Binding DisplayUnitDefaultItems}" SelectedValuePath="Key" DisplayMemberPath="Value"
+                          Margin="6" Style="{StaticResource ComboBoxDefault}" HorizontalAlignment="Left" ToolTip="The Unit to used in the UI when no other Unit Source is available."/>
+
+                <TextBlock Grid.Column="0" Grid.Row="2" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Open the UI when the App is started.">
+                    Open UI on Start:
+                </TextBlock>
+                <CheckBox Grid.Column="1" Grid.Row="2" IsChecked="{Binding OpenAppWindowOnStart}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Open the UI when the App is started."/>
+
+                <TextBlock Grid.Column="0" Grid.Row="3" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="The Weight per Passenger Bag used in Simbrief to calculate Cargo Weight.">
                     Fenix Bag Weight:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="1" Style="{StaticResource SettingItemPanel}" ToolTip="The Weight per Passenger Bag used in Simbrief to calculate Cargo Weight.">
+                <StackPanel Grid.Column="1" Grid.Row="3" Style="{StaticResource SettingItemPanel}" ToolTip="The Weight per Passenger Bag used in Simbrief to calculate Cargo Weight.">
                     <TextBox Name="InputBagWeight" Style="{StaticResource TextBoxCentered}"/>
-                    <TextBlock Text="{Binding DisplayUnitString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
+                    <TextBlock Text="{Binding DisplayUnitCurrentString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="2" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Default Value to set the Fuel on Board to (when the EFB is resetted or saved Fuel is applied).">
+                <TextBlock Grid.Column="0" Grid.Row="4" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Default Value to set the Fuel on Board to (when the EFB is resetted or saved Fuel is applied).">
                     FOB Reset Default:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="2" Style="{StaticResource SettingItemPanel}" ToolTip="Default Value to set the Fuel on Board to (when the EFB is resetted or saved Fuel is applied).">
+                <StackPanel Grid.Column="1" Grid.Row="4" Style="{StaticResource SettingItemPanel}" ToolTip="Default Value to set the Fuel on Board to (when the EFB is resetted or saved Fuel is applied).">
                     <TextBox Name="InputFuelDefault" Style="{StaticResource TextBoxCentered}"/>
-                    <TextBlock Text="{Binding DisplayUnitString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
+                    <TextBlock Text="{Binding DisplayUnitCurrentString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="3" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="The maximum allowed Difference when the Fuel on Board is compared to be equal to a specific Target.">
+                <TextBlock Grid.Column="0" Grid.Row="5" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="The maximum allowed Difference when the Fuel on Board is compared to be equal to a specific Target.">
                     Fuel Compare Variance:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="3" Style="{StaticResource SettingItemPanel}" ToolTip="The maximum allowed Difference when the Fuel on Board is compared to be equal to a specific Target.">
+                <StackPanel Grid.Column="1" Grid.Row="5" Style="{StaticResource SettingItemPanel}" ToolTip="The maximum allowed Difference when the Fuel on Board is compared to be equal to a specific Target.">
                     <TextBox Name="InputFuelVariance" Style="{StaticResource TextBoxCentered}"/>
-                    <TextBlock Text="{Binding DisplayUnitString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
+                    <TextBlock Text="{Binding DisplayUnitCurrentString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="4" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Round the planned Fuel Value to the next higher 100' Fraction.">
+                <TextBlock Grid.Column="0" Grid.Row="6" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Round the planned Fuel Value to the next higher 100' Fraction.">
                     Round Fuel to 100's:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="4" IsChecked="{Binding FuelRoundUp100}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Round the planned Fuel Value to the next higher 100' Fraction."/>
+                <CheckBox Grid.Column="1" Grid.Row="6" IsChecked="{Binding FuelRoundUp100}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Round the planned Fuel Value to the next higher 100' Fraction."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="5" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="If and when the Cabin Ding Sound should be played to announce certain Situations.">
+                <TextBlock Grid.Column="0" Grid.Row="7" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="If and when the Cabin Ding Sound should be played to announce certain Situations.">
                     Play Cabin Ding Sound:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="5" Style="{StaticResource SettingItemPanel}" Margin="0,6,6,6" ToolTip="If and when the Cabin Ding Sound should be played to announce certain Situations.">
+                <StackPanel Grid.Column="1" Grid.Row="7" Style="{StaticResource SettingItemPanel}" Margin="0,6,6,6" ToolTip="If and when the Cabin Ding Sound should be played to announce certain Situations.">
                     <CheckBox IsChecked="{Binding DingOnStartup}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Play the Sound when Reposition was executed and Jetway/Stairs are connected or connecting - indicating if it is safe to import the OFP.">
                         Ding on Startup
                     </CheckBox>
@@ -95,41 +108,41 @@
                     </CheckBox>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="6" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Percent of Cargo Weight per Second applied to the Aircraft after a GSX Value Change.">
+                <TextBlock Grid.Column="0" Grid.Row="8" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Percent of Cargo Weight per Second applied to the Aircraft after a GSX Value Change.">
                     Cargo Change Rate:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="6" Style="{StaticResource SettingItemPanel}" ToolTip="Percent of Cargo Weight per Second applied to the Aircraft after a GSX Value Change.">
+                <StackPanel Grid.Column="1" Grid.Row="8" Style="{StaticResource SettingItemPanel}" ToolTip="Percent of Cargo Weight per Second applied to the Aircraft after a GSX Value Change.">
                     <TextBox Name="InputCargoRate" Style="{StaticResource TextBoxCentered}"/>
                     <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">% / s</TextBlock>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="7" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Delay in Seconds to close the Forward Cargo Door when Progress reached 100% during Boarding (ignored when Keep Doors Open is configured).">
+                <TextBlock Grid.Column="0" Grid.Row="9" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Delay in Seconds to close the Forward Cargo Door when Progress reached 100% during Boarding (ignored when Keep Doors Open is configured).">
                     Cargo Door Delay:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="7" Style="{StaticResource SettingItemPanel}" ToolTip="Delay in Seconds to close a Cargo Door when the Loader is finished (ignored when Keep Doors Open is configured).">
+                <StackPanel Grid.Column="1" Grid.Row="9" Style="{StaticResource SettingItemPanel}" ToolTip="Delay in Seconds to close a Cargo Door when the Loader is finished (ignored when Keep Doors Open is configured).">
                     <TextBox Name="InputDoorCargoDelay" Style="{StaticResource TextBoxCentered}"/>
                     <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="8" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Automatically skip to the Cockpit in MSFS 2024 on Session Start.&#x0a;You can use Walkaround Mode while the Departure Services run, except when any Door is about to be opened or closed.">
+                <TextBlock Grid.Column="0" Grid.Row="10" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Automatically skip to the Cockpit in MSFS 2024 on Session Start.&#x0a;You can use Walkaround Mode while the Departure Services run, except when any Door is about to be opened or closed.">
                     Skip Walkaround:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="8" IsChecked="{Binding SkipWalkAround}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Automatically skip to the Cockpit in MSFS 2024 on Session Start.&#x0a;You can use Walkaround Mode while the Departure Services run, except when any Door is about to be opened or closed."/>
+                <CheckBox Grid.Column="1" Grid.Row="10" IsChecked="{Binding SkipWalkAround}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Automatically skip to the Cockpit in MSFS 2024 on Session Start.&#x0a;You can use Walkaround Mode while the Departure Services run, except when any Door is about to be opened or closed."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="9" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already).">
+                <TextBlock Grid.Column="0" Grid.Row="11" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already).">
                     Restart GSX on Taxi-In:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="9" IsChecked="{Binding RestartGsxOnTaxiIn}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already)."/>
+                <CheckBox Grid.Column="1" Grid.Row="11" IsChecked="{Binding RestartGsxOnTaxiIn}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already)."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="10" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State.">
+                <TextBlock Grid.Column="0" Grid.Row="12" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State.">
                     Reset EFB on Session Start:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="10" IsChecked="{Binding EfbResetOnStartup}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State."/>
+                <CheckBox Grid.Column="1" Grid.Row="12" IsChecked="{Binding EfbResetOnStartup}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="11" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control.">
+                <TextBlock Grid.Column="0" Grid.Row="13" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control.">
                     Run GSX Controller:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="11" IsChecked="{Binding RunGsxService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control."/>
+                <CheckBox Grid.Column="1" Grid.Row="13" IsChecked="{Binding RunGsxService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control."/>
             </Grid>
         </GroupBox>
     </Grid>

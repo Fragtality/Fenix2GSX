@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Fenix2GSX.UI.Views.Monitor"
              d:DataContext="{d:DesignInstance Type=local:ModelMonitor}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="768" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -212,7 +212,7 @@
                     <Label>Automation Phase</Label>
                     <Label Content="{Binding AppAutomationState}"/>
                 </StackPanel>
-                <StackPanel Grid.Column="1" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="Count of completed and (current) total of Departure Services">
+                <StackPanel Grid.Column="1" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="Count of completed &amp; skipped / requested &amp; active / total Departure Services">
                     <Label>Departure Services</Label>
                     <Label Content="{Binding AppAutomationDepartureServices}"/>
                 </StackPanel>
@@ -229,11 +229,11 @@
                     <Label Content="{Binding AppInMotion}"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="0" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Active Aircraft Profile used by Fenix2GSX">
+                <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Active Aircraft Profile used by Fenix2GSX">
                     <Label>Aircraft Profile</Label>
                     <Label Content="{Binding AppProfile}"/>
                 </StackPanel>
-                <StackPanel Grid.Column="1" Grid.ColumnSpan="4" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Information on the Aircraft received by Sim / EFB">
+                <StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Information on the Aircraft received by Sim / EFB">
                     <Label>Aircraft Data</Label>
                     <Label Content="{Binding AppAircraft}"/>
                 </StackPanel>
@@ -244,14 +244,17 @@
             <GroupBox.Header>Message Log</GroupBox.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MaxWidth="840"/>
+                    <ColumnDefinition Width="*" MaxWidth="840"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ListBox Name="LogControl" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding MessageLog}" BorderThickness="0" IsHitTestVisible="False" ToolTip="Informational Log Messages.&#x0a;NOTE: A Screenshot is NOT sufficient when reporting Issues - always provide the actual Log File!"/>
-
+                <ListBox Name="LogControl" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding MessageLog}" BorderThickness="0" IsHitTestVisible="False" FontFamily="Consolas" FontSize="10" ToolTip="Informational Log Messages.&#x0a;NOTE: A Screenshot is NOT sufficient when reporting Issues - always provide the actual Log File!"/>
+                <Button Grid.Column="0" Grid.Row="0" Name="ButtonGetLog" Command="{Binding LogDirCommand}" Visibility="Visible"
+                        HorizontalAlignment="Right" VerticalAlignment="Bottom" MinWidth="48" MinHeight="24" Padding="4" Margin="8">
+                    Get Log
+                </Button>
             </Grid>
         </GroupBox>
     </Grid>

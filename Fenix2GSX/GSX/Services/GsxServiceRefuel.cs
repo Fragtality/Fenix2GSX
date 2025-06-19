@@ -1,6 +1,7 @@
 ﻿using CFIT.AppLogger;
 using CFIT.SimConnectLib.SimResources;
 using Fenix2GSX.GSX.Menu;
+using System.Threading.Tasks;
 
 namespace Fenix2GSX.GSX.Services
 {
@@ -50,7 +51,7 @@ namespace Fenix2GSX.GSX.Services
             {
                 Logger.Information($"{Type} Service completed");
                 CompleteNotified = true;
-                Controller.AircraftInterface.RefuelComplete();
+                _ = Controller.AircraftInterface.RefuelComplete();
                 NotifyCompleted();
             }
             NotifyStateChange();
@@ -67,8 +68,32 @@ namespace Fenix2GSX.GSX.Services
                 if (State == GsxServiceState.Active)
                     Controller.AircraftInterface.RefuelStart();
             }
-            else if (sub.GetNumber() == 0 && State != GsxServiceState.Unknown)
-                Logger.Information($"Fuel Hose disconnected");
+            else if (sub.GetNumber() == 0 && State != GsxServiceState.Unknown && WasActive)
+            {
+                if (Controller.AircraftProfile.RefuelFinishOnHose && Controller.AircraftInterface.IsRefueling)
+                {
+                    Logger.Information($"Fuel Hose disconnected while Refuel still in Progress - stopping Refuel");
+                    if (!Controller.SimConnect.IsPaused)
+                        _ = Controller.AircraftInterface.RefuelStop();
+                    else
+                        _ = DelayedFuelStop();
+                }
+                else if (Controller.AircraftInterface.IsRefueling)
+                    Logger.Information($"Fuel Hose disconnected while Refuel still in Progress - Refuel continues");
+                else
+                    Logger.Information($"Fuel Hose disconnected");
+            }
+        }
+
+        protected virtual async Task DelayedFuelStop()
+        {
+            Logger.Information($"Waiting for Sim to be unpaused");
+            while (Controller.SimConnect.IsPaused)
+            {
+                Logger.Debug($"Waiting for Sim to be unpaused");
+                await Task.Delay(Controller.Config.CheckInterval, Controller.Token);
+            }
+            await Controller.AircraftInterface.RefuelStop();
         }
 
         protected override void DoReset()
@@ -90,6 +115,12 @@ namespace Fenix2GSX.GSX.Services
             var state = ReadState(SubRefuelService);
             if (state == GsxServiceState.Callable && WasActive)
                 return GsxServiceState.Completed;
+            else if (state == GsxServiceState.Active && !WasActive)
+            {
+                Logger.Debug($"Setting WasActive for Refuel");
+                WasActive = true;
+                return state;
+            }
             else
                 return state;
         }

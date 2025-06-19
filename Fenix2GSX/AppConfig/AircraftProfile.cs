@@ -35,19 +35,6 @@ namespace Fenix2GSX.AppConfig
                 return $"{Name}: {MatchType}";
         }
 
-        public override bool Equals(object? obj)
-        {
-            if (obj is AircraftProfile profile)
-                return this.Name.Equals(profile.Name);
-            else
-                return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return Name?.GetHashCode() ?? 0 ^ MatchType.GetHashCode() ^ MatchString?.GetHashCode() ?? 0;
-        }
-
         //Settings
         public virtual int ConnectPca { get; set; } = 2; // 0 => false | 1 => true | 2 => only on jetway stand
         public virtual bool DoorStairHandling { get; set; } = true;
@@ -61,6 +48,7 @@ namespace Fenix2GSX.AppConfig
         public virtual bool RandomizePax { get; set; } = true;
         public virtual double ChancePerSeat { get; set; } = 0.025;
         public virtual double RefuelRateKgSec { get; set; } = 28;
+        public virtual bool RefuelFinishOnHose { get; set; } = false;
         public virtual bool UseRefuelTimeTarget { get; set; } = false;
         public virtual int RefuelTimeTargetSeconds { get; set; } = 300;
         public virtual bool DoorsCargoKeepOpenOnLoaded { get; set; } = false;

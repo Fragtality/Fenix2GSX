@@ -56,31 +56,31 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <DataGrid Grid.Column="0" Grid.Row="0" Name="GridDepartureServices" Margin="6,10,6,6" MinWidth="312" AutoGenerateColumns="False" HeadersVisibility="Column" SelectionMode="Single" IsReadOnly="True" HorizontalAlignment="Left" GridLinesVisibility="None"
+                    <DataGrid Grid.Column="0" Grid.Row="0" Name="GridDepartureServices" Margin="6,10,6,6" MinWidth="384"
                               ToolTip="Departure Services: GSX Services and their Order to be called, monitored or skipped in the Departure Phase.">
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Service">
+                            <DataGridTemplateColumn Header="Service" MinWidth="64">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding ServiceType}" Margin="1" Style="{StaticResource TextBlockDefault}"/>
+                                        <TextBlock Text="{Binding ServiceType}" Margin="4,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="Activation">
+                            <DataGridTemplateColumn Header="Activation" MinWidth="128">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding ServiceActivationName}" Margin="1" Style="{StaticResource TextBlockDefault}"/>
+                                        <TextBlock Text="{Binding ServiceActivationName}" Margin="5,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="Min. Flight Time">
+                            <DataGridTemplateColumn Header="Min. Flight Time" MinWidth="112">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Margin="1">
+                                        <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
                                             <Label Content="{Binding MinimumFlightDuration, Converter={StaticResource TimeSpanConverter}}" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="6,0,0,0" MinWidth="48"/>
-                                            <TextBlock Style="{StaticResource TextBlockDefault}">minutes</TextBlock>
+                                            <TextBlock Style="{StaticResource TextBlockDefault}" Margin="2,0,0,0">minutes</TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -89,7 +89,7 @@
                             <DataGridTemplateColumn Header="Constraint">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding ServiceConstraintName}" MinWidth="128" Margin="8,1,1,1" Style="{StaticResource TextBlockDefault}"/>
+                                        <TextBlock Text="{Binding ServiceConstraintName}" MinWidth="96" Margin="6,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -105,7 +105,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Margin="6,6,0,0" Visibility="{Binding HasSelection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolVisibilityConverter}}">
-                        <TextBlock Name="LabelServiceName" Style="{StaticResource TextBlockDefault}"/>
+                        <TextBlock Name="LabelServiceName" Margin="5,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                         <ComboBox Name="SelectorActivation" ItemsSource="{Binding TextServiceActivations}" SelectedIndex="0" SelectedValuePath="Key" DisplayMemberPath="Value" Style="{StaticResource ComboBoxDefault}"
                                   ToolTip="Select if and how to activate the Service:&#x0a;
                                   Skip / Ignore: Service will neither be called nor monitored by Fenix2GSX&#x0a;
@@ -118,7 +118,7 @@
                                   Note: The first Service will always be called directly (if not set to skipped or manual), as it has no previous Service!"/>
                         <TextBox Name="InputDuration" Margin="8,0,0,0" Style="{StaticResource TextBoxCentered}" ToolTip="Only call/monitor the Service if the scheduled Flight Time is greater than the specified Value."/>
                         <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}" ToolTip="Only call/monitor the Service if the scheduled Flight Time is greater than the specified Value.">minutes</TextBlock>
-                        <ComboBox Margin="8,0,0,0" Name="SelectorConstraint" ItemsSource="{Binding TextServiceConstraints}" SelectedIndex="0" SelectedValuePath="Key" DisplayMemberPath="Value" Style="{StaticResource ComboBoxDefault}"
+                        <ComboBox Margin="10,0,0,0" Name="SelectorConstraint" ItemsSource="{Binding TextServiceConstraints}" SelectedIndex="0" SelectedValuePath="Key" DisplayMemberPath="Value" Style="{StaticResource ComboBoxDefault}"
                                   ToolTip="Select a Constraint for calling the Service:&#x0a;
                                   None: No Constraint applied, the Service is called every time (Time Constraint still applies)&#x0a;
                                   Only Departure: The Service is only called on the first Departure (resetted by Fenix2GSX Restart or new Session)&#x0a;
@@ -144,12 +144,13 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Column="0" Grid.Row="0" Style="{StaticResource SettingItemPanel}" ToolTip="Refuel the Aircraft with a fixed Rate. Refueling Duration is variable (depending on planned Fuel)">
                     <TextBlock Style="{StaticResource TextBlockDefault}">Fixed Refuel Rate:</TextBlock>
                     <TextBox Name="InputRefuelRate" Margin="6,0,0,0" Style="{StaticResource TextBoxCentered}" IsEnabled="{Binding UseFixedRefuelRate}" IsReadOnly="{Binding UseRefuelTimeTarget}"/>
-                    <TextBlock Text="{Binding DisplayUnitString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
+                    <TextBlock Text="{Binding DisplayUnitCurrentString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                     <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">per sec</TextBlock>
                 </StackPanel>
 
@@ -165,6 +166,11 @@
                 <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding SkipFuelOnTankering}" Style="{StaticResource CheckBoxSettingItem}"
                           ToolTip="Do not call and ignore GSX Refuel Service if the Fuel on Board is already equal or higher than the planned Fuel Value.">
                     <TextBlock><Underline>Skip Refuel</Underline> when FOB is higher than planned (for Tankering)</TextBlock>
+                </CheckBox>
+
+                <CheckBox Grid.Column="0" Grid.Row="3" IsChecked="{Binding RefuelFinishOnHose}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="When the GSX Fuel Hose is reported as disconnected, stop Refueling and instantly set the planned Fuel">
+                    <TextBlock><Underline>Finish Refuel immediately</Underline> when the Fuel Hose disconnects</TextBlock>
                 </CheckBox>
             </Grid>
         </GroupBox>

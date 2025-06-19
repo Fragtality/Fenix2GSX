@@ -1,7 +1,9 @@
 ﻿using CFIT.AppLogger;
+using CFIT.AppTools;
 using CFIT.SimConnectLib.SimResources;
 using Fenix2GSX.GSX.Menu;
 using System;
+using System.Threading.Tasks;
 
 namespace Fenix2GSX.GSX.Services
 {
@@ -68,15 +70,15 @@ namespace Fenix2GSX.GSX.Services
             return ReadState(SubDeboardService);
         }
 
-        public virtual bool SetPaxTarget(int num)
+        public virtual async Task<bool> SetPaxTarget(int num)
         {
             if (Profile.SkipCrewQuestion)
             {
-                SimStore[GsxConstants.VarNoCrewDeboard].WriteValue(1);
-                SimStore[GsxConstants.VarNoPilotsDeboard].WriteValue(1);
+                await SimStore[GsxConstants.VarNoCrewDeboard].WriteValue(1);
+                await SimStore[GsxConstants.VarNoPilotsDeboard].WriteValue(1);
             }
 
-            return SubPaxTarget.WriteValue(num);
+            return await SubPaxTarget.WriteValue(num);
         }
 
         protected virtual void NotifyPaxChange(ISimResourceSubscription sub, object data)
@@ -97,7 +99,7 @@ namespace Fenix2GSX.GSX.Services
                 return;
             }
 
-            OnPaxChange?.Invoke(this);
+            TaskTools.RunLogged(() => OnPaxChange?.Invoke(this), Controller.Token);
         }
 
         protected virtual void NotifyCargoChange(ISimResourceSubscription sub, object data)
@@ -118,7 +120,7 @@ namespace Fenix2GSX.GSX.Services
                 return;
             }
 
-            OnCargoChange?.Invoke(this);
+            TaskTools.RunLogged(() => OnCargoChange?.Invoke(this), Controller.Token);
         }
     }
 }

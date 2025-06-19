@@ -1,5 +1,7 @@
 ﻿using CFIT.AppFramework.UI.ViewModels;
 using Fenix2GSX.AppConfig;
+using System;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace Fenix2GSX.UI.Views.Profiles
@@ -19,19 +21,20 @@ namespace Fenix2GSX.UI.Views.Profiles
             InputType.ItemsSource = ModelProfiles.MatchTypes;
 
             ViewModelSelector.BindTextElement(InputName, nameof(AircraftProfile.Name));
-            ViewModelSelector.BindMember(InputType, nameof(AircraftProfile.MatchType));
+            ViewModelSelector.BindMember(InputType, nameof(AircraftProfile.MatchType), null, ProfileMatchType.Default);
             ViewModelSelector.BindTextElement(InputMatchString, nameof(AircraftProfile.MatchString));
 
             ButtonAdd.Command = ViewModelSelector.BindAddUpdateButton(ButtonAdd, ImageAdd, GetItem, IsItemValid);
             ViewModelSelector.AddUpdateCommand.Subscribe(InputName);
             ViewModelSelector.AddUpdateCommand.Subscribe(InputType);
             ViewModelSelector.AddUpdateCommand.Subscribe(InputMatchString);
+            ViewModelSelector.AddUpdateCommand.Executed += () => AppService.Instance?.Config?.NotifyPropertyChanged(nameof(Config.CurrentProfile));
 
             ButtonRemove.Command = ViewModelSelector.BindRemoveButton(ButtonRemove, ViewModel.IsSelectionNonDefault);
-            ViewModelSelector.RemoveCommand.Executed += () => ViewModel.CheckActiveProfile();
             ViewModelSelector.RemoveCommand.Subscribe(InputName);
             ViewModelSelector.RemoveCommand.Subscribe(InputType);
             ViewModelSelector.RemoveCommand.Subscribe(InputMatchString);
+            ViewModelSelector.RemoveCommand.Executed += () => ViewModel.CheckActiveProfile();
 
             ButtonSetActive.Command = ViewModel.SetActiveCommand;
         }
@@ -50,11 +53,19 @@ namespace Fenix2GSX.UI.Views.Profiles
 
         public virtual bool IsItemValid()
         {
-            return !string.IsNullOrWhiteSpace(InputName?.Text) && InputType?.SelectedValue is ProfileMatchType type && type != ProfileMatchType.Default && !string.IsNullOrWhiteSpace(InputMatchString?.Text);
+            bool baseCheck = !string.IsNullOrWhiteSpace(InputName?.Text) && InputType?.SelectedValue is ProfileMatchType type && type != ProfileMatchType.Default && !string.IsNullOrWhiteSpace(InputMatchString?.Text);
+            if (!baseCheck)
+                return false;
+
+            if (InputName?.Text?.Equals(ViewModelSelector?.SelectedItem?.Name, StringComparison.InvariantCultureIgnoreCase) == true)
+                return true;
+            else
+                return ViewModelSelector?.ItemsSource?.Source?.Any(p => p.Name.Equals(InputName?.Text, StringComparison.InvariantCultureIgnoreCase)) == false;
         }
 
         public virtual void Start()
         {
+            SelectorProfiles.SelectedItem = AppService.Instance?.Config?.CurrentProfile;
             ViewModel.Start();
         }
 

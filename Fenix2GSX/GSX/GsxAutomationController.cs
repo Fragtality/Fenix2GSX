@@ -47,17 +47,18 @@ namespace Fenix2GSX.GSX
         public virtual AutomationState LastState { get; protected set; } = AutomationState.SessionStart;
         public virtual bool HasStateChanged => State != LastState;
         protected virtual bool SimGroundState => Controller.IsOnGround;
-        public virtual bool IsOnGround { get; protected set; } = true;
-        protected virtual int GroundCounter { get; set; } = 0;
+        public virtual bool IsOnGround { get; set; } = true;
 
         protected virtual IEnumerator DepartureServicesEnumerator { get; set; }
         protected virtual ServiceConfig DepartureServicesCurrent => ((KeyValuePair<int, ServiceConfig>)DepartureServicesEnumerator.Current).Value;
         protected virtual List<GsxService> DepartureServicesCalled { get; } = [];
-        public virtual int CountDepartureServicesQueued => Profile?.DepartureServices?.Where(s => s.Value.ServiceActivation != GsxServiceActivation.Skip)?.Count() ?? 0;
-        public virtual int CountDepartureServicesCompleted => DepartureServicesCalled?.Where(s => s.State == GsxServiceState.Completed || s.IsSkipped)?.Count() ?? 0;
+        public virtual int ServiceCountCompleted { get; protected set; } = 0;
+        public virtual int ServiceCountRunning { get; protected set; } = 0;
+        public virtual int ServiceCountTotal { get; protected set; } = 0;
         protected virtual ConcurrentDictionary<GsxServiceType, GsxService> GsxServices => Controller.GsxServices;
         protected virtual GsxServiceReposition ServiceReposition => GsxServices[GsxServiceType.Reposition] as GsxServiceReposition;
         protected virtual GsxServiceRefuel ServiceRefuel => GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel;
+        protected virtual GsxServiceCatering ServiceCatering => GsxServices[GsxServiceType.Catering] as GsxServiceCatering;
         protected virtual GsxServiceJetway ServiceJetway => GsxServices[GsxServiceType.Jetway] as GsxServiceJetway;
         protected virtual GsxServiceStairs ServiceStairs => GsxServices[GsxServiceType.Stairs] as GsxServiceStairs;
         protected virtual GsxServicePushback ServicePushBack => GsxServices[GsxServiceType.Pushback] as GsxServicePushback;
@@ -101,7 +102,6 @@ namespace Fenix2GSX.GSX
             foreach (var service in GsxServices)
                 service.Value.ResetState();
 
-            GroundCounter = 0;
             IsOnGround = true;
 
             ExecutedReposition = false;
@@ -111,6 +111,9 @@ namespace Fenix2GSX.GSX
             ChockFlashed = false;
             CabinDinged = false;
             DepartureIcao = "";
+            ServiceCountRunning = 0;
+            ServiceCountCompleted = 0;
+            ServiceCountTotal = 0;
 
             DepartureServicesCompleted = false;
             DepartureServicesCalled?.Clear();
@@ -126,8 +129,6 @@ namespace Fenix2GSX.GSX
 
         protected virtual void ResetFlight()
         {
-            GroundCounter = 0;
-
             Controller.Menu.ResetFlight();
             foreach (var service in GsxServices)
                 service.Value.ResetState();
@@ -158,15 +159,14 @@ namespace Fenix2GSX.GSX
 
             while (RunFlag && Controller.IsActive && !Controller.Token.IsCancellationRequested)
             {
-                CheckGround();
                 Logger.Verbose($"Automation Tick - State: {State} | ServicesValid: {ServicesValid}");
-                if (Controller.IsGsxRunning && Controller.Menu.FirstReadyReceived && GroundCounter == 0)
+                if (Controller.IsGsxRunning && Controller.CanAutomationRun)
                 {
                     await EvaluateState();
-                    if (Config.RunAutomationService && ServicesValid)
+                    if (Config.RunAutomationService && ServicesValid && Controller.Menu.FirstReadyReceived)
                         await RunServices();
                     if (SmartButtonRequest)
-                        Aircraft.ResetSmartButton();
+                        await Aircraft.ResetSmartButton();
                 }
 
                 LastState = State;
@@ -183,22 +183,6 @@ namespace Fenix2GSX.GSX
             RunFlag = false;
         }
 
-        protected virtual void CheckGround()
-        {
-            if (SimGroundState != IsOnGround && !Controller.IsWalkaround)
-            {
-                GroundCounter++;
-                if (GroundCounter > Config.GroundTicks)
-                {
-                    GroundCounter = 0;
-                    IsOnGround = SimGroundState;
-                    Logger.Information($"On Ground State changed: {(IsOnGround ? "On Ground" : "In Flight")}");
-                }
-            }
-            else if (SimGroundState == IsOnGround && GroundCounter > 0)
-                GroundCounter = 0;
-        }
-
         protected virtual async void CheckStateChange(AutomationState state)
         {
             if (state == AutomationState.Departure)
@@ -207,21 +191,34 @@ namespace Fenix2GSX.GSX
 
         protected virtual async Task EvaluateState()
         {
+            ServiceCountRunning = 0;
+            ServiceCountCompleted = 0;
+            ServiceCountTotal = 0;
+
             //Session Start => Prep / Push / Taxi-Out / Flight
             if (State == AutomationState.SessionStart)
             {
                 if (!Controller.IsOnGround || Config.DebugArrival)
+                {
+                    Logger.Debug($"Starting in {AutomationState.Flight} - IsOnGround {Controller.IsOnGround} | DebugArrival {Config.DebugArrival}");
                     StateChange(AutomationState.Flight);
+                }
                 else if (Aircraft.EnginesRunning || Aircraft.LightBeacon || ServicePushBack.PushStatus > 0)
                 {
                     if ((Aircraft.LightBeacon && !Aircraft.EnginesRunning) || ServicePushBack.PushStatus > 0)
+                    {
+                        Logger.Debug($"Starting in {AutomationState.PushBack} - Beacon {Aircraft.LightBeacon} | PushStatus {ServicePushBack.PushStatus > 0}");
                         StateChange(AutomationState.PushBack);
+                    }
                     else
+                    {
+                        Logger.Debug($"Starting in {AutomationState.TaxiOut} - EnginesRunning {Aircraft.EnginesRunning}");
                         StateChange(AutomationState.TaxiOut);
+                    }
                 }
                 else if (Aircraft?.IsFlightPlanLoaded == true)
                     StateChange(AutomationState.Departure);
-                else if (Aircraft?.IsLoaded == true)
+                else if (Aircraft?.IsLoaded == true && Controller?.SkippedWalkAround == true)
                     StateChange(AutomationState.Preparation);
             }
             //intercept Flight
@@ -243,7 +240,7 @@ namespace Fenix2GSX.GSX
                 {
                     CabinDinged = false;
                     StateChange(AutomationState.Departure);
-                    ServiceBoard.SetPaxTarget(Aircraft.GetPaxBoarding());
+                    await ServiceBoard.SetPaxTarget(Aircraft.GetPaxBoarding());
                 }
             }
             //Departure => PushBack
@@ -251,6 +248,23 @@ namespace Fenix2GSX.GSX
             {
                 if (DepartureServicesCompleted)
                     StateChange(AutomationState.PushBack);
+                else
+                {
+                    foreach (var serviceCfg in Profile.DepartureServices.Values)
+                    {
+                        if (serviceCfg.ServiceActivation == GsxServiceActivation.Skip)
+                            continue;
+
+                        if (Controller.GsxServices[serviceCfg.ServiceType].IsActive)
+                            ServiceCountRunning++;
+                        else if (Controller.GsxServices[serviceCfg.ServiceType].IsRunning)
+                            ServiceCountRunning++;
+                        else if (Controller.GsxServices[serviceCfg.ServiceType].IsCompleted || Controller.GsxServices[serviceCfg.ServiceType].IsSkipped)
+                            ServiceCountCompleted++;
+
+                        ServiceCountTotal++;
+                    }
+                }
             }
             //PushBack => TaxiOut
             else if (State == AutomationState.PushBack)
@@ -279,7 +293,7 @@ namespace Fenix2GSX.GSX
                 {
                     await Controller.Menu.OpenHide();
                     StateChange(AutomationState.Arrival);
-                    ServiceDeboard.SetPaxTarget(Aircraft.GetPaxDeboarding());
+                    await ServiceDeboard.SetPaxTarget(Aircraft.GetPaxDeboarding());
                 }
             }
             //Arrival => Turnaround
@@ -287,10 +301,10 @@ namespace Fenix2GSX.GSX
             {
                 if (ServiceDeboard.IsCompleted)
                 {
-                    Aircraft.UnloadOfp();
+                    await Aircraft.UnloadOfp();
                     StateChange(AutomationState.TurnAround);
                     if (Config.DingOnTurnaround)
-                        Aircraft.DingCabin();
+                        await Aircraft.DingCabin();
                 }
             }
             //Turnaround => Departure
@@ -298,10 +312,30 @@ namespace Fenix2GSX.GSX
             {
                 if (Aircraft.IsFlightPlanLoaded && IsOnGround && !Aircraft.EnginesRunning)
                 {
-                    await Controller.ReloadSimbrief();
-                    StateChange(AutomationState.Departure);                    
+                    await SkipTurn(AutomationState.Departure);
+                }
+                else if (SmartButtonRequest)
+                {
+                    Logger.Information("Skip Turnaround Phase (SmarButton Request)");
+                    await SkipTurn(AutomationState.Departure);
+                }
+                else if (ServiceRefuel.IsRunning || ServiceCatering.IsRunning || ServiceBoard.IsRunning)
+                {
+                    Logger.Warning($"Departure Services already running! Skipping Turnaround");
+                    await SkipTurn(AutomationState.Departure);
+                }
+                else if (ServicePushBack.IsRunning)
+                {
+                    Logger.Warning($"Pushback Service already running! Skipping Turnaround");
+                    await SkipTurn(AutomationState.PushBack);
                 }
             }
+        }
+
+        protected virtual async Task SkipTurn(AutomationState state)
+        {
+            await Controller.ReloadSimbrief();
+            StateChange(AutomationState.Departure);
         }
 
         protected virtual void StateChange(AutomationState newState)
@@ -347,13 +381,13 @@ namespace Fenix2GSX.GSX
             if (ExecutedReposition && Controller.SkippedWalkAround && !GroundEquipmentPlaced && ServicePushBack.PushStatus == 0 && !Aircraft.EnginesRunning)
             {
                 Logger.Information("Automation: Placing Ground Equipment");
-                Aircraft.SetChocks(false);
-                Aircraft.SetChocks(true);
-                Aircraft.SetGroundPower(true);
+                await Aircraft.SetChocks(false);
+                await Aircraft.SetChocks(true);
+                await Aircraft.SetGroundPower(true);
                 if (Profile.ConnectPca == 1 || (Profile.ConnectPca == 2 && ServiceJetway.State != GsxServiceState.NotAvailable))
                 {
                     Logger.Information($"Connecting PCA");
-                    Aircraft.SetPca(true);
+                    await Aircraft.SetPca(true);
                 }
                 GroundEquipmentPlaced = true;
             }
@@ -375,7 +409,7 @@ namespace Fenix2GSX.GSX
             if (!CabinDinged && ExecutedReposition && (ServiceJetway.IsRunning || ServiceStairs.IsRunning))
             {
                 if (Config.DingOnStartup)
-                    Aircraft.DingCabin();
+                    await Aircraft.DingCabin();
                 CabinDinged = true;
             }
         }
@@ -385,7 +419,7 @@ namespace Fenix2GSX.GSX
             if (Aircraft.IsApuBleedOn && Aircraft.EquipmentPca)
             {
                 Logger.Information($"Disconnecting PCA");
-                Aircraft.SetPca(false);
+                await Aircraft.SetPca(false);
             }
 
             if (!DepartureServicesCompleted)
@@ -464,7 +498,7 @@ namespace Fenix2GSX.GSX
                             || (activation == GsxServiceActivation.AfterAllCompleted && DepartureServicesCalled.All(s => s.IsCompleted || s.IsSkipped)))
                     {
                         if (DepartureServicesCurrent.ServiceType == GsxServiceType.Boarding)
-                            ServiceBoard.SetPaxTarget(Aircraft.GetPaxBoarding());
+                            await ServiceBoard.SetPaxTarget(Aircraft.GetPaxBoarding());
                         Logger.Information($"Automation: Call Departure Service {DepartureServicesCurrent.ServiceType}");
                         await current.Call();
                         if (current.IsCalled)
@@ -505,13 +539,13 @@ namespace Fenix2GSX.GSX
             if (Aircraft.IsApuBleedOn && Aircraft.EquipmentPca)
             {
                 Logger.Information($"Disconnecting PCA");
-                Aircraft.SetPca(false);
+                await Aircraft.SetPca(false);
             }
 
             if (Aircraft.HasOpenDoors && Aircraft.IsFinalReceived && Profile.CloseDoorsOnFinal)
             {
                 Logger.Information($"Automation: Close Doors on Final Loadsheet");
-                Aircraft.CloseAllDoors();
+                await Aircraft.CloseAllDoors();
                 await Task.Delay(Config.StateMachineInterval * 2, Token);
             }
 
@@ -529,7 +563,7 @@ namespace Fenix2GSX.GSX
                 if (Profile.ClearGroundEquipOnBeacon)
                 {
                     Logger.Information($"Automation: Remove Ground Equipment on Beacon");
-                    SetGroundEquip(false);
+                    await SetGroundEquip(false);
                 }
                 GroundEquipmentPlaced = false;
                 if (Profile.CallPushbackOnBeacon && !ServicePushBack.IsCalled && ServicePushBack.State < GsxServiceState.Requested)
@@ -567,14 +601,14 @@ namespace Fenix2GSX.GSX
             if (Aircraft.HasOpenDoors && (ServicePushBack.PushStatus > 0 || ServiceDeice.IsActive || Aircraft.EnginesRunning))
             {
                 Logger.Information($"Automation: Close Doors on Pushback");
-                Aircraft.CloseAllDoors();
+                await Aircraft.CloseAllDoors();
                 await Task.Delay(Config.StateMachineInterval, Token);
             }
 
             if (GroundEquipmentPlaced && (ServicePushBack.PushStatus > 1 || ServicePushBack.State == GsxServiceState.Completed || ServiceDeice.IsActive))
             {
                 Logger.Information($"Automation: Remove Ground Equipment on Pushback");
-                SetGroundEquip(false);
+                await SetGroundEquip(false);
                 GroundEquipmentPlaced = false;
                 await Task.Delay(Config.StateMachineInterval, Token);
             }
@@ -590,19 +624,19 @@ namespace Fenix2GSX.GSX
                 if (Aircraft.EquipmentGpu && !Aircraft.IsExternalPowerConnected)
                 {
                     Logger.Information($"Automation: Remove GPU {reason}");
-                    Aircraft.SetGroundPower(false);
+                    await Aircraft.SetGroundPower(false);
                 }
 
                 if (Aircraft.EquipmentChocks && Aircraft.IsBrakeSet)
                 {
                     Logger.Information($"Automation: Remove Chocks {reason}");
-                    Aircraft.SetChocks(false);
+                    await Aircraft.SetChocks(false);
                 }
 
                 if (Aircraft.HasOpenDoors)
                 {
                     Logger.Information($"Automation: Close all Doors {reason}");
-                    Aircraft.CloseAllDoors();
+                    await Aircraft.CloseAllDoors();
                 }
             }
 
@@ -615,7 +649,7 @@ namespace Fenix2GSX.GSX
                     if (GroundEquipmentPlaced)
                     {
                         Logger.Information($"Automation: Remove Ground Equipment on INT/RAD");
-                        SetGroundEquip(false);
+                        await SetGroundEquip(false);
                         GroundEquipmentPlaced = false;
                     }
                 }
@@ -632,12 +666,12 @@ namespace Fenix2GSX.GSX
             }
         }
 
-        protected virtual void SetGroundEquip(bool set)
+        protected virtual async Task SetGroundEquip(bool set)
         {
-            Aircraft.SetChocks(set);
+            await Aircraft.SetChocks(set);
             if (!set)
-                Aircraft.SetPca(set);
-            Aircraft.SetGroundPower(set);
+                await Aircraft.SetPca(set);
+            await Aircraft.SetGroundPower(set);
         }
 
         protected virtual async Task RunArrival()
@@ -647,6 +681,14 @@ namespace Fenix2GSX.GSX
                 ChockDelay = new Random().Next(Profile.ChockDelayMin, Profile.ChockDelayMax);
                 Logger.Information($"Automation: Placing Chocks on Arrival (ETA {ChockDelay}s)");
                 _ = Task.Delay(ChockDelay * 1000).ContinueWith((_) => Aircraft.SetChocks(true));
+                _ = Task.Delay(60000, Token).ContinueWith(async (_) =>
+                {
+                    if (!Aircraft.EquipmentGpu && Controller.GsxServices[GsxServiceType.Deboarding].IsCalled)
+                    {
+                        Logger.Warning($"Failback: Setting GPU after Deboard was called");
+                        await Aircraft.SetGroundPower(true, true);
+                    }
+                });
             }
 
             if (Aircraft.EquipmentChocks && !ChockFlashed)
@@ -658,7 +700,7 @@ namespace Fenix2GSX.GSX
             if (!Aircraft.EquipmentGpu && (IsGateConnected || ServiceDeboard.IsActive))
             {
                 Logger.Information($"Automation: Placing GPU on Arrival");
-                Aircraft.SetGroundPower(true);
+                await Aircraft.SetGroundPower(true);
                 await Task.Delay(1000, Controller.Token);
             }
 
@@ -667,7 +709,7 @@ namespace Fenix2GSX.GSX
                 if (Profile.ConnectPca == 1 || (Profile.ConnectPca == 2 && ServiceJetway.State != GsxServiceState.NotAvailable))
                 {
                     Logger.Information($"Automation: Placing PCA on Arrival");
-                    Aircraft.SetPca(true);
+                    await Aircraft.SetPca(true);
                     await Task.Delay(1000, Controller.Token);
                 }
             }
@@ -687,13 +729,13 @@ namespace Fenix2GSX.GSX
             {
                 if (ServiceJetway.IsAvailable && !ServiceJetway.IsConnected && !ServiceJetway.IsCalled)
                 {
-                    Logger.Information("Automation: Call Jetway on Preparation");
+                    Logger.Information("Automation: Call Jetway on Arrival");
                     await ServiceJetway.Call();
                 }
 
                 if (!ServiceStairs.IsConnected && !ServiceStairs.IsCalled)
                 {
-                    Logger.Information("Automation: Call Stairs on Preparation");
+                    Logger.Information("Automation: Call Stairs on Arrival");
                     await ServiceStairs.Call();
                 }
             }

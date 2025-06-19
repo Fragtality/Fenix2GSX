@@ -4,6 +4,7 @@ using CoreAudio;
 using Fenix2GSX.Aircraft;
 using Fenix2GSX.Audio;
 using FenixInterface;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,14 +12,11 @@ using System.Text.Json.Serialization;
 
 namespace Fenix2GSX.AppConfig
 {
-    public enum DisplayUnit
-    {
-        KG = 0,
-        LB = 1,
-    }
-
     public class Config : AppConfigBase<Definition>, IConfig, INotifyPropertyChanged
     {
+        public virtual bool OpenAppWindowOnStart { get; set; } = false;
+        [JsonIgnore]
+        public virtual bool ForceOpen { get; set; } = false;
         public virtual double WeightConversion { get; set; } = 2.2046226218;
         public virtual float CargoDistMain { get; set; } = 4000.0f / 9440.0f;
         public virtual float CargoDistBulk { get; set; } = 1440.0f / 9440.0f;
@@ -34,6 +32,7 @@ namespace Fenix2GSX.AppConfig
         public virtual double FenixWeightBag { get; set; } = 15;
         public virtual double FuelCompareVariance { get; set; } = 25;
         public virtual int TimerGsxCheck { get; set; } = 1000;
+        public virtual int TimerGsxProcessCheck { get; set; } = 5000;
         public virtual int TimerGsxStartupMenuCheck { get; set; } = 5000;
         public virtual int DelayGsxBinaryStart { get; set; } = 7500;
         public virtual bool RunGsxService { get; set; } = true;
@@ -43,8 +42,9 @@ namespace Fenix2GSX.AppConfig
         public virtual DataFlow AudioDeviceFlow { get; set; } = DataFlow.Render;
         public virtual DeviceState AudioDeviceState { get; set; } = DeviceState.Active;
         public virtual int AudioServiceRunInterval { get; set; } = 1000;
+        public virtual int AudioProcessCheckInterval { get; set; } = 2500;
         public virtual int AudioProcessStartupDelay { get; set; } = 2000;
-        public virtual int AudioDeviceCheckInterval { get; set; } = 5000;
+        public virtual int AudioDeviceCheckInterval { get; set; } = 60000;
         public virtual int AudioProcessMaxSearchCount { get; set; } = 30;
         public virtual bool AudioSynchSessionOnCountChange { get; set; } = false;
         public virtual List<string> AudioDeviceBlacklist { get; set; } = [];
@@ -92,14 +92,17 @@ namespace Fenix2GSX.AppConfig
         public virtual bool DingOnStartup { get; set; } = true;
         public virtual bool DingOnFinal { get; set; } = true;
         public virtual bool DingOnTurnaround { get; set; } = true;
-        public virtual DisplayUnit WeightDisplayUnit { get; set; } = DisplayUnit.KG;
         [JsonIgnore]
-        public virtual string WeightDisplayUnitString => WeightDisplayUnit.ToString().ToLowerInvariant();
+        public virtual DisplayUnit DisplayUnitCurrent { get; set; }
+        [JsonIgnore]
+        public string DisplayUnitCurrentString => DisplayUnitCurrent.ToString().ToLowerInvariant();
+        public virtual DisplayUnit DisplayUnitDefault { get; set; }
+        public virtual DisplayUnitSource DisplayUnitSource { get; set; }
         public virtual double FuelResetDefaultKg { get; set; } = 3000;
         public virtual bool FuelRoundUp100 { get; set; } = true;
         public virtual Dictionary<string, double> FuelFobSaved { get; set; } = [];
         public virtual int CargoPercentChangePerSec { get; set; } = 5;
-        public int DoorCargoDelay { get; set; } = 7;
+        public int DoorCargoDelay { get; set; } = 16;
         public virtual bool InterceptGpuAndChocksOnBeacon { get; set; } = true;
         public virtual int OperatorWaitTimeout { get; set; } = 1500;
         public virtual int OperatorSelectTimeout { get; set; } = 10000;
@@ -111,6 +114,8 @@ namespace Fenix2GSX.AppConfig
         public virtual int SpeedTresholdTaxiOut { get; set; } = 2;
         public virtual int SpeedTresholdTaxiIn { get; set; } = 30;
 
+        [JsonIgnore]
+        public virtual AircraftProfile CurrentProfile => AppService.Instance?.GsxService?.AircraftProfile;
         public virtual List<AircraftProfile> AircraftProfiles { get; set; } = new()
         {
             { new AircraftProfile() }
@@ -132,7 +137,11 @@ namespace Fenix2GSX.AppConfig
 
         protected override void UpdateConfiguration(int buildConfigVersion)
         {
-
+            if (buildConfigVersion == 7 || buildConfigVersion == 8)
+            {
+                AudioDeviceCheckInterval = 60000;
+                DoorCargoDelay = 16;
+            }
         }
 
         public virtual void SetFuelFob(string registration, double fuel)
@@ -157,28 +166,49 @@ namespace Fenix2GSX.AppConfig
         {
             if (aircraft.IsLoaded)
             {
-                var query = AircraftProfiles.Where(p => p.MatchType == ProfileMatchType.Registration && aircraft.Registration.Equals(p.MatchString, System.StringComparison.InvariantCultureIgnoreCase));
-                if (query.Any())
+                foreach (var profile in AircraftProfiles)
                 {
-                    var profile = query.First();
-                    Logger.Information($"Loading Profile '{profile.Name}' (matched by Registration {profile.MatchString})");
-                    return profile;
+                    if (profile.MatchType != ProfileMatchType.Registration)
+                        continue;
+                    var strings = profile.MatchString.Split('|');
+                    foreach (var s in strings)
+                    {
+                        if (aircraft.Registration.Equals(s, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            Logger.Information($"Loading Profile '{profile.Name}' (matched on Registration - '{aircraft.Registration}' equals '{s}')");
+                            return profile;
+                        }
+                    }
                 }
 
-                query = AircraftProfiles.Where(p => p.MatchType == ProfileMatchType.Title && aircraft.Title.Contains(p.MatchString, System.StringComparison.InvariantCultureIgnoreCase));
-                if (query.Any())
+                foreach (var profile in AircraftProfiles)
                 {
-                    var profile = query.First();
-                    Logger.Information($"Loading Profile '{profile.Name}' (matched by Title {profile.MatchString})");
-                    return profile;
+                    if (profile.MatchType != ProfileMatchType.Title)
+                        continue;
+                    var strings = profile.MatchString.Split('|');
+                    foreach (var s in strings)
+                    {
+                        if (aircraft.Title.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            Logger.Information($"Loading Profile '{profile.Name}' (matched on Title/Livery - '{aircraft.Title}' contains '{s}')");
+                            return profile;
+                        }
+                    }
                 }
 
-                query = AircraftProfiles.Where(p => p.MatchType == ProfileMatchType.Airline && aircraft.Airline.StartsWith(p.MatchString, System.StringComparison.InvariantCultureIgnoreCase));
-                if (query.Any())
+                foreach (var profile in AircraftProfiles)
                 {
-                    var profile = query.First();
-                    Logger.Information($"Loading Profile '{profile.Name}' (matched by Airline {profile.MatchString})");
-                    return profile;
+                    if (profile.MatchType != ProfileMatchType.Airline)
+                        continue;
+                    var strings = profile.MatchString.Split('|');
+                    foreach (var s in strings)
+                    {
+                        if (aircraft.Airline.StartsWith(s, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            Logger.Information($"Loading Profile '{profile.Name}' (matched on Airline - '{aircraft.Airline}' starts with '{s}')");
+                            return profile;
+                        }
+                    }
                 }
             }
 
@@ -186,9 +216,17 @@ namespace Fenix2GSX.AppConfig
             return AircraftProfiles.Where(p => p.Name == "default").First() ?? new AircraftProfile();
         }
 
+        public virtual void SetDisplayUnit(DisplayUnit displayUnit)
+        {
+            bool notify = DisplayUnitCurrent != displayUnit;
+            DisplayUnitCurrent = displayUnit;
+            if (notify)
+                NotifyDisplayUnit();
+        }
+
         public virtual double ConvertKgToDisplayUnit(double kg)
         {
-            if (WeightDisplayUnit == DisplayUnit.KG)
+            if (DisplayUnitCurrent == DisplayUnit.KG)
                 return kg;
             else
                 return kg * WeightConversion;
@@ -196,7 +234,7 @@ namespace Fenix2GSX.AppConfig
 
         public virtual double ConvertLbToDisplayUnit(double lb)
         {
-            if (WeightDisplayUnit == DisplayUnit.LB)
+            if (DisplayUnitCurrent == DisplayUnit.LB)
                 return lb;
             else
                 return lb / WeightConversion;
@@ -204,7 +242,7 @@ namespace Fenix2GSX.AppConfig
 
         public virtual double ConvertFromDisplayUnitKg(double value)
         {
-            if (WeightDisplayUnit == DisplayUnit.KG)
+            if (DisplayUnitCurrent == DisplayUnit.KG)
                 return value;
             else
                 return value / WeightConversion;
@@ -217,23 +255,31 @@ namespace Fenix2GSX.AppConfig
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        [JsonIgnore]
-        public virtual DisplayUnit DisplayUnit
-        {
-            get => WeightDisplayUnit;
-            set
-            {
-                WeightDisplayUnit = value;
-                SaveConfiguration();
-                NotifyDisplayUnit();
-            }
-        }
-
         public virtual void NotifyDisplayUnit()
         {
-            NotifyPropertyChanged(nameof(DisplayUnit));
-            NotifyPropertyChanged(nameof(WeightDisplayUnit));
-            NotifyPropertyChanged(nameof(WeightDisplayUnitString));
+            NotifyPropertyChanged(nameof(DisplayUnitCurrent));
+            NotifyPropertyChanged(nameof(DisplayUnitCurrentString));
+        }
+
+        public virtual void EvaluateDisplayUnit()
+        {
+            if (DisplayUnitSource == DisplayUnitSource.App && DisplayUnitCurrent != DisplayUnitDefault)
+            {
+                DisplayUnitCurrent = DisplayUnitDefault;
+                NotifyDisplayUnit();
+            }
+            else if (AppService.Instance?.SimConnect?.IsSessionRunning == true
+                    && DisplayUnitSource == DisplayUnitSource.Aircraft && AppService.Instance?.GsxService?.AircraftInterface?.IsLoaded == true
+                    && AppService.Instance?.GsxService?.AircraftInterface?.UnitAircraft != DisplayUnitCurrent)
+            {
+                DisplayUnitCurrent = AppService.Instance.GsxService.AircraftInterface.UnitAircraft;
+                NotifyDisplayUnit();
+            }
+            else if (AppService.Instance?.SimConnect?.IsSessionRunning == false && DisplayUnitCurrent != DisplayUnitDefault)
+            {
+                DisplayUnitCurrent = DisplayUnitDefault;
+                NotifyDisplayUnit();
+            }
         }
     }
 }
