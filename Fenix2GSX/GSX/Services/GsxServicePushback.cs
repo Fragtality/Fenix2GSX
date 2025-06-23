@@ -48,10 +48,11 @@ namespace Fenix2GSX.GSX.Services
 
             var state = sub.GetNumber();
             Logger.Debug($"Push Status Change: {state}");
-            if (!TugAttachedOnBoarding && state > 0 && Controller.GsxServices[GsxServiceType.Boarding].State == GsxServiceState.Active)
+            if (!TugAttachedOnBoarding && state > 0 && (Controller.GsxServices[GsxServiceType.Boarding].State == GsxServiceState.Active || Controller.GsxServices[GsxServiceType.Boarding].State == GsxServiceState.Requested))
             {
                 Logger.Information($"Tug attaching during Boarding");
                 TugAttachedOnBoarding = true;
+                Controller.Menu.SuppressMenuRefresh = false;
             }
         }
 

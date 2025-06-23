@@ -186,7 +186,7 @@ namespace Fenix2GSX.Audio
                         NextProcessCheck = DateTime.Now + TimeSpan.FromMilliseconds(Config.AudioProcessCheckInterval);
                     }
 
-                    if (DeviceManager.Scan())
+                    if (DeviceManager.Scan(SessionManager.HasEmptySearches))
                         rescanNeeded = true;
                     if (rescanNeeded)
                         Logger.Debug($"Rescan Needed - DeviceEnum");

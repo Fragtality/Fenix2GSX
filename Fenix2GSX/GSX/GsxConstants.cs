@@ -67,6 +67,7 @@
         public static string MenuPushbackConfirm { get; } = "Interrupt pushback";
         public static string MenuPushbackRequest { get; } = "Do you want to request"; 
         public static string MenuFollowMe { get; } = "Request FollowMe";
+        public static string MenuBoardCrew { get; } = "Do you want to board crew";
         public static string MenuDeboardCrew { get; } = "Do you want to deboard crew";
     }
 }

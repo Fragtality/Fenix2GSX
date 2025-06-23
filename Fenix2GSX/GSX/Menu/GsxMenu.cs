@@ -51,6 +51,7 @@ namespace Fenix2GSX.GSX.Menu
         protected virtual bool FollowMeAnswered { get; set; } = false;
         protected virtual bool MenuOpenRequesting { get; set; } = false;
         protected virtual bool MenuOpenAfterReady { get; set; } = false;
+        public virtual bool SuppressMenuRefresh { get; set; } = false;
         public virtual MessageReceiver<MsgGsxMenuReady> MsgMenuReady { get; protected set; }
 
 
@@ -76,6 +77,7 @@ namespace Fenix2GSX.GSX.Menu
                 MenuCallbacks.Add(GsxConstants.MenuDeiceOnPush, OnDeiceQuestion);
                 MenuCallbacks.Add(GsxConstants.MenuParkingChange, OnParking);
                 MenuCallbacks.Add(GsxConstants.MenuParkingSelect, OnParking);
+                MenuCallbacks.Add(GsxConstants.MenuBoardCrew, OnBoardCrew);
                 MenuCallbacks.Add(GsxConstants.MenuDeboardCrew, OnDeboardCrew);
 
                 IsInitialized = true;
@@ -106,11 +108,16 @@ namespace Fenix2GSX.GSX.Menu
         protected virtual async Task OnTugQuestion(GsxMenu menu)
         {
             Logger.Debug($"Tug Question active");
+            int hide = !AircraftProfile.SkipCrewQuestion ? 0 : 2;
             if (AircraftProfile.AttachTugDuringBoarding == 2)
-                await Select(1, true, false, 2);
+                await Select(1, true, false, hide);
             else if (AircraftProfile.AttachTugDuringBoarding == 1)
-                await Select(2, true, false, 2);
-            await Controller.SubScriptSupress.WriteValue(0);
+                await Select(2, true, false, hide);
+
+            if (AircraftProfile.SkipCrewQuestion && AircraftProfile.AttachTugDuringBoarding != 0)
+                SuppressMenuRefresh = false;
+            else if (AircraftProfile.AttachTugDuringBoarding == 0)
+                SuppressMenuRefresh = true;
         }
 
         protected virtual async Task OnFollowMeQuestion(GsxMenu menu)
@@ -139,12 +146,25 @@ namespace Fenix2GSX.GSX.Menu
             FollowMeAnswered = false;
             await Task.Delay(25);
         }
-        
+
+        protected virtual async Task OnBoardCrew(GsxMenu menu)
+        {
+            Logger.Debug($"Board Crew Question active");
+            if (AircraftProfile.SkipCrewQuestion)
+            {
+                await Select(1, false, false, 2);
+                SuppressMenuRefresh = false;
+            }
+        }
+
         protected virtual async Task OnDeboardCrew(GsxMenu menu)
         {
             Logger.Debug($"Deboard Crew Question active");
             if (AircraftProfile.SkipCrewQuestion)
+            {
                 await Select(1, false, false, 2);
+                SuppressMenuRefresh = false;
+            }            
         }
 
         protected virtual void OnCouatlStopped(MsgGsxCouatlStopped msg)
@@ -239,7 +259,7 @@ namespace Fenix2GSX.GSX.Menu
             foreach (var callback in matchingCallbacks)
                 await TaskTools.RunLogged(() => callback.Value.Invoke(this), Controller.Token);
 
-            if (MenuOpenAfterReady)
+            if (!SuppressMenuRefresh && MenuOpenAfterReady)
                 _ = Task.Delay(1000, Controller.Token).ContinueWith((_) => Open());
         }
 

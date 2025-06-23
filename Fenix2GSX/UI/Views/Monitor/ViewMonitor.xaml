@@ -73,7 +73,7 @@
                     <Label Content="{Binding SimVersion}"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="3" Style="{StaticResource LabelMonitorPanel}" ToolTip="Aircraft SimObject received by SimConnect">
+                <StackPanel Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="3" Style="{StaticResource LabelMonitorPanel}" MaxWidth="760" ToolTip="Aircraft SimObject received by SimConnect">
                     <Label>Aircraft</Label>
                     <Label Content="{Binding AircraftString}"/>
                 </StackPanel>
@@ -244,13 +244,13 @@
             <GroupBox.Header>Message Log</GroupBox.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" MaxWidth="840"/>
+                    <ColumnDefinition Width="*" MaxWidth="760"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ListBox Name="LogControl" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding MessageLog}" BorderThickness="0" IsHitTestVisible="False" FontFamily="Consolas" FontSize="10" ToolTip="Informational Log Messages.&#x0a;NOTE: A Screenshot is NOT sufficient when reporting Issues - always provide the actual Log File!"/>
+                <ListBox Name="LogControl" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding MessageLog}" BorderThickness="0" MaxWidth="760" IsHitTestVisible="False" FontFamily="Consolas" FontSize="10" ToolTip="Informational Log Messages.&#x0a;NOTE: A Screenshot is NOT sufficient when reporting Issues - always provide the actual Log File!"/>
                 <Button Grid.Column="0" Grid.Row="0" Name="ButtonGetLog" Command="{Binding LogDirCommand}" Visibility="Visible"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom" MinWidth="48" MinHeight="24" Padding="4" Margin="8">
                     Get Log

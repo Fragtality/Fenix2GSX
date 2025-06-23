@@ -203,9 +203,9 @@
       }
     }
   ],
-  "ConfigVersion": 8,
+  "ConfigVersion": 9,
   "LogInterval": 3,
-  "SizeLimit": 1048576,
+  "SizeLimit": 10485760,
   "LogCount": 3,
   "LogTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] [{SourceContext}] {Message} {NewLine}",
   "LogLevel": 1,

@@ -141,6 +141,12 @@ namespace Fenix2GSX.AppConfig
             {
                 AudioDeviceCheckInterval = 60000;
                 DoorCargoDelay = 16;
+                SizeLimit = 10 * 1024 * 1024;
+            }
+
+            if (buildConfigVersion == 9)
+            {
+                SizeLimit = 10 * 1024 * 1024;
             }
         }
 

@@ -56,14 +56,6 @@ namespace Fenix2GSX.GSX.Services
             await base.Call();
         }
 
-        protected override void NotifyStateChange()
-        {
-            base.NotifyStateChange();
-
-            if (IsFenixAircraft && State == GsxServiceState.Active)
-                Controller.SubScriptSupress.WriteValue(1);
-        }
-
         public override void FreeResources()
         {
             SubBoardService.OnReceived -= OnStateChange;
@@ -133,16 +125,23 @@ namespace Fenix2GSX.GSX.Services
                 return;
             }
 
+            if (Controller.Menu.SuppressMenuRefresh && cargo > 0)
+                Controller.Menu.SuppressMenuRefresh = false;
+
             TaskTools.RunLogged(() => OnCargoChange?.Invoke(this), Controller.Token);
         }
 
-        protected override void NotifyCompleted()
+        protected override void NotifyStateChange()
         {
-            if (!IsFenixAircraft)
-                return;
+            base.NotifyStateChange();
 
-            base.NotifyCompleted();
-            Controller.SubScriptSupress.WriteValue(0);
+            if (State == GsxServiceState.Active || State == GsxServiceState.Requested)
+            {
+                Logger.Debug($"Supressing Menu Refresh");
+                Controller.Menu.SuppressMenuRefresh = true;
+            }
+            else if (State == GsxServiceState.Callable || State == GsxServiceState.Completed)
+                Controller.Menu.SuppressMenuRefresh = false;
         }
     }
 }

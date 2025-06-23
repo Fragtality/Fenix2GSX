@@ -94,7 +94,7 @@ namespace Fenix2GSX.AppConfig
 
                 foreach (var hub in CompanyHubs)
                 {
-                    if (hub.StartsWith(icao, StringComparison.InvariantCultureIgnoreCase))
+                    if (icao?.StartsWith(hub, StringComparison.InvariantCultureIgnoreCase) == true)
                         return true;
                 }
             }

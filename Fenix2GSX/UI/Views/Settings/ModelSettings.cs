@@ -2,6 +2,7 @@
 using FenixInterface;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Threading;
 
@@ -10,6 +11,7 @@ namespace Fenix2GSX.UI.Views.Settings
     public partial class ModelSettings : ModelBase<Config>
     {
         protected virtual DispatcherTimer UnitUpdateTimer { get; }
+        public virtual ModelSavedFuelCollection ModelSavedFuel { get; }
         public virtual Dictionary<DisplayUnit, string> DisplayUnitDefaultItems { get; } = new()
         {
             { DisplayUnit.KG, "kg" },
@@ -28,11 +30,19 @@ namespace Fenix2GSX.UI.Views.Settings
                 Interval = TimeSpan.FromMilliseconds(100),
             };
             UnitUpdateTimer.Tick += UnitUpdateTimer_Tick;
+
+            ModelSavedFuel = new();
+            ModelSavedFuel.CollectionChanged += OnSavedFuelCollectionChanged;
         }
 
         protected override void InitializeModel()
         {
             Config.PropertyChanged += OnConfigPropertyChanged;
+        }
+
+        protected virtual void OnSavedFuelCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            Config.SaveConfiguration();
         }
 
         protected virtual void OnConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -49,6 +59,7 @@ namespace Fenix2GSX.UI.Views.Settings
             NotifyPropertyChanged(nameof(FenixWeightBag));
             NotifyPropertyChanged(nameof(FuelResetDefaultKg));
             NotifyPropertyChanged(nameof(FuelCompareVariance));
+            ModelSavedFuel.NotifyCollectionChanged();
             InhibitConfigSave = false;
             UnitUpdateTimer.Stop();
         }

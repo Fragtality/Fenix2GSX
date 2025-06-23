@@ -35,18 +35,18 @@ namespace Fenix2GSX.Audio
             Devices.Clear();
         }
 
-        public virtual bool Scan()
+        public virtual bool Scan(bool force)
         {
             bool result = false;
 
             try
             {
-                if (DateTime.Now >= LastDeviceScan + TimeSpan.FromMilliseconds(Config.AudioDeviceCheckInterval))
+                if (force || DateTime.Now >= LastDeviceScan + TimeSpan.FromMilliseconds(Config.AudioDeviceCheckInterval))
                 {
                     Logger.Debug($"Scanning Audio Devices");
                     var deviceList = EnumerateDevices(out int sessionCount);
 
-                    if (LastDeviceCount != deviceList.Count || LastSessionCount != sessionCount)
+                    if (LastDeviceCount != deviceList.Count || LastSessionCount != sessionCount || force)
                     {
                         Logger.Debug($"Device Enumeration needed - DeviceCount {LastDeviceCount != deviceList.Count} | SessionCount {LastSessionCount != sessionCount}");
                         result = true;

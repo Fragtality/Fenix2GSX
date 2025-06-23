@@ -121,6 +121,19 @@ namespace Fenix2GSX.GSX.Services
             }
 
             TaskTools.RunLogged(() => OnCargoChange?.Invoke(this), Controller.Token);
+
+            if (cargo == 100 && !Profile.SkipCrewQuestion)
+            {
+                Logger.Debug($"Supressing Menu Refresh");
+                Controller.Menu.SuppressMenuRefresh = true;
+            }
+        }
+
+        protected override void OnStateChange(ISimResourceSubscription sub, object data)
+        {
+            base.OnStateChange(sub, data);
+            if (State == GsxServiceState.Completed || State == GsxServiceState.Callable)
+                Controller.Menu.SuppressMenuRefresh = false;
         }
     }
 }

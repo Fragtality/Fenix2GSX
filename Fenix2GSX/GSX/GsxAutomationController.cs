@@ -82,10 +82,7 @@ namespace Fenix2GSX.GSX
         public virtual void Init()
         {
             if (!IsInitialized)
-            {
                 IsInitialized = true;
-                this.OnStateChange += CheckStateChange;
-            }
         }
 
         public virtual void FreeResources()
@@ -183,12 +180,6 @@ namespace Fenix2GSX.GSX
             RunFlag = false;
         }
 
-        protected virtual async void CheckStateChange(AutomationState state)
-        {
-            if (state == AutomationState.Departure)
-                DepartureIcao = await Controller.Flightplan.GetDestinationIcao();
-        }
-
         protected virtual async Task EvaluateState()
         {
             ServiceCountRunning = 0;
@@ -217,7 +208,12 @@ namespace Fenix2GSX.GSX
                     }
                 }
                 else if (Aircraft?.IsFlightPlanLoaded == true)
-                    StateChange(AutomationState.Departure);
+                {
+                    if (string.IsNullOrWhiteSpace(DepartureIcao))
+                        DepartureIcao = await Controller.Flightplan.GetDestinationIcao();
+                    if (!string.IsNullOrWhiteSpace(DepartureIcao))
+                        StateChange(AutomationState.Departure);
+                }
                 else if (Aircraft?.IsLoaded == true && Controller?.SkippedWalkAround == true)
                     StateChange(AutomationState.Preparation);
             }
@@ -239,8 +235,13 @@ namespace Fenix2GSX.GSX
                 if (ExecutedReposition && Aircraft.IsFlightPlanLoaded && IsGateConnected)
                 {
                     CabinDinged = false;
-                    StateChange(AutomationState.Departure);
-                    await ServiceBoard.SetPaxTarget(Aircraft.GetPaxBoarding());
+                    if (string.IsNullOrWhiteSpace(DepartureIcao))
+                        DepartureIcao = await Controller.Flightplan.GetDestinationIcao();
+                    if (!string.IsNullOrWhiteSpace(DepartureIcao))
+                    {
+                        StateChange(AutomationState.Departure);
+                        await ServiceBoard.SetPaxTarget(Aircraft.GetPaxBoarding());
+                    }
                 }
             }
             //Departure => PushBack
@@ -305,6 +306,7 @@ namespace Fenix2GSX.GSX
                     StateChange(AutomationState.TurnAround);
                     if (Config.DingOnTurnaround)
                         await Aircraft.DingCabin();
+                    Controller.Menu.SuppressMenuRefresh = false;
                 }
             }
             //Turnaround => Departure
@@ -499,6 +501,7 @@ namespace Fenix2GSX.GSX
                     {
                         if (DepartureServicesCurrent.ServiceType == GsxServiceType.Boarding)
                             await ServiceBoard.SetPaxTarget(Aircraft.GetPaxBoarding());
+
                         Logger.Information($"Automation: Call Departure Service {DepartureServicesCurrent.ServiceType}");
                         await current.Call();
                         if (current.IsCalled)
@@ -683,7 +686,7 @@ namespace Fenix2GSX.GSX
                 _ = Task.Delay(ChockDelay * 1000).ContinueWith((_) => Aircraft.SetChocks(true));
                 _ = Task.Delay(60000, Token).ContinueWith(async (_) =>
                 {
-                    if (!Aircraft.EquipmentGpu && Controller.GsxServices[GsxServiceType.Deboarding].IsCalled)
+                    if (!Aircraft.EquipmentGpu)
                     {
                         Logger.Warning($"Failback: Setting GPU after Deboard was called");
                         await Aircraft.SetGroundPower(true, true);
