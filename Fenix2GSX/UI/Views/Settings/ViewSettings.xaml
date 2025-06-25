@@ -46,6 +46,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Column="0" Grid.Row="0" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Which Source is used to get the Unit used in the UI.">
@@ -137,20 +138,25 @@
                 </TextBlock>
                 <CheckBox Grid.Column="1" Grid.Row="11" IsChecked="{Binding RestartGsxOnTaxiIn}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already)."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="12" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State.">
+                <TextBlock Grid.Column="0" Grid.Row="12" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready.">
+                    Restart GSX on Startup:
+                </TextBlock>
+                <CheckBox Grid.Column="1" Grid.Row="12" IsChecked="{Binding RestartGsxStartupFail}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready."/>
+
+                <TextBlock Grid.Column="0" Grid.Row="13" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State.">
                     Reset EFB on Session Start:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="12" IsChecked="{Binding EfbResetOnStartup}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State."/>
+                <CheckBox Grid.Column="1" Grid.Row="13" IsChecked="{Binding EfbResetOnStartup}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="13" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control.">
+                <TextBlock Grid.Column="0" Grid.Row="14" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control.">
                     Run GSX Controller:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="13" IsChecked="{Binding RunGsxService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control."/>
+                <CheckBox Grid.Column="1" Grid.Row="14" IsChecked="{Binding RunGsxService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="14" Margin="6" Style="{StaticResource TextBlockDefault}" VerticalAlignment="Top" ToolTip="The Fuel-on-Board Values currently stored by Any2GSX for the various Aircrafts.">
+                <TextBlock Grid.Column="0" Grid.Row="15" Margin="6" Style="{StaticResource TextBlockDefault}" VerticalAlignment="Top" ToolTip="The Fuel-on-Board Values currently stored by Any2GSX for the various Aircrafts.">
                     Saved Fuel Values:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="14" Margin="6" Orientation="Horizontal">
+                <StackPanel Grid.Column="1" Grid.Row="15" Margin="6" Orientation="Horizontal">
                     <ListView MinWidth="228" MaxWidth="384" Height="96" MaxHeight="142" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                               HorizontalAlignment="Left" HorizontalContentAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center"
                               Name="ListSavedFuel">

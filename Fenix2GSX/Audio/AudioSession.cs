@@ -39,43 +39,52 @@ namespace Fenix2GSX.Audio
 
         public virtual int CheckProcess(bool force = false)
         {
-            bool running = IsRunning;
-            int result = 0;
-
-            if (!running && ProcessId != 0 || force)
+            try
             {
-                if (!force)
-                    Logger.Debug($"Binary '{Binary}' stopped");
-                else
-                    Logger.Verbose($"Binary '{Binary}' stopped");
-                ClearSimSubscriptions();
-                ProcessId = 0;
-                SessionControls.Clear();
-                result = -1;
-            }
+                bool running = IsRunning;
+                int result = 0;
 
-            if (running && ProcessId == 0)
-            {
-                ProcessId = (uint)Manager.ProcessList.Where(p => p.ProcessName.Equals(Binary, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault().Id;
-                if (ProcessId != 0)
+                if (!running && ProcessId != 0 || force)
                 {
-                    Logger.Debug($"Binary '{Binary}' started (PID: {ProcessId})");
-                    SetSimSubscriptions();
-                    result = 1;
+                    if (!force)
+                        Logger.Debug($"Binary '{Binary}' stopped");
+                    else
+                        Logger.Verbose($"Binary '{Binary}' stopped");
+                    ClearSimSubscriptions();
+                    ProcessId = 0;
+                    SessionControls.Clear();
+                    result = -1;
                 }
-            }
-            else if (running && ProcessId > 0)
-            {
-                int count = Manager?.ProcessList?.Where(p => p.ProcessName.Equals(Binary, StringComparison.InvariantCultureIgnoreCase)).Count() ?? 0;
-                if (ProcessCount != count)
+
+                if (running && ProcessId == 0)
                 {
-                    result = 1;
-                    Logger.Debug($"Process Count changed");
+                    ProcessId = (uint)Manager.ProcessList.Where(p => p.ProcessName.Equals(Binary, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault().Id;
+                    if (ProcessId != 0)
+                    {
+                        Logger.Debug($"Binary '{Binary}' started (PID: {ProcessId})");
+                        SetSimSubscriptions();
+                        result = 1;
+                    }
                 }
-                ProcessCount = count;
+                else if (running && ProcessId > 0)
+                {
+                    int count = Manager?.ProcessList?.Where(p => p.ProcessName.Equals(Binary, StringComparison.InvariantCultureIgnoreCase)).Count() ?? 0;
+                    if (ProcessCount != count)
+                    {
+                        result = 1;
+                        Logger.Debug($"Process Count changed");
+                    }
+                    ProcessCount = count;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
             }
 
-            return result;
+            return 0;
         }
 
         public virtual void RestoreVolumes()

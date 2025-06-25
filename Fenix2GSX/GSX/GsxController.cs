@@ -20,7 +20,7 @@ namespace Fenix2GSX.GSX
 {
     public class GsxController : ServiceController<Fenix2GSX, AppService, Config, Definition>, IGsxController
     {
-        protected object _lock = new();
+        protected bool _lock = false;
         public virtual SimConnectManager SimConnect => Fenix2GSX.Instance.AppService.SimConnect;
         public virtual SimConnectController SimController => Fenix2GSX.Instance.AppService.SimService.Controller;
         public virtual bool IsMsfs2024 => SimConnect.GetSimVersion() == SimVersion.MSFS2024;
@@ -40,6 +40,9 @@ namespace Fenix2GSX.GSX
         public virtual ConcurrentDictionary<GsxServiceType, GsxService> GsxServices { get; } = [];
         
         public virtual bool CouatlVarsValid { get; protected set; } = false;
+        public virtual int CouatlLastProgress { get; protected set; } = 0;
+        public virtual int CouatlLastStarted { get; protected set; } = 0;
+        public virtual int CouatlInvalidCount { get; protected set; } = 0;
         protected virtual bool CouatlVarsReceived { get; set; } = false;
         public virtual bool CouatlConfigSet { get; protected set; } = false;
         public virtual bool IsProcessRunning { get; protected set; } = false;
@@ -57,11 +60,9 @@ namespace Fenix2GSX.GSX
         public virtual bool WalkAroundSkipActive { get; protected set; } = false;
         public virtual bool WalkaroundNotified { get; protected set; } = false;
         public event Func<Task> WalkaroundWasSkipped;
-        public virtual string CouatlState => $"{SimStore[GsxConstants.VarCouatlStarted]?.GetNumber() ?? 0} / {SimStore[GsxConstants.VarCouatlStartProgress]?.GetNumber() ?? 0} / {SimStore[GsxConstants.VarCouatlStartStatus]?.GetNumber() ?? 0}";
 
         public virtual ISimResourceSubscription SubDoorToggleCargo1 { get; protected set; }
         public virtual ISimResourceSubscription SubDoorToggleCargo2 { get; protected set; }
-        public virtual ISimResourceSubscription SubScriptSupress { get; protected set; }
         
         public GsxController(Config config) : base(config)
         {
@@ -108,8 +109,8 @@ namespace Fenix2GSX.GSX
             base.InitReceivers();
 
             SimStore.AddVariable(GsxConstants.VarCouatlStarted).OnReceived += OnCouatlVariable;
-            SimStore.AddVariable(GsxConstants.VarCouatlStartProgress).OnReceived += OnCouatlVariable;
-            SimStore.AddVariable(GsxConstants.VarCouatlStartStatus).OnReceived += OnCouatlVariable;
+            SimStore.AddVariable(GsxConstants.VarCouatlStartProg7).OnReceived += OnCouatlVariable;
+
             SimStore.AddVariable("SIM ON GROUND", SimUnitType.Bool);
             if (IsMsfs2024)
             {
@@ -121,7 +122,6 @@ namespace Fenix2GSX.GSX
 
             SubDoorToggleCargo1 = SimStore.AddVariable(GsxConstants.VarDoorToggleCargo1);
             SubDoorToggleCargo2 = SimStore.AddVariable(GsxConstants.VarDoorToggleCargo2);
-            SubScriptSupress = SimStore.AddVariable("L:GSX_AUTO_SUPPRESS_MENUREFRESH");
 
             SimStore.AddVariable(GsxConstants.VarReadProgFuel).OnReceived += OnConfigChange;
             SimStore.AddVariable(GsxConstants.VarReadCustFuel).OnReceived += OnConfigChange;
@@ -139,16 +139,20 @@ namespace Fenix2GSX.GSX
 
         protected virtual void OnCouatlVariable(ISimResourceSubscription sub, object data)
         {
-            lock (_lock)
+            while (_lock && !Token.IsCancellationRequested) { }
+            _lock = true;
+
+            try
             {
-                if (SimStore[GsxConstants.VarCouatlStarted]?.GetNumber() == 1
-                    && SimStore[GsxConstants.VarCouatlStartProgress]?.GetNumber() == 0
-                    && SimStore[GsxConstants.VarCouatlStartStatus]?.GetNumber() == 0)
+                CouatlLastStarted = (int)(SimStore[GsxConstants.VarCouatlStarted]?.GetNumber() ?? 0);
+                CouatlLastProgress = (int)(SimStore[GsxConstants.VarCouatlStartProg7]?.GetNumber() ?? 0);
+                if (CouatlLastStarted == 1 && CouatlLastProgress == 100)
                 {
                     if (!CouatlVarsValid)
                     {
                         Logger.Debug($"Couatl Variables valid!");
                         CouatlVarsValid = true;
+                        CouatlInvalidCount = 0;
                         MessageService.Send(MessageGsx.Create<MsgGsxCouatlStarted>(this, true));
                     }
                 }
@@ -156,7 +160,7 @@ namespace Fenix2GSX.GSX
                 {
                     if (CouatlVarsValid)
                     {
-                        Logger.Debug($"Couatl Variables NOT valid! (started: {SimStore[GsxConstants.VarCouatlStarted]?.GetNumber() ?? 0} | progress: {SimStore[GsxConstants.VarCouatlStartProgress].GetNumber()} | status: {SimStore[GsxConstants.VarCouatlStartStatus]?.GetNumber() ?? 0})");
+                        Logger.Debug($"Couatl Variables NOT valid! (started: {CouatlLastStarted} / progress: {CouatlLastProgress})");
                         MessageService.Send(MessageGsx.Create<MsgGsxCouatlStopped>(this, true));
                         CouatlVarsValid = false;
                         CouatlConfigSet = false;
@@ -165,6 +169,14 @@ namespace Fenix2GSX.GSX
 
                 CouatlVarsReceived = true;
             }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+            }
+            finally
+            {
+                _lock = false;
+            }            
         }
 
         protected virtual void CheckGround()
@@ -219,6 +231,7 @@ namespace Fenix2GSX.GSX
 
                 Logger.Debug($"GsxService active (VarsReceived: {CouatlVarsReceived} | FirstReady: {Menu.FirstReadyReceived})");
                 IsActive = true;
+                Logger.Information($"GsxController active - waiting for Menu to be ready");
                 while (SimConnect.IsSessionRunning && IsExecutionAllowed && !Token.IsCancellationRequested)
                 {
                     if (Config.LogLevel == LogLevel.Verbose)
@@ -236,10 +249,28 @@ namespace Fenix2GSX.GSX
                             SkippedWalkAround = true;
                     }
 
-                    if (CouatlVarsValid && !Menu.FirstReadyReceived && NextMenuStartupCheck <= DateTime.Now && IsGsxRunning && AutomationController.IsOnGround)
+                    if (!Menu.FirstReadyReceived && IsProcessRunning && NextMenuStartupCheck <= DateTime.Now && AutomationController.IsOnGround)
                     {
-                        Logger.Debug($"Menu Startup Check");
-                        await Menu.Open(true);
+                        if (CouatlVarsReceived && CouatlLastStarted == 1 && IsProcessRunning)
+                        {
+                            Logger.Information($"Trying to open GSX Menu ...");
+                            await Menu.OpenHide();
+                            await Task.Delay(1000, Token);
+                        }
+
+                        if (!CouatlVarsValid || !IsProcessRunning)
+                        {
+                            CouatlInvalidCount++;
+                            Logger.Warning($"GSX Menu is not starting #{CouatlInvalidCount}");
+                            if (CouatlInvalidCount > Config.GsxMenuStartupMaxFail && Config.RestartGsxStartupFail)
+                            {
+                                Logger.Information($"Restarting GSX ...");
+                                await AppService.Instance.RestartGsx();
+                                CouatlInvalidCount = 0;
+                                await Task.Delay(Config.GsxServiceStartDelay, App.Token);
+                            }
+                        }
+
                         NextMenuStartupCheck = DateTime.Now + TimeSpan.FromMilliseconds(Config.TimerGsxStartupMenuCheck);
                     }
 
@@ -411,6 +442,9 @@ namespace Fenix2GSX.GSX
             WalkaroundNotified = false;
             WalkAroundSkipActive = false;
             CouatlVarsValid = false;
+            CouatlLastProgress = 0;
+            CouatlLastStarted = 0;
+            CouatlInvalidCount = 0;
             CouatlVarsReceived = false;
             CouatlConfigSet = false;
             GroundCounter = 0;
@@ -431,7 +465,6 @@ namespace Fenix2GSX.GSX
             AircraftInterface.FreeResources();
             AutomationController.FreeResources();
 
-            SimStore.Remove("L:GSX_AUTO_SUPPRESS_MENUREFRESH");
             SimStore[GsxConstants.VarReadProgFuel].OnReceived -= OnConfigChange;
             SimStore[GsxConstants.VarReadCustFuel].OnReceived -= OnConfigChange;
             SimStore[GsxConstants.VarReadAutoMode].OnReceived -= OnConfigChange;
@@ -443,12 +476,12 @@ namespace Fenix2GSX.GSX
             SimStore.Remove(GsxConstants.VarSetAutoMode);
             SimStore.Remove(GsxConstants.VarDoorToggleCargo1);
             SimStore.Remove(GsxConstants.VarDoorToggleCargo2);
+
             SimStore[GsxConstants.VarCouatlStarted].OnReceived -= OnCouatlVariable;
+            SimStore[GsxConstants.VarCouatlStartProg7].OnReceived -= OnCouatlVariable;
             SimStore.Remove(GsxConstants.VarCouatlStarted);
-            SimStore[GsxConstants.VarCouatlStartProgress].OnReceived -= OnCouatlVariable;
-            SimStore.Remove(GsxConstants.VarCouatlStartProgress);
-            SimStore[GsxConstants.VarCouatlStartStatus].OnReceived -= OnCouatlVariable;
-            SimStore.Remove(GsxConstants.VarCouatlStartStatus);
+            SimStore.Remove(GsxConstants.VarCouatlStartProg7);
+
             SimStore.Remove("SIM ON GROUND");
             if (IsMsfs2024)
             {

@@ -50,8 +50,8 @@
                 </StackPanel>
 
                 <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding SkipFollowMe}" Style="{StaticResource CheckBoxSettingItem}"
-                          ToolTip="Automatically answer the Follow-Me Question after Gate Selection with 'No'.">
-                    <TextBlock>Skip <Underline>Follow-Me Question</Underline> on Gate Selection</TextBlock>
+                          ToolTip="Automatically answer the Follow-Me Question after Gate or De-Ice Pad Selection with 'No'.">
+                    <TextBlock>Skip <Underline>Follow-Me Question</Underline> on Gate or De-Ice Selection</TextBlock>
                 </CheckBox>
 
                 <CheckBox Grid.Column="0" Grid.Row="3" IsChecked="{Binding KeepDirectionMenuOpen}" Style="{StaticResource CheckBoxSettingItem}"

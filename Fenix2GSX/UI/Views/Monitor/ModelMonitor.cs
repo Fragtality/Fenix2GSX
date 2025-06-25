@@ -167,7 +167,7 @@ namespace Fenix2GSX.UI.Views.Monitor
         protected virtual void UpdateGsx()
         {
             UpdateBoolState(nameof(GsxRunning), nameof(GsxRunningColor), GsxController.CheckBinaries());
-            UpdateState<string>(nameof(GsxStarted), GsxController.CouatlState);
+            UpdateState<string>(nameof(GsxStarted), $"{GsxController?.CouatlLastStarted ?? 0} | {GsxController?.CouatlLastProgress ?? 0}");
             UpdateColor(nameof(GsxStartedColor), GsxController.CouatlVarsValid);
             UpdateState<GsxMenuState>(nameof(GsxMenu), GsxController.Menu.MenuState);
             UpdateState<int>(nameof(GsxPaxTarget), GsxServiceBoard?.SubPaxTarget?.GetValue<int>() ?? 0);

@@ -78,6 +78,7 @@ namespace Fenix2GSX.UI.Views.Settings
         public virtual int DoorCargoDelay { get => Source.DoorCargoDelay; set => SetModelValue<int>(value); }
         public virtual bool SkipWalkAround { get => Source.SkipWalkAround; set => SetModelValue<bool>(value); }
         public virtual bool RestartGsxOnTaxiIn { get => Source.RestartGsxOnTaxiIn; set => SetModelValue<bool>(value); }
+        public virtual bool RestartGsxStartupFail { get => Source.RestartGsxStartupFail; set => SetModelValue<bool>(value); }
         public virtual bool EfbResetOnStartup { get => Source.EfbResetOnStartup; set => SetModelValue<bool>(value); }
         public virtual bool RunGsxService { get => Source.RunGsxService; set => SetModelValue<bool>(value); }
         public virtual bool OpenAppWindowOnStart { get => Source.OpenAppWindowOnStart; set => SetModelValue<bool>(value); }

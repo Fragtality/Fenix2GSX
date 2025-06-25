@@ -34,7 +34,9 @@ namespace Fenix2GSX.AppConfig
         public virtual int TimerGsxCheck { get; set; } = 1000;
         public virtual int TimerGsxProcessCheck { get; set; } = 5000;
         public virtual int TimerGsxStartupMenuCheck { get; set; } = 5000;
-        public virtual int DelayGsxBinaryStart { get; set; } = 7500;
+        public virtual int GsxMenuStartupMaxFail { get; set; } = 3;
+        public virtual bool RestartGsxStartupFail { get; set; } = false;
+        public virtual int DelayGsxBinaryStart { get; set; } = 2000;
         public virtual bool RunGsxService { get; set; } = true;
         public virtual bool RestartGsxOnTaxiIn { get; set; } = false;
         public virtual bool RunAudioService { get; set; } = true;
@@ -86,7 +88,7 @@ namespace Fenix2GSX.AppConfig
         public virtual int DelayForegroundChange { get; set; } = 1250;
         public virtual int DelayAircraftModeChange { get; set; } = 1250;
         public virtual int MenuCheckInterval { get; set; } = 250;
-        public virtual int MenuOpenTimeout { get; set; } = 5000;
+        public virtual int MenuOpenTimeout { get; set; } = 2500;
         public virtual int EfbCheckInterval { get; set; } = 1500;
         public virtual bool EfbResetOnStartup { get; set; } = true;
         public virtual bool DingOnStartup { get; set; } = true;
@@ -147,6 +149,12 @@ namespace Fenix2GSX.AppConfig
             if (buildConfigVersion == 9)
             {
                 SizeLimit = 10 * 1024 * 1024;
+            }
+
+            if (buildConfigVersion == 10)
+            {
+                DelayGsxBinaryStart = 2000;
+                MenuOpenTimeout = 2500;
             }
         }
 

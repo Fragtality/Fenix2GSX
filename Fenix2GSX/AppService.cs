@@ -81,7 +81,7 @@ namespace Fenix2GSX
             Sys.KillProcess(App.Config.BinaryGsx2020);
             Sys.KillProcess(App.Config.BinaryGsx2024);
 
-            Logger.Debug($"Awaiting Couatl Restart ({Config.DelayGsxBinaryStart}ms) ...");
+            Logger.Debug($"Wait for Binary Start ({Config.DelayGsxBinaryStart}ms) ...");
             await Task.Delay(Config.DelayGsxBinaryStart, App.Token);
 
             if (SimService.Manager.GetSimVersion() == SimVersion.MSFS2020 && !Sys.GetProcessRunning(App.Config.BinaryGsx2020))
@@ -97,6 +97,8 @@ namespace Fenix2GSX
                 string dir = Path.Join(GsxService.PathInstallation, "couatl64");
                 Sys.StartProcess(Path.Join(dir, $"{App.Config.BinaryGsx2024}.exe"), dir);
             }
+
+            await Task.Delay(Config.DelayGsxBinaryStart, App.Token);
         }
 
         protected override async Task MainLoop()
