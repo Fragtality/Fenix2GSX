@@ -1,6 +1,7 @@
 ﻿using CFIT.AppLogger;
 using CFIT.AppTools;
 using Fenix2GSX.AppConfig;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +16,7 @@ namespace Fenix2GSX.Audio
         protected virtual Config Config => Controller.Config;
         protected virtual ConcurrentDictionary<AudioChannel, List<AudioSession>> MappedAudioSessions { get; } = [];
         public virtual bool HasEmptySearches => MappedAudioSessions.Any(c => c.Value.Any(s => s.SearchCounter > Config.AudioProcessMaxSearchCount));
-        public virtual bool HasInactiveSessions => MappedAudioSessions.Any(c => c.Value.Any(s => s.SessionControls.Any(sc => sc.State != CoreAudio.AudioSessionState.AudioSessionStateActive)));
+        public virtual bool HasInactiveSessions => CheckInactiveSessions();
         public virtual List<Process> ProcessList { get; } = [];
 
         public virtual void RegisterMappings()
@@ -59,6 +60,23 @@ namespace Fenix2GSX.Audio
         public virtual void Clear()
         {
             MappedAudioSessions.Clear();
+        }
+
+        protected virtual bool CheckInactiveSessions()
+        {
+            bool result;
+
+            try
+            {
+                result = MappedAudioSessions.Any(c => c.Value.Any(s => s.SessionControls.Any(sc => sc.State != CoreAudio.AudioSessionState.AudioSessionStateActive)));
+            }
+            catch (Exception ex)
+            {
+                Logger.Warning($"'{ex.GetType().Name}' during Inactive Session Check");
+                result = true;
+            }
+
+            return result;
         }
 
         public virtual bool CheckProcesses(bool force = false)
