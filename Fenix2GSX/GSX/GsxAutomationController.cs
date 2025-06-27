@@ -66,6 +66,7 @@ namespace Fenix2GSX.GSX
         protected virtual GsxServiceDeboarding ServiceDeboard => GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding;
         protected virtual GsxServiceDeice ServiceDeice => GsxServices[GsxServiceType.Deice] as GsxServiceDeice;
         public virtual bool IsGateConnected => ServiceJetway.IsConnected || ServiceStairs.IsConnected;
+        public virtual bool HasDepartBypassed => Controller.GsxServices[GsxServiceType.Refuel].State == GsxServiceState.Bypassed || Controller.GsxServices[GsxServiceType.Boarding].State == GsxServiceState.Bypassed;
         public virtual bool ServicesValid => ServiceStairs.State != GsxServiceState.Unknown || ServiceJetway.State != GsxServiceState.Unknown || !IsOnGround;
 
         public virtual bool ExecutedReposition { get; protected set; } = false;
@@ -247,8 +248,13 @@ namespace Fenix2GSX.GSX
             //Departure => PushBack
             else if (State == AutomationState.Departure)
             {
-                if (DepartureServicesCompleted)
+                bool pushbackTrigger = ServicePushBack.PushStatus > 0 && (ServicePushBack.IsActive || HasDepartBypassed);
+                if (DepartureServicesCompleted || pushbackTrigger)
+                {
+                    if (pushbackTrigger)
+                        Logger.Information($"Pushback Service already running - skipping Departure");
                     StateChange(AutomationState.PushBack);
+                }
                 else
                 {
                     foreach (var serviceCfg in Profile.DepartureServices.Values)
@@ -301,13 +307,7 @@ namespace Fenix2GSX.GSX
             else if (State == AutomationState.Arrival)
             {
                 if (ServiceDeboard.IsCompleted)
-                {
-                    await Aircraft.UnloadOfp();
-                    StateChange(AutomationState.TurnAround);
-                    if (Config.DingOnTurnaround)
-                        await Aircraft.DingCabin();
-                    Controller.Menu.SuppressMenuRefresh = false;
-                }
+                    await SetTurnaround();
             }
             //Turnaround => Departure
             else if (State == AutomationState.TurnAround)
@@ -334,6 +334,15 @@ namespace Fenix2GSX.GSX
             }
         }
 
+        protected virtual async Task SetTurnaround()
+        {
+            await Aircraft.UnloadOfp();
+            StateChange(AutomationState.TurnAround);
+            if (Config.DingOnTurnaround)
+                await Aircraft.DingCabin();
+            Controller.Menu.SuppressMenuRefresh = false;
+        }
+
         protected virtual async Task SkipTurn(AutomationState state)
         {
             await Controller.ReloadSimbrief();
@@ -345,6 +354,43 @@ namespace Fenix2GSX.GSX
             Logger.Information($"State Change: {State} => {newState}");
             State = newState;
             TaskTools.RunLogged(() => OnStateChange?.Invoke(State), Controller.Token);
+        }
+
+        public virtual async Task OnCouatlStarted()
+        {
+            if (!IsStarted)
+                return;
+
+            if (State == AutomationState.Departure && !DepartureServicesCompleted)
+            {
+                if (!DepartureServicesEnumerator.CheckEnumeratorValid())
+                {
+                    Controller.GsxServices[GsxServiceType.Boarding].ForceComplete();
+                    Logger.Information($"GSX Restart on last Departure Service detected - skip to Pushback");
+                    StateChange(AutomationState.PushBack);
+                    await Aircraft.OnBoardingCompleted(Controller.GsxServices[GsxServiceType.Boarding]);
+                    await Aircraft.RefuelComplete();
+                }
+                else if (DepartureServicesCalled.Any(s => s.Type == GsxServiceType.Refuel && s.WasActive && s.State != GsxServiceState.Completed))
+                {
+                    Logger.Information($"GSX Restart during Departure Service detected - completing Refuel");
+                    await Aircraft.RefuelComplete();
+                }
+            }
+
+            if (State == AutomationState.Arrival && ServiceDeboard.WasActive && !ServiceDeboard.WasCompleted)
+            {
+                Controller.GsxServices[GsxServiceType.Deboarding].ForceComplete();
+                Logger.Information($"GSX Restart on Deboarding Service detected - skip to Turnaround");
+                await SetTurnaround();
+                await Aircraft.OnDeboardingCompleted(Controller.GsxServices[GsxServiceType.Deboarding]);
+            }
+        }
+
+        public virtual void OnCouatlStopped()
+        {
+            if (!IsStarted)
+                return;
         }
 
         protected virtual async Task RunServices()

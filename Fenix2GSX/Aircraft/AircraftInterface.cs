@@ -168,22 +168,22 @@ namespace Fenix2GSX.Aircraft
                 FenixInterface.OnStateArrival();
         }
 
-        protected virtual async void OnStairChange(GsxService service)
+        protected virtual async Task OnStairChange(GsxService service)
         {
             await FenixInterface.OnStairChange((int)GsxServices[GsxServiceType.Stairs].State, (int)GsxServices[GsxServiceType.Jetway].State);
         }
 
-        protected virtual async void OnRefuelActive(GsxService service)
+        protected virtual async Task OnRefuelActive(GsxService service)
         {
             await FenixInterface.OnRefuelActive();
         }
 
-        protected virtual async void OnBoardingActive(GsxService service)
+        protected virtual async Task OnBoardingActive(GsxService service)
         {
             await FenixInterface.BoardingStart();
         }
 
-        protected virtual async void OnBoardingCompleted(GsxService service)
+        public virtual async Task OnBoardingCompleted(GsxService service)
         {
             await FenixInterface.BoardingStop();
         }
@@ -198,12 +198,13 @@ namespace Fenix2GSX.Aircraft
             await FenixInterface.OnCargoChangeBoarding(service.CargoPercent);
         }
 
-        protected virtual void OnDeboardingActive(GsxService service)
+        protected virtual Task OnDeboardingActive(GsxService service)
         {
             FenixInterface.OnDeboardingActive();
+            return Task.CompletedTask;
         }
 
-        protected virtual async void OnDeboardingCompleted(GsxService service)
+        public virtual async Task OnDeboardingCompleted(GsxService service)
         {
             await FenixInterface.OnDeboardingCompleted();
         }

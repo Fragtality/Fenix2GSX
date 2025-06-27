@@ -154,6 +154,7 @@ namespace Fenix2GSX.GSX
                         CouatlVarsValid = true;
                         CouatlInvalidCount = 0;
                         MessageService.Send(MessageGsx.Create<MsgGsxCouatlStarted>(this, true));
+                        _ = AutomationController.OnCouatlStarted();
                     }
                 }
                 else
@@ -164,6 +165,7 @@ namespace Fenix2GSX.GSX
                         MessageService.Send(MessageGsx.Create<MsgGsxCouatlStopped>(this, true));
                         CouatlVarsValid = false;
                         CouatlConfigSet = false;
+                        AutomationController.OnCouatlStopped();
                     }
                 }
 

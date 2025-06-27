@@ -75,10 +75,11 @@ namespace Fenix2GSX.GSX.Services
         public virtual bool IsCompleted => State == GsxServiceState.Completed;
         public virtual bool IsSkipped { get; set; } = false;
         public virtual bool WasActive { get; protected set; } = false;
+        public virtual bool WasCompleted { get; protected set; } = false;
 
-        public event Action<GsxService> OnActive;
-        public event Action<GsxService> OnCompleted;
-        public event Action<GsxService> OnStateChanged;
+        public event Func<GsxService, Task> OnActive;
+        public event Func<GsxService, Task> OnCompleted;
+        public event Func<GsxService, Task> OnStateChanged;
 
         public GsxService(GsxController controller)
         {
@@ -111,6 +112,7 @@ namespace Fenix2GSX.GSX.Services
             {
                 Logger.Information($"{Type} Service completed");
                 WasActive = true;
+                WasCompleted = true;
                 NotifyCompleted();
             }
             NotifyStateChange();
@@ -121,6 +123,7 @@ namespace Fenix2GSX.GSX.Services
             IsCalled = false;
             IsSkipped = false;
             WasActive = false;
+            WasCompleted = false;
             CallSequence.Reset();
             DoReset();
         }
@@ -198,6 +201,12 @@ namespace Fenix2GSX.GSX.Services
 
             Logger.Debug($"Notify Completed for {Type}: {State}");
             TaskTools.RunLogged(() => OnCompleted?.Invoke(this), Controller.Token);
+        }
+
+        public virtual void ForceComplete()
+        {
+            Logger.Debug($"Force Complete for {Type}");
+            WasCompleted = true;
         }
     }
 }
