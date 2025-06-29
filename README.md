@@ -53,7 +53,7 @@ Fenix2GSX will display a **little Exclamation Mark** on its SysTray/Notification
 
 ### 1.3 - Auto-Start
 
-When starting it manually, please do so when MSFS is loading or in the **Main Menu**. Fenix2GSX will directly close if no Simulator is running.<br/>
+When starting it manually, please do so when MSFS is loading or in the **Main Menu**.<br/>
 To automatically start it with **FSUIPC or MSFS**, select the respective Option in the **Installer**. Just re-run it if you want to change if and how Fenix2GSX is auto started. Selecting one Option (i.e. MSFS) will also check and remove Fenix2GSX from all other Options (i.e. FSUIPC), so just set & forget.<br/>
 For Auto-Start either your FSUIPC7.ini or EXE.xml (MSFS) is modified. The Installer does not create a Backup (not deemed neccessary), so if you want a Backup, do so yourself.<br/><br/>
 
