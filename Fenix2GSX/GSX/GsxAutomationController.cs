@@ -197,7 +197,7 @@ namespace Fenix2GSX.GSX
             //Session Start => Prep / Push / Taxi-Out / Flight
             if (State == AutomationState.SessionStart)
             {
-                if (!Controller.IsOnGround || Config.DebugArrival)
+                if (!IsOnGround || Config.DebugArrival)
                 {
                     Logger.Debug($"Starting in {AutomationState.Flight} - IsOnGround {Controller.IsOnGround} | DebugArrival {Config.DebugArrival}");
                     StateChange(AutomationState.Flight);
@@ -219,10 +219,10 @@ namespace Fenix2GSX.GSX
                 {
                     if (string.IsNullOrWhiteSpace(DepartureIcao))
                         DepartureIcao = await Controller.Flightplan.GetDestinationIcao();
-                    if (!string.IsNullOrWhiteSpace(DepartureIcao))
+                    if (!string.IsNullOrWhiteSpace(DepartureIcao) && Controller?.Menu?.IsGateMenu == true)
                         StateChange(AutomationState.Departure);
                 }
-                else if (Aircraft?.IsLoaded == true && Controller?.SkippedWalkAround == true)
+                else if (Aircraft?.IsLoaded == true && Controller?.SkippedWalkAround == true && Controller?.Menu?.IsGateMenu == true)
                     StateChange(AutomationState.Preparation);
             }
             //intercept Flight
@@ -422,7 +422,7 @@ namespace Fenix2GSX.GSX
 
         protected virtual async Task RunPreparation()
         {
-            if (!ExecutedReposition && !IsGateConnected && !Aircraft.IsFlightPlanLoaded)
+            if (!ExecutedReposition && !IsGateConnected && !Aircraft.IsFlightPlanLoaded && !Controller.Menu.WarpedToGate)
             {
                 if (Profile.CallReposition)
                 {
@@ -431,7 +431,7 @@ namespace Fenix2GSX.GSX
                     await Task.Delay(1000, Token);
                 }
             }
-            ExecutedReposition = ServiceReposition.IsCompleted || IsGateConnected || !Profile.CallReposition || Aircraft.IsFlightPlanLoaded;
+            ExecutedReposition = ServiceReposition.IsCompleted || IsGateConnected || !Profile.CallReposition || Aircraft.IsFlightPlanLoaded || Controller.Menu.WarpedToGate;
 
             if (ExecutedReposition && Controller.SkippedWalkAround && !GroundEquipmentPlaced && ServicePushBack.PushStatus == 0 && !Aircraft.EnginesRunning)
             {

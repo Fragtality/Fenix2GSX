@@ -51,6 +51,8 @@ namespace Fenix2GSX.GSX.Menu
         protected virtual bool FollowMeAnswered { get; set; } = false;
         protected virtual bool MenuOpenRequesting { get; set; } = false;
         protected virtual bool MenuOpenAfterReady { get; set; } = false;
+        public virtual bool WaitingForGate { get; protected set; } = false;
+        public virtual bool WarpedToGate { get; protected set; } = false;
         public virtual bool SuppressMenuRefresh { get; set; } = false;
         public virtual MessageReceiver<MsgGsxMenuReady> MsgMenuReady { get; protected set; }
 
@@ -93,6 +95,12 @@ namespace Fenix2GSX.GSX.Menu
                 {
                     Logger.Debug($"Deice Question was answered: {num}");
                     DeIceQuestionAnswered = true;
+                }
+                else if (MatchTitle(GsxConstants.MenuParkingChange) && WaitingForGate && num == 4)
+                {
+                    Logger.Debug($"Warped to Gate - trigger Menu Refresh");
+                    WaitingForGate = false;
+                    Task.Delay(2000, Controller.Token).ContinueWith((_) => OpenHide()).ContinueWith((_) => WarpedToGate = true);
                 }
                 LastMenuSelection = num;
                 Logger.Verbose($"Menu Selection {LastMenuSelection}");
@@ -144,6 +152,12 @@ namespace Fenix2GSX.GSX.Menu
         {
             Logger.Debug($"Change/Select Parking active");
             FollowMeAnswered = false;
+
+            if (MatchTitle(GsxConstants.MenuParkingChange) && Controller.AutomationController.State < AutomationState.Departure)
+            {
+                Logger.Debug($"App waiting for Gate");
+                WaitingForGate = true;
+            }
             await Task.Delay(25);
         }
 
@@ -182,12 +196,16 @@ namespace Fenix2GSX.GSX.Menu
             DeIceQuestionAnswered = false;
             FollowMeAnswered = false;
             MenuOpenRequesting = false;
+            WaitingForGate = false;
+            WarpedToGate = false;
         }
 
         public virtual void ResetFlight()
         {
             DeIceQuestionAnswered = false;
             FollowMeAnswered = false;
+            WaitingForGate = false;
+            WarpedToGate = false;
         }
 
         public virtual void AddMenuCallback(string title, Func<GsxMenu, Task> callback)
@@ -214,6 +232,7 @@ namespace Fenix2GSX.GSX.Menu
                 FirstReadyReceived = true;
             }
 
+            WaitingForGate = false;
             if (MenuState == GsxMenuState.READY)
                 await UpdateMenu();
 
