@@ -139,19 +139,19 @@ namespace Fenix2GSX.AppConfig
 
         protected override void UpdateConfiguration(int buildConfigVersion)
         {
-            if (buildConfigVersion == 7 || buildConfigVersion == 8)
+            if (ConfigVersion < 7 && buildConfigVersion >= 7)
             {
                 AudioDeviceCheckInterval = 60000;
                 DoorCargoDelay = 16;
                 SizeLimit = 10 * 1024 * 1024;
             }
 
-            if (buildConfigVersion == 9)
+            if (ConfigVersion < 9 && buildConfigVersion >= 9)
             {
                 SizeLimit = 10 * 1024 * 1024;
             }
 
-            if (buildConfigVersion == 10)
+            if (ConfigVersion < 10 && buildConfigVersion >= 10)
             {
                 DelayGsxBinaryStart = 2000;
                 MenuOpenTimeout = 2500;

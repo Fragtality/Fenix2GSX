@@ -70,7 +70,7 @@ namespace Fenix2GSX.GSX.Services
             }
             else if (sub.GetNumber() == 0 && State != GsxServiceState.Unknown && WasActive)
             {
-                if (Controller.AircraftProfile.RefuelFinishOnHose && Controller.AircraftInterface.IsRefueling)
+                if (Controller?.AircraftProfile?.RefuelFinishOnHose == true && Controller?.AircraftInterface?.IsRefueling == true)
                 {
                     Logger.Information($"Fuel Hose disconnected while Refuel still in Progress - stopping Refuel");
                     if (!Controller.SimConnect.IsPaused)
