@@ -186,7 +186,8 @@ Fenix2GSX will control **all Audio Sessions** on all Devices for a configured Ap
 You can map freely Applications to any of the ACP Channels. Per Default ATC Applications are controlled by VHF1, GSX by INT and the Simulator by CAB. You change the Mappings to your Preferences. All Mappings are global - they are not associated to an Aircraft Profile!<br/>
 To identify an Application you need to enter it's Binary Name without .exe Extension. The UI will present a List of matching (running!) Applications to your Input to ease Selection. The **Use Mute** Checkbox determines if the **Record Latch** (=Knob is pulled or pushed) is used to mute the Application.<br/><br/>
 
-Some Audio Devices act 'strangely' or throw Exceptions when being scanned by Fenix2GSX for Audio-Sessions. If you have such a Device, you can add it to the Blacklist so that Fenix2GSX ignores it.<br/>
+Some Audio Devices act 'strangely' or throw Exceptions when being scanned by Fenix2GSX for Audio-Sessions. If you have such a Device, you can add it to the Blacklist so that Fenix2GSX ignores it (normally it should automatically add Devices throwing Exceptions).<br/>
+But there also Cases where Input (Capture) Devices are reported as Output (Render) Devices which leads to Any2GSX controlling the Volume of your Microphone! In such Cases these "false-output" also need to be added to the Blacklist.<br/>
 Matching is done on the Start of the Device Name, but it is recommended to use the exact Device Name for blacklisting. Tip: when you hit Ctrl+C on the Device Dropdown (under App Mappings), the selected Device's Name is automatically pasted to Blacklist Input Field.
 
 <br/><br/>
