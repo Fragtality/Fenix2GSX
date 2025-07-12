@@ -92,7 +92,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 
-                <DataGrid Grid.Column="0" Grid.Row="0" Name="GridAudioMappings" Margin="6,6,6,6">
+                <DataGrid Grid.Column="0" Grid.Row="0" Name="GridAudioMappings" Margin="6,6,6,6" SelectionUnit="FullRow" SelectionMode="Single">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Channel" MinWidth="96">
                             <DataGridTemplateColumn.CellTemplate>
@@ -125,6 +125,14 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="Only Active">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding OnlyActive}" IsHitTestVisible="False" HorizontalAlignment="Center" Margin="2,0,0,0" Style="{StaticResource CheckBoxDefault}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -136,7 +144,10 @@
                     </StackPanel>
                     <ComboBox Name="SelectorMappingDevice" SelectedIndex="0" Margin="6,0,0,0" Style="{StaticResource ComboBoxDefault}" VerticalAlignment="Top" ToolTip="Restrict the Volume Control to a specific Windows Audio Device."/>
                     <Grid Name="PanelMute" HorizontalAlignment="Stretch">
-                        <CheckBox Name="CheckboxMappingMute" Margin="4,3.5,0,0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Style="{StaticResource CheckBoxDefault}" VerticalAlignment="Top" ToolTip="Use the Record Lath (push/pull the Knob) to Mute the App."/>
+                        <CheckBox Name="CheckboxMappingMute" Margin="4,3.5,0,0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Style="{StaticResource CheckBoxDefault}" VerticalAlignment="Top" ToolTip="Use the Record Latch (push/pull the Knob) to Mute the App."/>
+                    </Grid>
+                    <Grid Name="PanelActive" HorizontalAlignment="Stretch">
+                        <CheckBox Name="CheckboxOnlyActive" Margin="4,3.5,0,0" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Style="{StaticResource CheckBoxDefault}" VerticalAlignment="Top" ToolTip="Only control App Audio Sessions flagged as active."/>
                     </Grid>
                 </StackPanel>
 
@@ -163,8 +174,7 @@
                 </Grid.RowDefinitions>
 
                 <ListView Grid.Column="0" Grid.Row="0" Name="ListDeviceBlacklist" MinWidth="248" MinHeight="64" Margin="6" HorizontalAlignment="Left" VerticalAlignment="Center" SelectionMode="Single"
-                          ToolTip="Devices on this List will be skipped when searching for Audio Sessions of Apps.&#x0a;
-                          Devices which raise Errors during Session-Scan will temporarly be ignored while Fenix2GSX runs."/>
+                          ToolTip="Devices on this List will be skipped when searching for Audio Sessions of Apps.&#x0a;Devices which raise Errors during Session-Scan will temporarly be ignored while Fenix2GSX runs."/>
 
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Margin="6,0,6,6" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <TextBox Name="InputDevice" Style="{StaticResource TextBoxLeft}" MinWidth="248" MinHeight="24" ToolTip="The Name of the Audio Device to be ignored.&#x0a;Every Device whose Name begins with the entered Text will be ignored.&#x0a;TIP: Press Ctrl+C on the Device Selection above to copy the exact Name of a Device!"/>
@@ -191,11 +201,11 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBlockDefault}" ToolTip="Only for Troubleshooting, change as advised.">Device-Filter DataFlow:</TextBlock>
-                <ComboBox  Grid.Column="1" Grid.Row="0" Name="SelectorAudioDataFlow" SelectedValue="{Binding AudioDeviceFlow}" ItemsSource="{Binding DeviceDataFlows}" SelectedValuePath="Key" DisplayMemberPath="Value" Margin="8,0,0,0" Style="{StaticResource ComboBoxDefault}" ToolTip="Only for Troubleshooting, change as advised."/>
+                <TextBlock Grid.Column="0" Grid.Row="0" Style="{StaticResource TextBlockDefault}" Margin="0,0,0,4" ToolTip="Only for Troubleshooting, change as advised.">Device-Filter DataFlow:</TextBlock>
+                <ComboBox  Grid.Column="1" Grid.Row="0" Name="SelectorAudioDataFlow" SelectedValue="{Binding AudioDeviceFlow}" ItemsSource="{Binding DeviceDataFlows}" SelectedValuePath="Key" DisplayMemberPath="Value" Margin="8,0,0,4" Style="{StaticResource ComboBoxDefault}" ToolTip="Only for Troubleshooting, change as advised."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBlockDefault}" ToolTip="Only for Troubleshooting, change as advised.">Device-Filter State:</TextBlock>
-                <ComboBox  Grid.Column="1" Grid.Row="1" Name="SelectorAudioState" SelectedValue="{Binding AudioDeviceState}" ItemsSource="{Binding DeviceStates}" SelectedValuePath="Key" DisplayMemberPath="Value" Margin="8,0,0,0" Style="{StaticResource ComboBoxDefault}" ToolTip="Only for Troubleshooting, change as advised."/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource TextBlockDefault}" Margin="0,0,0,4" ToolTip="Only for Troubleshooting, change as advised.">Device-Filter State:</TextBlock>
+                <ComboBox  Grid.Column="1" Grid.Row="1" Name="SelectorAudioState" SelectedValue="{Binding AudioDeviceState}" ItemsSource="{Binding DeviceStates}" SelectedValuePath="Key" DisplayMemberPath="Value" Margin="8,0,0,4" Style="{StaticResource ComboBoxDefault}" ToolTip="Only for Troubleshooting, change as advised."/>
 
                 <Button Grid.Column="0" Grid.Row="2" Command="{Binding CommandDebugInfo}" Margin="6,6,6,6" Padding="2">
                     Write Debug Info

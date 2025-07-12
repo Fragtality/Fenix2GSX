@@ -14,11 +14,12 @@ namespace Fenix2GSX.Audio
     {
         protected virtual AudioController Controller { get; } = controller;
         protected virtual SessionManager Manager => Controller.SessionManager;
-        public virtual AudioMapping Mapping => new(Channel, Device, Binary, UseLatch);
+        public virtual AudioMapping Mapping => new(Channel, Device, Binary, UseLatch, OnlyActive);
         public virtual AudioChannel Channel { get; } = mapping.Channel;
         public virtual string Device { get; } = mapping.Device;
         public virtual string Binary { get; } = mapping.Binary;
         public virtual bool UseLatch { get; } = mapping.UseLatch;
+        public virtual bool OnlyActive { get; } = mapping.OnlyActive;
         public virtual uint ProcessId { get; protected set; } = 0;
         public virtual int ProcessCount { get; protected set; } = 0;
         public virtual bool IsActive => ProcessId > 0 && Controller.HasInitialized && Controller.IsExecutionAllowed;

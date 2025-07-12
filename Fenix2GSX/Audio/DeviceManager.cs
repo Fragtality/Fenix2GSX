@@ -161,10 +161,11 @@ namespace Fenix2GSX.Audio
             {
                 foreach (var device in Devices.Values)
                 {
-                    if (!allDevices && !device.DeviceInterfaceFriendlyName.Equals(audioSession.Device, StringComparison.InvariantCultureIgnoreCase))
+                    if (!allDevices && !device.DeviceFriendlyName.Equals(audioSession.Device, StringComparison.InvariantCultureIgnoreCase))
                         continue;
 
-                    var query = device.AudioSessionManager2.Sessions.Where(s => (s.ProcessID == audioSession.ProcessId || s.SessionInstanceIdentifier.Contains($"{audioSession.Binary}.exe", StringComparison.InvariantCultureIgnoreCase)) && s.State == AudioSessionState.AudioSessionStateActive);
+                    var query = device.AudioSessionManager2.Sessions.Where(s => (s.ProcessID == audioSession.ProcessId || s.SessionInstanceIdentifier.Contains($"{audioSession.Binary}.exe", StringComparison.InvariantCultureIgnoreCase))
+                                                                           && ((audioSession.Mapping.OnlyActive && s.State == AudioSessionState.AudioSessionStateActive) || !audioSession.Mapping.OnlyActive));
                     if (query.Any())
                     {
                         list.AddRange(query);
@@ -237,7 +238,7 @@ namespace Fenix2GSX.Audio
                         debugInfo.AppendLine($"Scanning Device '{device.DeviceFriendlyName}' (Sessions: {device?.AudioSessionManager2?.Sessions?.Count} | Blacklisted: {Config.AudioDeviceBlacklist.Where(d => d.StartsWith(device.DeviceFriendlyName, StringComparison.InvariantCultureIgnoreCase)).Any()})");
                         int i = 1;
                         foreach (var session in device.AudioSessionManager2.Sessions)
-                            debugInfo.AppendLine($"\tSession #{i++} - Name: {session.DisplayName} | ID: {session.ProcessID} | SessionInstance: {session.SessionInstanceIdentifier}");
+                            debugInfo.AppendLine($"\tSession #{i++} - Name: {session.DisplayName} | ID: {session.ProcessID} | State: {session.State} | SessionInstance: {session.SessionInstanceIdentifier}");
                     }
                     catch (Exception ex)
                     {

@@ -39,43 +39,50 @@
       "Channel": 0,
       "Device": "",
       "Binary": "vPilot",
-      "UseLatch": true
+      "UseLatch": true,
+      "OnlyActive": true
     },
     {
       "Channel": 0,
       "Device": "",
       "Binary": "BeyondATC",
-      "UseLatch": true
+      "UseLatch": true,
+      "OnlyActive": true
     },
     {
       "Channel": 0,
       "Device": "",
       "Binary": "Pilot2ATC_2021",
-      "UseLatch": true
+      "UseLatch": true,
+      "OnlyActive": true
     },
     {
       "Channel": 5,
       "Device": "",
       "Binary": "Couatl64_MSFS",
-      "UseLatch": true
+      "UseLatch": true,
+      "OnlyActive": true
     },
     {
       "Channel": 5,
       "Device": "",
       "Binary": "Couatl64_MSFS2024",
-      "UseLatch": true
+      "UseLatch": true,
+      "OnlyActive": true
     },
     {
       "Channel": 6,
       "Device": "",
       "Binary": "FlightSimulator",
-      "UseLatch": true
+      "UseLatch": true,
+      "OnlyActive": true
     },
     {
       "Channel": 6,
       "Device": "",
       "Binary": "FlightSimulator2024",
-      "UseLatch": true
+      "UseLatch": true,
+      "OnlyActive": true
     }
   ],
   "AudioStartupVolumes": {
@@ -205,7 +212,7 @@
       }
     }
   ],
-  "ConfigVersion": 10,
+  "ConfigVersion": 11,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

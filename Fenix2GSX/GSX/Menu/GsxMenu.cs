@@ -469,7 +469,7 @@ namespace Fenix2GSX.GSX.Menu
                     while (timeWaited < Config.OperatorSelectTimeout && LastMenuSelection == -2 && !Controller.Token.IsCancellationRequested);
                     if (Controller.Token.IsCancellationRequested)
                         return false;
-
+                    Logger.Debug($"Wait ended after {timeWaited}ms - LastSelection {LastMenuSelection}");
                     if (timeWaited >= Config.OperatorSelectTimeout)
                         Timeout();
                     else

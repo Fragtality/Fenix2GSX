@@ -68,7 +68,7 @@ namespace Fenix2GSX.Audio
 
             try
             {
-                result = MappedAudioSessions.Any(c => c.Value.Any(s => s.SessionControls.Any(sc => sc.State != CoreAudio.AudioSessionState.AudioSessionStateActive)));
+                result = MappedAudioSessions.Any(c => c.Value.Any(s => s.Mapping.OnlyActive && s.SessionControls.Any(sc => sc.State != CoreAudio.AudioSessionState.AudioSessionStateActive)));
             }
             catch (Exception ex)
             {

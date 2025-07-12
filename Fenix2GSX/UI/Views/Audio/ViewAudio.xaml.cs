@@ -48,6 +48,9 @@ namespace Fenix2GSX.UI.Views.Audio
             ViewModelMappings.BindMember(CheckboxMappingMute, nameof(AudioMapping.UseLatch));
             ViewModelMappings.AddUpdateCommand.Subscribe(CheckboxMappingMute);
 
+            ViewModelMappings.BindMember(CheckboxOnlyActive, nameof(AudioMapping.OnlyActive));
+            ViewModelMappings.AddUpdateCommand.Subscribe(CheckboxOnlyActive);
+
             GridAudioMappings.SizeChanged += OnGridSizeChanged;
 
             ViewModelBlacklist = new(ListDeviceBlacklist, ViewModel.BlacklistCollection, AppWindow.IconLoader);
@@ -80,6 +83,7 @@ namespace Fenix2GSX.UI.Views.Audio
                 ListActiveProcesses.Width = GridAudioMappings.Columns[1].ActualWidth - offset;
                 SelectorMappingDevice.Width = GridAudioMappings.Columns[2].ActualWidth - offset;
                 PanelMute.Width = GridAudioMappings.Columns[3].ActualWidth;
+                PanelActive.Width = GridAudioMappings.Columns[4].ActualWidth;
             }
             catch { }
         }
@@ -100,8 +104,9 @@ namespace Fenix2GSX.UI.Views.Audio
                 if (SelectorMappingChannel?.SelectedValue is AudioChannel channel
                     && SelectorMappingDevice?.SelectedValue is string device && !string.IsNullOrWhiteSpace(device)
                     && !string.IsNullOrWhiteSpace(InputMappingApp?.Text)
-                    && CheckboxMappingMute?.IsChecked is bool unmute)
-                    return new AudioMapping(channel, (device == "All" ? "" : device), InputMappingApp?.Text, unmute);
+                    && CheckboxMappingMute?.IsChecked is bool unmute
+                    && CheckboxOnlyActive?.IsChecked is bool onlyActive)
+                    return new AudioMapping(channel, (device == "All" ? "" : device), InputMappingApp?.Text, unmute, onlyActive);
             }
             catch { }
 
