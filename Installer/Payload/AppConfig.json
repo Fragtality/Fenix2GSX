@@ -173,6 +173,7 @@
       "RemoveJetwayStairsOnFinal": true,
       "CallPushbackOnBeacon": false,
       "ClearGroundEquipOnBeacon": true,
+      "GradualGroundEquipRemoval": false,
       "CallDeboardOnArrival": true,
       "AnswerCabinCallGround": true,
       "DelayCabinCallGround": 4000,
@@ -212,7 +213,7 @@
       }
     }
   ],
-  "ConfigVersion": 11,
+  "ConfigVersion": 12,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

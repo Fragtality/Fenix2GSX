@@ -96,6 +96,7 @@ namespace Fenix2GSX.UI.Views.Automation
 
         //Ground Equipment
         public virtual bool ClearGroundEquipOnBeacon { get => Source.ClearGroundEquipOnBeacon; set => SetModelValue<bool>(value); }
+        public virtual bool GradualGroundEquipRemoval { get => Source.GradualGroundEquipRemoval; set => SetModelValue<bool>(value); }
         public virtual int ConnectPca { get => Source.ConnectPca; set => SetModelValue<int>(value); }
         public virtual int ChockDelayMin { get => Source.ChockDelayMin; set => SetModelValue<int>(value); }
         public virtual int ChockDelayMax { get => Source.ChockDelayMax; set => SetModelValue<int>(value); }

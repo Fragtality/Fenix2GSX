@@ -605,6 +605,21 @@ namespace Fenix2GSX.GSX
                 await Task.Delay(Config.StateMachineInterval * 2, Token);
             }
 
+            if (Profile.GradualGroundEquipRemoval)
+            {
+                if (Aircraft.EquipmentGpu && !Aircraft.IsExternalPowerConnected)
+                {
+                    Logger.Information($"Automation: Removing GPU on External Power disconnect");
+                    await Aircraft.SetGroundPower(false);
+                }
+
+                if (Aircraft.EquipmentChocks && Aircraft.IsBrakeSet && !Aircraft.EquipmentGpu)
+                {
+                    Logger.Information($"Automation: Removing Chocks on Parking Brake set");
+                    await Aircraft.SetChocks(false);
+                }
+            }
+
             if (!JetwayStairRemoved && IsGateConnected && Aircraft.IsFinalReceived && Profile.RemoveJetwayStairsOnFinal)
             {
                 Logger.Information($"Automation: Remove Jetway/Stairs on Final Loadsheet");

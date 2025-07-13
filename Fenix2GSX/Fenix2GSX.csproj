@@ -13,7 +13,7 @@
   
   <PropertyGroup>
     <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd.HHmm"))</SourceRevisionId>
-    <Version>0.51</Version>
+    <Version>0.5.1</Version>
     <Title>$(AssemblyName)</Title>
     <Authors>Fragtality</Authors>
     <Company>Fragtality</Company>
