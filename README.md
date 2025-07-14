@@ -371,10 +371,11 @@ You can manually call the Jetway/Stairs with the **INT/RAD** Switch once you're 
 
 ## 6 - FCOM (Troubleshooting)
 
-1) Ensure you have fully read and understand the Readme 😉
+1) Ensure you have fully read and understood the Readme 😉
 2) Ensure you have checked the Instructions below for common/known Issues
 3) Ensure your GSX Installation is working correctly - Fenix2GSX ain't gonna fix it!
 4) If you report an Issue because you are *really really* sure that Fenix2GSX is misbehaving: provide a **meaningful Description** of the Issue and attach the **Log-File** covering the Issue ('Log-Directory' in the Systray or `%appdata%\Fenix2GSX\log`). If there are **multiple Flights** in one Log (it is one Log per Day for 3 Days), provide a **rough Timestamp** where/when to look.
+5) If your Issue is related to Volume Control, it is strongly recommended to attach the AudioDebug.txt File from the Log Directory (=> 'Write Debug Info' Button in the 'Volume Control' View)
 
 
 **NOTE**: It is my personal Decision to provide support or not. So if you don't put any Effort in reading the Readme or properly reporting your Issue, I won't put any Effort in doing any Support or even responding at all. **You need** to help me in order for **me to help you**! 😉<br/><br/>
