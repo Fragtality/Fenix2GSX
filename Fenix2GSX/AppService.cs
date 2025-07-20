@@ -8,6 +8,7 @@ using Fenix2GSX.Audio;
 using Fenix2GSX.GSX;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fenix2GSX
@@ -19,12 +20,28 @@ namespace Fenix2GSX
         AppGsx = 2,
     }
 
-    public class AppService(Config config) : AppService<Fenix2GSX, AppService, Config, Definition>(config)
+    public class AppService : AppService<Fenix2GSX, AppService, Config, Definition>
     {
+        public virtual CancellationTokenSource RequestTokenSource { get; protected set; }
+        public virtual CancellationToken RequestToken { get; protected set; }
         public virtual GsxController GsxService { get; protected set; }
         public virtual AudioController AudioService { get; protected set; }
         public virtual AppResetRequest ResetRequested {  get; set; } = AppResetRequest.None;
+        public virtual bool IsSessionInitializing { get; protected set; } = false;
+        public virtual bool IsSessionInitialized { get; protected set; } = false;
+        public virtual bool SessionStopRequested { get; protected set; } = false;
         public virtual bool IsFenixAircraft => SimConnect.AircraftString.Contains(Config.FenixAircraftString, StringComparison.InvariantCultureIgnoreCase);
+
+        public AppService(Config config) : base(config)
+        {
+            RefreshToken();
+        }
+
+        protected virtual void RefreshToken()
+        {
+            RequestTokenSource = CancellationTokenSource.CreateLinkedTokenSource(Fenix2GSX.Instance.Token);
+            RequestToken = RequestTokenSource.Token;
+        }
 
         protected override void CreateServiceControllers()
         {
@@ -42,37 +59,66 @@ namespace Fenix2GSX
 
         protected virtual void OnSessionEnded(MsgSessionEnded obj)
         {
-            if (GsxService.IsActive)
+            SessionStopRequested = true;
+
+            try
             {
-                Logger.Debug($"Stop GsxService");
-                GsxService.Stop();
+                Logger.Debug($"Cancel Request Token");
+                RequestTokenSource.Cancel();
+
+                if (GsxService.IsActive)
+                {
+                    Logger.Debug($"Stop GsxService");
+                    GsxService.Stop();
+                }
+
+                if (AudioService.IsActive)
+                {
+                    Logger.Debug($"Stop AudioService");
+                    AudioService.Stop();
+                }
+
+                Config.SetDisplayUnit(Config.DisplayUnitDefault);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
             }
 
-            if (AudioService.IsActive)
-            {
-                Logger.Debug($"Stop AudioService");
-                AudioService.Stop();
-            }
-
-            Config.SetDisplayUnit(Config.DisplayUnitDefault);
+            IsSessionInitialized = false;
         }
 
         protected virtual void OnSessionReady(MsgSessionReady obj)
         {
-            if (!IsFenixAircraft)
+            if (!IsFenixAircraft || IsSessionInitializing || IsSessionInitialized)
                 return;
+            IsSessionInitializing = true;
+            SessionStopRequested = false;            
 
-            if (App.Config.RunGsxService)
+            try
             {
-                Logger.Debug($"Start GsxService");
-                GsxService.Start();
+                Logger.Debug($"Refresh Token");
+                RefreshToken();
+
+                if (App.Config.RunGsxService)
+                {
+                    Logger.Debug($"Start GsxService");
+                    GsxService.Start();
+                }
+
+                if (App.Config.RunAudioService)
+                {
+                    Logger.Debug($"Start AudioService");
+                    AudioService.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
             }
 
-            if (App.Config.RunAudioService)
-            {
-                Logger.Debug($"Start AudioService");
-                AudioService.Start();
-            }
+            IsSessionInitialized = true;
+            IsSessionInitializing = false;
         }
 
         public virtual async Task RestartGsx()
@@ -82,7 +128,7 @@ namespace Fenix2GSX
             Sys.KillProcess(App.Config.BinaryGsx2024);
 
             Logger.Debug($"Wait for Binary Start ({Config.DelayGsxBinaryStart}ms) ...");
-            await Task.Delay(Config.DelayGsxBinaryStart, App.Token);
+            await Task.Delay(Config.DelayGsxBinaryStart, Token);
 
             if (SimService.Manager.GetSimVersion() == SimVersion.MSFS2020 && !Sys.GetProcessRunning(App.Config.BinaryGsx2020))
             {
@@ -98,19 +144,19 @@ namespace Fenix2GSX
                 Sys.StartProcess(Path.Join(dir, $"{App.Config.BinaryGsx2024}.exe"), dir);
             }
 
-            await Task.Delay(Config.DelayGsxBinaryStart, App.Token);
+            await Task.Delay(Config.DelayGsxBinaryStart, Token);
         }
 
         protected override async Task MainLoop()
         {
-            await Task.Delay(App.Config.TimerGsxCheck, App.Token);
+            await Task.Delay(App.Config.TimerGsxCheck, Token);
 
             if (ResetRequested > AppResetRequest.None)
             {
                 Logger.Debug($"Reset was requested: {ResetRequested}");
                 OnSessionEnded(null);
                 if (ResetRequested == AppResetRequest.App)
-                    await Task.Delay(1500, App.Token);
+                    await Task.Delay(2500, Token);
                 else
                     await RestartGsx();
                 OnSessionReady(null);

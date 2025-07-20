@@ -32,6 +32,7 @@ namespace Fenix2GSX.GSX
     public class GsxAutomationController(GsxController controller)
     {
         protected virtual GsxController Controller { get; } = controller;
+        public virtual CancellationToken RequestToken => AppService.Instance.RequestToken;
         protected virtual AircraftInterface Aircraft => Controller.AircraftInterface;
         protected virtual bool SmartButtonRequest => Aircraft.SmartButtonRequest;
         protected virtual SimConnectManager SimConnect => Fenix2GSX.Instance.AppService.SimConnect;
@@ -41,7 +42,7 @@ namespace Fenix2GSX.GSX
         protected virtual AircraftProfile Profile => Controller.AircraftProfile;
         public virtual string DepartureIcao { get; protected set; } = "";
         public virtual bool IsInitialized { get; protected set; } = false;
-        protected virtual bool RunFlag { get; set; } = true;
+        public virtual bool RunFlag { get; protected set; } = false;
         public virtual bool IsStarted { get; protected set; } = false;
         public virtual AutomationState State { get; protected set; } = AutomationState.SessionStart;
         public virtual AutomationState LastState { get; protected set; } = AutomationState.SessionStart;
@@ -94,7 +95,7 @@ namespace Fenix2GSX.GSX
         public virtual void Reset()
         {
             IsStarted = false;
-            RunFlag = true;
+            RunFlag = false;
             State = AutomationState.SessionStart;
 
             foreach (var service in GsxServices)
@@ -157,7 +158,7 @@ namespace Fenix2GSX.GSX
                     activation.ActivationCount = 0;
                 Logger.Information($"Automation Service started");
 
-                while (RunFlag && Controller.IsActive && !Controller.Token.IsCancellationRequested)
+                while (RunFlag && Controller.IsActive && !Token.IsCancellationRequested && !RequestToken.IsCancellationRequested)
                 {
                     Logger.Verbose($"Automation Tick - State: {State} | ServicesValid: {ServicesValid}");
                     if (Controller.IsGsxRunning && Controller.CanAutomationRun)
@@ -170,13 +171,14 @@ namespace Fenix2GSX.GSX
                     }
 
                     LastState = State;
-                    await Task.Delay(Config.StateMachineInterval, Token);
+                    await Task.Delay(Config.StateMachineInterval, RequestToken);
                 }
                 IsStarted = false;
             }
             catch (Exception ex)
             {
-                Logger.LogException(ex);
+                if (ex is not TaskCanceledException)
+                    Logger.LogException(ex);
             }
 
             Logger.Information($"Automation Service ended");
@@ -360,7 +362,7 @@ namespace Fenix2GSX.GSX
         {
             Logger.Information($"State Change: {State} => {newState}");
             State = newState;
-            TaskTools.RunLogged(() => OnStateChange?.Invoke(State), Controller.Token);
+            TaskTools.RunLogged(() => OnStateChange?.Invoke(State), RequestToken);
         }
 
         public virtual async Task OnCouatlStarted()
@@ -428,7 +430,7 @@ namespace Fenix2GSX.GSX
                 {
                     Logger.Information("Automation: Reposition Aircraft on Gate");
                     await ServiceReposition.Call();
-                    await Task.Delay(1000, Token);
+                    await Task.Delay(1000, RequestToken);
                 }
             }
             ExecutedReposition = ServiceReposition.IsCompleted || IsGateConnected || !Profile.CallReposition || Aircraft.IsFlightPlanLoaded || Controller.Menu.WarpedToGate;
@@ -602,7 +604,7 @@ namespace Fenix2GSX.GSX
             {
                 Logger.Information($"Automation: Close Doors on Final Loadsheet");
                 await Aircraft.CloseAllDoors();
-                await Task.Delay(Config.StateMachineInterval * 2, Token);
+                await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
             }
 
             if (Profile.GradualGroundEquipRemoval)
@@ -626,7 +628,7 @@ namespace Fenix2GSX.GSX
                 await ServiceJetway.Remove();
                 await ServiceStairs.Remove();
                 JetwayStairRemoved = true;
-                await Task.Delay(Config.StateMachineInterval * 2, Token);
+                await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
             }
 
             if (GroundEquipmentPlaced && !Aircraft.IsExternalPowerConnected && Aircraft.IsBrakeSet && Aircraft.LightBeacon)
@@ -641,7 +643,7 @@ namespace Fenix2GSX.GSX
                 {
                     Logger.Information($"Automation: Call Pushback (Beacon / Prepared for Push)");
                     await ServicePushBack.Call();
-                    await Task.Delay(Config.StateMachineInterval * 2, Token);
+                    await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
                 }
                 else if (IsGateConnected && Profile.ClearGroundEquipOnBeacon)
                 {
@@ -649,7 +651,7 @@ namespace Fenix2GSX.GSX
                     await ServiceJetway.Remove();
                     await ServiceStairs.Remove();
                     JetwayStairRemoved = true;
-                    await Task.Delay(Config.StateMachineInterval * 2, Token);
+                    await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
                 }
             }
 
@@ -659,13 +661,13 @@ namespace Fenix2GSX.GSX
                 {
                     Logger.Information($"Automation: Call Pushback after Departure Services (Tug already attached)");
                     await ServicePushBack.Call();
-                    await Task.Delay(Config.StateMachineInterval, Token);
+                    await Task.Delay(Config.StateMachineInterval, RequestToken);
                 }
                 else if (Profile.CallPushbackWhenTugAttached == 2 && Aircraft.IsFinalReceived)
                 {
                     Logger.Information($"Automation: Call Pushback after Final LS (Tug already attached)");
                     await ServicePushBack.Call();
-                    await Task.Delay(Config.StateMachineInterval, Token);
+                    await Task.Delay(Config.StateMachineInterval, RequestToken);
                 }
             }
 
@@ -673,7 +675,7 @@ namespace Fenix2GSX.GSX
             {
                 Logger.Information($"Automation: Close Doors on Pushback");
                 await Aircraft.CloseAllDoors();
-                await Task.Delay(Config.StateMachineInterval, Token);
+                await Task.Delay(Config.StateMachineInterval, RequestToken);
             }
 
             if (GroundEquipmentPlaced && (ServicePushBack.PushStatus > 1 || ServicePushBack.State == GsxServiceState.Completed || ServiceDeice.IsActive))
@@ -681,7 +683,7 @@ namespace Fenix2GSX.GSX
                 Logger.Information($"Automation: Remove Ground Equipment on Pushback");
                 await SetGroundEquip(false);
                 GroundEquipmentPlaced = false;
-                await Task.Delay(Config.StateMachineInterval, Token);
+                await Task.Delay(Config.StateMachineInterval, RequestToken);
             }
 
             if ((ServicePushBack.PushStatus > 1 || ServiceDeice.IsActive || Aircraft.EnginesRunning) && !GroundEquipmentPlaced)
@@ -752,7 +754,7 @@ namespace Fenix2GSX.GSX
                 ChockDelay = new Random().Next(Profile.ChockDelayMin, Profile.ChockDelayMax);
                 Logger.Information($"Automation: Placing Chocks on Arrival (ETA {ChockDelay}s)");
                 _ = Task.Delay(ChockDelay * 1000).ContinueWith((_) => Aircraft.SetChocks(true));
-                _ = Task.Delay(60000, Token).ContinueWith(async (_) =>
+                _ = Task.Delay(60000, RequestToken).ContinueWith(async (_) =>
                 {
                     if (!Aircraft.EquipmentGpu)
                     {
@@ -772,7 +774,7 @@ namespace Fenix2GSX.GSX
             {
                 Logger.Information($"Automation: Placing GPU on Arrival");
                 await Aircraft.SetGroundPower(true);
-                await Task.Delay(1000, Controller.Token);
+                await Task.Delay(1000, RequestToken);
             }
 
             if (!Aircraft.EquipmentPca && Profile.ConnectPca > 0 && (IsGateConnected || ServiceDeboard.IsActive))
@@ -781,7 +783,7 @@ namespace Fenix2GSX.GSX
                 {
                     Logger.Information($"Automation: Placing PCA on Arrival");
                     await Aircraft.SetPca(true);
-                    await Task.Delay(1000, Controller.Token);
+                    await Task.Delay(1000, RequestToken);
                 }
             }
 

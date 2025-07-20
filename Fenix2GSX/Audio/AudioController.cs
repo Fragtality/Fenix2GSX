@@ -8,6 +8,7 @@ using FenixInterface;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fenix2GSX.Audio
@@ -32,6 +33,7 @@ namespace Fenix2GSX.Audio
 
     public class AudioController : ServiceController<Fenix2GSX, AppService, Config, Definition>
     {
+        public virtual CancellationToken RequestToken => AppService.Instance.RequestToken;
         public virtual SimConnectManager SimConnect => Fenix2GSX.Instance.AppService.SimConnect;
         protected virtual ISimResourceSubscription SubPlanePowered { get; set; }
         public virtual bool IsActive { get; protected set; } = false;
@@ -151,8 +153,8 @@ namespace Fenix2GSX.Audio
 
         protected override async Task DoRun()
         {
-            while (!IsPlanePowered && IsExecutionAllowed && !Token.IsCancellationRequested)
-                await Task.Delay(Config.AudioServiceRunInterval, Token);
+            while (!IsPlanePowered && IsExecutionAllowed && !RequestToken.IsCancellationRequested)
+                await Task.Delay(Config.AudioServiceRunInterval, RequestToken);
 
             Logger.Debug($"Aircraft powered. AudioService active");
             try
@@ -199,7 +201,7 @@ namespace Fenix2GSX.Audio
 
                     ResetVolumes = false;
                     rescanNeeded = false;
-                    await Task.Delay(Config.AudioServiceRunInterval, Token);
+                    await Task.Delay(Config.AudioServiceRunInterval, RequestToken);
                 }
             }
             catch (Exception ex)

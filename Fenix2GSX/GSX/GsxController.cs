@@ -14,6 +14,7 @@ using FenixInterface;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fenix2GSX.GSX
@@ -21,6 +22,7 @@ namespace Fenix2GSX.GSX
     public class GsxController : ServiceController<Fenix2GSX, AppService, Config, Definition>, IGsxController
     {
         protected bool _lock = false;
+        public virtual CancellationToken RequestToken => AppService.Instance.RequestToken;
         public virtual SimConnectManager SimConnect => Fenix2GSX.Instance.AppService.SimConnect;
         public virtual SimConnectController SimController => Fenix2GSX.Instance.AppService.SimService.Controller;
         public virtual bool IsMsfs2024 => SimConnect.GetSimVersion() == SimVersion.MSFS2024;
@@ -52,7 +54,7 @@ namespace Fenix2GSX.GSX
         public virtual bool IsOnGround => SimStore["SIM ON GROUND"]?.GetNumber() == 1;
         public virtual bool FirstGroundCheck { get; protected set; } = true;
         public virtual bool IsAirStart { get; protected set; } = false;
-        public virtual bool CanAutomationRun => Menu.FirstReadyReceived || IsAirStart;
+        public virtual bool CanAutomationRun => Menu.FirstReadyReceived || IsAirStart || AircraftInterface?.EnginesRunning == true;
         protected virtual int GroundCounter { get; set; } = 0;
         public virtual bool IsPaused => SimConnect.IsPaused;
         public virtual bool IsWalkaround => CheckWalkAround();
@@ -209,24 +211,34 @@ namespace Fenix2GSX.GSX
         {
             try
             {
-                while (!AircraftBinary && IsExecutionAllowed && !Token.IsCancellationRequested)
+                Menu.Reset();
+
+                while (!AircraftBinary && IsExecutionAllowed && !Token.IsCancellationRequested && !RequestToken.IsCancellationRequested)
                     await Task.Delay(Config.TimerGsxCheck, Token);
                 Logger.Debug($"FenixBinary running");
+                if (!IsExecutionAllowed || RequestToken.IsCancellationRequested)
+                    return;
 
                 if (IsMsfs2024 && SimConnect.CameraState == 30)
                 {
                     await Task.Delay(Config.GsxServiceStartDelay, Token);
 
-                    while (SimStore["IS AIRCRAFT"]?.GetNumber() != 0 && SimStore["IS AVATAR"]?.GetNumber() != 1 && IsExecutionAllowed && !Token.IsCancellationRequested)
-                        await Task.Delay(Config.TimerGsxCheck, Token);
+                    while (((SimStore["IS AIRCRAFT"]?.GetNumber() == 0 && SimStore["IS AVATAR"]?.GetNumber() == 0)
+                        || (SimStore["IS AIRCRAFT"]?.GetNumber() == 1 && SimStore["IS AVATAR"]?.GetNumber() == 1))
+                        && IsExecutionAllowed && !RequestToken.IsCancellationRequested)
+                        await Task.Delay(Config.TimerGsxCheck, RequestToken);
 
                     Logger.Debug($"MSFS 2024 Aircraft/Avatar Vars valid");
                 }
+                if (!IsExecutionAllowed || RequestToken.IsCancellationRequested)
+                    return;
 
                 AutomationController.Reset();
                 AircraftInterface.Run();
-                while (!AircraftInterface.IsLoaded && IsExecutionAllowed && !Token.IsCancellationRequested)
+                while (!AircraftInterface.IsLoaded && IsExecutionAllowed && !Token.IsCancellationRequested && !RequestToken.IsCancellationRequested)
                     await Task.Delay(Config.TimerGsxCheck, Token);
+                if (!IsExecutionAllowed || RequestToken.IsCancellationRequested)
+                    return;
 
                 Logger.Debug($"AircraftInterface loaded. Searching Profile ...");
                 LoadAircraftProfile();
@@ -234,7 +246,7 @@ namespace Fenix2GSX.GSX
                 Logger.Debug($"GsxService active (VarsReceived: {CouatlVarsReceived} | FirstReady: {Menu.FirstReadyReceived})");
                 IsActive = true;
                 Logger.Information($"GsxController active - waiting for Menu to be ready");
-                while (SimConnect.IsSessionRunning && IsExecutionAllowed && !Token.IsCancellationRequested)
+                while (SimConnect.IsSessionRunning && IsExecutionAllowed && !RequestToken.IsCancellationRequested)
                 {
                     if (Config.LogLevel == LogLevel.Verbose)
                         Logger.Verbose($"Controller Tick - VarsReceived: {CouatlVarsReceived} | FirstReady: {Menu.FirstReadyReceived} | VarsValid: {CouatlVarsValid} | IsGsxRunning: {IsGsxRunning}");
@@ -257,7 +269,7 @@ namespace Fenix2GSX.GSX
                         {
                             Logger.Information($"Trying to open GSX Menu ...");
                             await Menu.OpenHide();
-                            await Task.Delay(1000, Token);
+                            await Task.Delay(1000, RequestToken);
                         }
 
                         if (!CouatlVarsValid || !IsProcessRunning)
@@ -269,7 +281,7 @@ namespace Fenix2GSX.GSX
                                 Logger.Information($"Restarting GSX ...");
                                 await AppService.Instance.RestartGsx();
                                 CouatlInvalidCount = 0;
-                                await Task.Delay(Config.GsxServiceStartDelay, App.Token);
+                                await Task.Delay(Config.GsxServiceStartDelay, RequestToken);
                             }
                         }
 
@@ -282,7 +294,7 @@ namespace Fenix2GSX.GSX
                         CouatlConfigSet = true;
                     }
 
-                    if (!AutomationController.IsStarted && CanAutomationRun)
+                    if (!AutomationController.IsStarted && CanAutomationRun && !AutomationController.RunFlag)
                         _ = AutomationController.Run();
                     else if (AutomationController.IsStarted && SkippedWalkAround && !WalkaroundNotified)
                     {
@@ -293,7 +305,7 @@ namespace Fenix2GSX.GSX
 
                     CheckProcess();
 
-                    await Task.Delay(Config.TimerGsxCheck, Token);
+                    await Task.Delay(Config.TimerGsxCheck, RequestToken);
                 }
             }
             catch (Exception ex)
@@ -360,18 +372,18 @@ namespace Fenix2GSX.GSX
         {
             WalkAroundSkipActive = true;
             Logger.Verbose($"ac: {SimStore["IS AIRCRAFT"]?.GetNumber()} | av: {SimStore["IS AVATAR"]?.GetNumber()}");
-            while (IsWalkaround && !SkippedWalkAround && Config.SkipWalkAround && IsExecutionAllowed)
+            while (IsWalkaround && !SkippedWalkAround && Config.SkipWalkAround && IsExecutionAllowed && !RequestToken.IsCancellationRequested)
             {
                 Logger.Information("Automation: Skip Walkaround");
                 string title = Tools.GetMsfsWindowTitle();
                 Sys.SetForegroundWindow(title);
-                await Task.Delay(Config.DelayForegroundChange, Token);
+                await Task.Delay(Config.DelayForegroundChange, RequestToken);
                 string active = Sys.GetActiveWindowTitle();
                 if (active == title)
                 {
                     Logger.Debug($"Sending Keystrokes");
                     Tools.SendWalkaroundKeystroke();
-                    await Task.Delay(Config.DelayAircraftModeChange, Token);
+                    await Task.Delay(Config.DelayAircraftModeChange, RequestToken);
                 }
                 else
                     Logger.Debug($"Active Window did not match to '{title}'");
