@@ -382,7 +382,7 @@ You can manually call the Jetway/Stairs with the **INT/RAD** Switch once you're 
 
 
 You can use the '**App Monitor**' View of the UI to monitor the current State of Fenix2GSX:
-<img src="img/appmonitorpng" width="817"><br/><br/>
+<img src="img/appmonitor.png" width="817"><br/><br/>
 
 - The **Sim State** Section reports on the Connection to MSFS - it should be all green.
 - The **GSX State** Section reports the State of GSX and it Services. Fenix2GSX can only do as good as the Information provided by GSX!
