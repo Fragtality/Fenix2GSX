@@ -22,7 +22,7 @@ namespace Fenix2GSX.Aircraft
         public virtual AircraftProfile Profile => Controller.AircraftProfile;
         protected virtual SimStore SimStore => Controller.SimStore;
         protected virtual ConcurrentDictionary<GsxServiceType, GsxService> GsxServices => Controller.GsxServices;
-        protected virtual FenixAircraftInterface FenixInterface { get; }
+        public virtual FenixAircraftInterface FenixInterface { get; }
         public virtual bool IsInitialized { get; protected set; } = false;
         
         protected virtual ISimResourceSubscription SubAirline { get; set; }

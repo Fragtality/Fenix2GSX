@@ -143,10 +143,10 @@
                 </TextBlock>
                 <CheckBox Grid.Column="1" Grid.Row="12" IsChecked="{Binding RestartGsxStartupFail}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="13" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State.">
+                <!--<TextBlock Grid.Column="0" Grid.Row="13" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State.">
                     Reset EFB on Session Start:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="13" IsChecked="{Binding EfbResetOnStartup}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State."/>
+                <CheckBox Grid.Column="1" Grid.Row="13" IsChecked="{Binding EfbResetOnStartup}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State."/>-->
 
                 <TextBlock Grid.Column="0" Grid.Row="14" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control.">
                     Run GSX Controller:

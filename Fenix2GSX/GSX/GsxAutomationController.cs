@@ -439,6 +439,7 @@ namespace Fenix2GSX.GSX
             {
                 Logger.Information("Automation: Placing Ground Equipment");
                 await Aircraft.SetChocks(false);
+                await Task.Delay(250);
                 await Aircraft.SetChocks(true);
                 await Aircraft.SetGroundPower(true);
                 if (Profile.ConnectPca == 1 || (Profile.ConnectPca == 2 && ServiceJetway.State != GsxServiceState.NotAvailable))
@@ -453,6 +454,7 @@ namespace Fenix2GSX.GSX
                 && (Profile.CallJetwayStairsOnPrep || SmartButtonRequest))
             {
                 Logger.Information("Automation: Call Jetway on Preparation");
+                await Controller.AircraftInterface.FenixInterface.SetStairsFwd(false);
                 await ServiceJetway.Call();
             }
 
@@ -460,6 +462,7 @@ namespace Fenix2GSX.GSX
                 && (Profile.CallJetwayStairsOnPrep || SmartButtonRequest))
             {
                 Logger.Information("Automation: Call Stairs on Preparation");
+                await Controller.AircraftInterface.FenixInterface.SetStairsAft(false);
                 await ServiceStairs.Call();
             }
 
