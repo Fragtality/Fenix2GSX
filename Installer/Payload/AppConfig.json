@@ -112,7 +112,6 @@
   "MenuCheckInterval": 250,
   "MenuOpenTimeout": 2500,
   "EfbCheckInterval": 1500,
-  "EfbResetOnStartup": true,
   "DingOnStartup": true,
   "DingOnFinal": true,
   "DingOnTurnaround": true,
@@ -213,7 +212,7 @@
       }
     }
   ],
-  "ConfigVersion": 12,
+  "ConfigVersion": 13,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,
