@@ -430,16 +430,18 @@ namespace Fenix2GSX.GSX
                 {
                     Logger.Information("Automation: Reposition Aircraft on Gate");
                     await ServiceReposition.Call();
-                    await Task.Delay(1000, RequestToken);
+                    await Task.Delay(2000, RequestToken);
                 }
             }
             ExecutedReposition = ServiceReposition.IsCompleted || IsGateConnected || !Profile.CallReposition || Aircraft.IsFlightPlanLoaded || Controller.Menu.WarpedToGate;
 
             if (ExecutedReposition && Controller.SkippedWalkAround && !GroundEquipmentPlaced && ServicePushBack.PushStatus == 0 && !Aircraft.EnginesRunning)
             {
+                if (!Profile.CallReposition)
+                    await Task.Delay(3000);
                 Logger.Information("Automation: Placing Ground Equipment");
                 await Aircraft.SetChocks(false);
-                await Task.Delay(250);
+                await Task.Delay(750);
                 await Aircraft.SetChocks(true);
                 await Aircraft.SetGroundPower(true);
                 if (Profile.ConnectPca == 1 || (Profile.ConnectPca == 2 && ServiceJetway.State != GsxServiceState.NotAvailable))

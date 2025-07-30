@@ -36,6 +36,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
                 <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding CloseDoorsOnFinal}" Margin="6,8,6,6" Style="{StaticResource CheckBoxSettingItem}"
@@ -57,13 +58,18 @@
                           ToolTip="Open and Close the Forward &amp; Aft Cargo Door for GSX Boarding and Deboarding (unrelated to who called the GSX Service).">
                     <TextBlock>Open / Close <Underline>Cargo Doors</Underline> for GSX Boarding &amp; Deboarding</TextBlock>
                 </CheckBox>
-                
-                <CheckBox Grid.Column="0" Grid.Row="4" IsChecked="{Binding DoorsCargoKeepOpenOnLoaded}" Style="{StaticResource CheckBoxSettingItemIndented}"
+
+                <CheckBox Grid.Column="0" Grid.Row="4" IsChecked="{Binding DoorOpenBoardActive}" Style="{StaticResource CheckBoxSettingItemIndented}"
+                          ToolTip="Open both Cargo Doors some Seconds after the GSX Boarding Service switched to active (5).&#x0a;The Delay can be configured in App Settings.">
+                    <TextBlock><Underline>Open Cargo</Underline> Doors when Boarding becomes <Underline>active</Underline></TextBlock>
+                </CheckBox>
+
+                <CheckBox Grid.Column="0" Grid.Row="5" IsChecked="{Binding DoorsCargoKeepOpenOnLoaded}" Style="{StaticResource CheckBoxSettingItemIndented}"
                           ToolTip="Do not close the Cargo Doors when GSX' Cargo Loading reached 100%.&#x0a;Note: The Cargo Doors will still be closed once GSX Boarding is reported as completed!">
                     <TextBlock>Keep Cargo Doors <Underline>open after Loading</Underline> has finished (on Boarding)</TextBlock>
                 </CheckBox>
                 
-                <CheckBox Grid.Column="0" Grid.Row="5" IsChecked="{Binding DoorsCargoKeepOpenOnUnloaded}" Style="{StaticResource CheckBoxSettingItemIndented}"
+                <CheckBox Grid.Column="0" Grid.Row="6" IsChecked="{Binding DoorsCargoKeepOpenOnUnloaded}" Style="{StaticResource CheckBoxSettingItemIndented}"
                           ToolTip="Do not close the Cargo Doors when GSX' Cargo Unloading reached 100% and do not close after GSX Deboarding has finished.">
                     <TextBlock>Keep Cargo Doors <Underline>open after Unloading</Underline> has finished (on Deboarding)</TextBlock>
                 </CheckBox>

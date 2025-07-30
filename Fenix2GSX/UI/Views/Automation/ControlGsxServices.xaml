@@ -38,7 +38,7 @@
                 </Grid.RowDefinitions>
 
                 <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding CallReposition}" Margin="6,8,6,6" Style="{StaticResource CheckBoxSettingItem}"
-                          ToolTip="Automatically Reposition the Aircraft with GSX on Session Start.&#x0a;Note on MSFS2024: Reposition is already attempted before 'Ready to fly' is pressed.">
+                          ToolTip="Automatically Reposition the Aircraft via GSX Menu on Session Start.&#x0a;Note: Do NOT use both the GSX Setting and this Option to Reposition the Plane at the same Time!">
                     <TextBlock><Underline>Reposition</Underline> Aircaft on Session Start</TextBlock>
                 </CheckBox>
 

@@ -122,6 +122,7 @@
   "FuelFobSaved": {},
   "CargoPercentChangePerSec": 5,
   "DoorCargoDelay": 16,
+  "DoorCargoOpenDelay": 2,
   "InterceptGpuAndChocksOnBeacon": true,
   "OperatorWaitTimeout": 1500,
   "OperatorSelectTimeout": 10000,
@@ -141,6 +142,7 @@
       "DoorStairHandling": true,
       "DoorStairIncludeL2": false,
       "DoorCargoHandling": true,
+      "DoorOpenBoardActive": true,
       "FinalDelayMin": 90,
       "FinalDelayMax": 150,
       "ChockDelayMin": 10,
@@ -212,7 +214,7 @@
       }
     }
   ],
-  "ConfigVersion": 13,
+  "ConfigVersion": 14,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

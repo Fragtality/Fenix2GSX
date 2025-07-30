@@ -47,7 +47,7 @@
                 </CheckBox>
 
                 <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding GradualGroundEquipRemoval}" Margin="6,6,6,6" Style="{StaticResource CheckBoxSettingItem}"
-                          ToolTip="The Ground Equipment is removed gradually when the Aircraft isn't connected anymore.&#x0a;For Example the GPU is removed as soon as external Power was disconnected. Or the Chocks or Cones are removed when the Parking Brake is set (external Power has to be disconnected first)&#x0a;Only applies to Ground Equipment supported by the current Aircraft Plugin!">
+                          ToolTip="The Ground Equipment is removed gradually when the Aircraft isn't connected anymore.&#x0a;For Example the GPU is removed as soon as external Power was disconnected. Or the Chocks or Cones are removed when the Parking Brake is set (external Power has to be disconnected first).">
                     <TextBlock><Underline>Gradually remove</Underline> Ground Equipment in the Pushback <Underline>Phase</Underline></TextBlock>
                 </CheckBox>
 

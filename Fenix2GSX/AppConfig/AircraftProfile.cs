@@ -40,6 +40,7 @@ namespace Fenix2GSX.AppConfig
         public virtual bool DoorStairHandling { get; set; } = true;
         public virtual bool DoorStairIncludeL2 { get; set; } = false;
         public virtual bool DoorCargoHandling { get; set; } = true;
+        public virtual bool DoorOpenBoardActive { get; set; } = true;
         public virtual int FinalDelayMin { get; set; } = 90;
         public virtual int FinalDelayMax { get; set; } = 150;
         public virtual int ChockDelayMin { get; set; } = 10;

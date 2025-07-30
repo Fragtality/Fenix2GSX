@@ -84,6 +84,7 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual bool DoorStairHandling { get => Source.DoorStairHandling; set => SetModelValue<bool>(value); }
         public virtual bool DoorStairIncludeL2 { get => Source.DoorStairIncludeL2; set => SetModelValue<bool>(value); }
         public virtual bool DoorCargoHandling { get => Source.DoorCargoHandling; set => SetModelValue<bool>(value); }
+        public virtual bool DoorOpenBoardActive { get => Source.DoorOpenBoardActive; set => SetModelValue<bool>(value); }
         public virtual bool DoorsCargoKeepOpenOnLoaded { get => Source.DoorsCargoKeepOpenOnLoaded; set => SetModelValue<bool>(value); }
         public virtual bool DoorsCargoKeepOpenOnUnloaded { get => Source.DoorsCargoKeepOpenOnUnloaded; set => SetModelValue<bool>(value); }
         public virtual bool CloseDoorsOnFinal { get => Source.CloseDoorsOnFinal; set => SetModelValue<bool>(value); }
@@ -98,8 +99,24 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual bool ClearGroundEquipOnBeacon { get => Source.ClearGroundEquipOnBeacon; set => SetModelValue<bool>(value); }
         public virtual bool GradualGroundEquipRemoval { get => Source.GradualGroundEquipRemoval; set => SetModelValue<bool>(value); }
         public virtual int ConnectPca { get => Source.ConnectPca; set => SetModelValue<int>(value); }
-        public virtual int ChockDelayMin { get => Source.ChockDelayMin; set => SetModelValue<int>(value); }
-        public virtual int ChockDelayMax { get => Source.ChockDelayMax; set => SetModelValue<int>(value); }
+        public virtual int ChockDelayMin { get => Source.ChockDelayMin;
+            set
+            { 
+                if (value < ChockDelayMax)
+                    SetModelValue<int>(value);
+                else
+                    OnPropertyChanged(nameof(ChockDelayMin));
+            }
+        }
+        public virtual int ChockDelayMax { get => Source.ChockDelayMax;
+            set
+            {
+                if (value > ChockDelayMin)
+                    SetModelValue<int>(value);
+                else
+                    OnPropertyChanged(nameof(ChockDelayMax));
+            }
+        }
 
         //GSX Services
         public virtual bool CallReposition { get => Source.CallReposition; set => SetModelValue<bool>(value); }
@@ -140,8 +157,24 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual bool AnswerCabinCallAir { get => Source.AnswerCabinCallAir; set => SetModelValue<bool>(value); }
 
         //Aircraft / OFP
-        public virtual int FinalDelayMin { get => Source.FinalDelayMin; set => SetModelValue<int>(value); }
-        public virtual int FinalDelayMax { get => Source.FinalDelayMax; set => SetModelValue<int>(value); }
+        public virtual int FinalDelayMin { get => Source.FinalDelayMin;
+            set
+            {
+                if (value < FinalDelayMax)
+                    SetModelValue<int>(value);
+                else
+                    OnPropertyChanged(nameof(FinalDelayMin));
+            }
+        }
+        public virtual int FinalDelayMax { get => Source.FinalDelayMax;
+            set
+            {
+                if (value > FinalDelayMin)
+                    SetModelValue<int>(value);
+                else
+                    OnPropertyChanged(nameof(FinalDelayMax));
+            }
+        }
         public virtual bool FuelSaveLoadFob { get => Source.FuelSaveLoadFob; set => SetModelValue<bool>(value); }
         public virtual bool RandomizePax { get => Source.RandomizePax; set => SetModelValue<bool>(value); }
         public virtual double ChancePerSeat { get => Source.ChancePerSeat * 100.0; set => SetModelValue<double>(value / 100.0); }
