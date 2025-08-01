@@ -119,6 +119,8 @@
   "DisplayUnitSource": 0,
   "FuelResetDefaultKg": 3000,
   "FuelRoundUp100": true,
+  "RefuelPanelCloseDelay": 42,
+  "RefuelPanelOpenDelay": 10,
   "FuelFobSaved": {},
   "CargoPercentChangePerSec": 5,
   "DoorCargoDelay": 16,
@@ -150,6 +152,7 @@
       "FuelSaveLoadFob": true,
       "RandomizePax": true,
       "ChancePerSeat": 0.025,
+      "RefuelMethod": 0,
       "RefuelRateKgSec": 28,
       "RefuelFinishOnHose": false,
       "UseRefuelTimeTarget": false,
@@ -214,7 +217,7 @@
       }
     }
   ],
-  "ConfigVersion": 14,
+  "ConfigVersion": 15,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

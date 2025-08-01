@@ -3,6 +3,7 @@ using CFIT.AppLogger;
 using CFIT.AppTools;
 using CFIT.SimConnectLib.SimResources;
 using Fenix2GSX.AppConfig;
+using FenixInterface;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

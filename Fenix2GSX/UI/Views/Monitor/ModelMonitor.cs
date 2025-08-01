@@ -10,6 +10,7 @@ using Fenix2GSX.Audio;
 using Fenix2GSX.GSX;
 using Fenix2GSX.GSX.Menu;
 using Fenix2GSX.GSX.Services;
+using FenixInterface;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;

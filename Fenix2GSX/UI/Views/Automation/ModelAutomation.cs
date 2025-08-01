@@ -1,5 +1,6 @@
 ﻿using Fenix2GSX.AppConfig;
 using Fenix2GSX.GSX.Services;
+using FenixInterface;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -77,6 +78,13 @@ namespace Fenix2GSX.UI.Views.Automation
                 NotifyPropertyChanged(nameof(ProfileName));
         }
 
+        protected virtual void NotifyRefuelMethod()
+        {
+            NotifyPropertyChanged(nameof(RefuelFixedVisible));
+            NotifyPropertyChanged(nameof(RefuelDynamicVisible));
+            NotifyPropertyChanged(nameof(RefuelPanelVisible));
+        }
+
         public virtual string ProfileName => Config?.CurrentProfile?.Name ?? "";
         public virtual string DisplayUnitCurrentString => Config.DisplayUnitCurrentString;
 
@@ -125,9 +133,17 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual Dictionary<GsxServiceActivation, string> TextServiceActivations => ServiceConfig.TextServiceActivations;
         public virtual Dictionary<GsxServiceConstraint, string> TextServiceConstraints => ServiceConfig.TextServiceConstraints;
 
+        public virtual RefuelMethod RefuelMethod { get => Source.RefuelMethod; set { SetModelValue<RefuelMethod>(value); NotifyRefuelMethod(); } }
+        public virtual Dictionary<RefuelMethod, string> RefuelMethodOptions { get; } = new()
+        {
+            { RefuelMethod.FixedRate, "Fixed Rate" },
+            { RefuelMethod.DynamicRate, "Dynamic Rate" },
+            { RefuelMethod.RefuelPanel, "Refuel Panel" },
+        };
         public virtual double RefuelRateKgSec { get => Config.ConvertKgToDisplayUnit(Source.RefuelRateKgSec); set => SetModelValue<double>(Config.ConvertFromDisplayUnitKg(value)); }
-        public virtual bool UseFixedRefuelRate => !UseRefuelTimeTarget;
-        public virtual bool UseRefuelTimeTarget { get => Source.UseRefuelTimeTarget; set { SetModelValue<bool>(value); NotifyPropertyChanged(nameof(UseFixedRefuelRate)); } }
+        public virtual bool RefuelFixedVisible => RefuelMethod == RefuelMethod.FixedRate;
+        public virtual bool RefuelDynamicVisible => RefuelMethod == RefuelMethod.DynamicRate;
+        public virtual bool RefuelPanelVisible => RefuelMethod == RefuelMethod.RefuelPanel;
         public virtual int RefuelTimeTargetSeconds { get => Source.RefuelTimeTargetSeconds; set => SetModelValue<int>(value); }
         public virtual bool SkipFuelOnTankering { get => Source.SkipFuelOnTankering; set => SetModelValue<bool>(value); }
         public virtual bool RefuelFinishOnHose { get => Source.RefuelFinishOnHose; set => SetModelValue<bool>(value); }

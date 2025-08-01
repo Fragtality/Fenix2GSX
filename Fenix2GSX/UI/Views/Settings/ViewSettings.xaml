@@ -47,6 +47,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Column="0" Grid.Row="0" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Which Source is used to get the Unit used in the UI.">
@@ -118,20 +119,36 @@
                     <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">% / s</TextBlock>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="9" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Delay in Seconds to open both Cargo Doors after GSX Boarding became active (5) - If the corresponding Option is used.">
-                    Cargo Open Delay:
+                <TextBlock Grid.Column="0" Grid.Row="9" Margin="6" Style="{StaticResource TextBlockDefault}">
+                    Cargo Door Delay:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="9" Style="{StaticResource SettingItemPanel}" ToolTip="Delay in Seconds to open both Cargo Doors after GSX Boarding became active (5) - If the corresponding Option is used.">
-                    <TextBox Name="InputDoorCargoOpenDelay" Style="{StaticResource TextBoxCentered}"/>
-                    <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
+                <StackPanel Grid.Column="1" Grid.Row="9" Orientation="Horizontal" Margin="6,0,0,0">
+                    <StackPanel Orientation="Horizontal" ToolTip="Delay in Seconds to open both Cargo Doors after GSX Boarding became active (5) - If the corresponding Option is used.">
+                        <TextBlock Margin="0,0,6,0" Style="{StaticResource TextBlockDefault}">Open:</TextBlock>
+                        <TextBox Name="InputDoorCargoOpenDelay" Style="{StaticResource TextBoxCentered}"/>
+                        <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="10" Style="{StaticResource SettingItemPanel}" ToolTip="Delay in Seconds to close a Cargo Door when the Loader is finished (ignored when Keep Doors Open is configured).">
+                        <TextBlock Margin="12,0,6,0" Style="{StaticResource TextBlockDefault}">Close:</TextBlock>
+                        <TextBox Name="InputDoorCargoCloseDelay" Style="{StaticResource TextBoxCentered}"/>
+                        <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
+                    </StackPanel>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="10" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Delay in Seconds to close a Cargo Door when the Loader is finished (ignored when Keep Doors Open is configured).">
-                    Cargo Close Delay:
+                <TextBlock Grid.Column="0" Grid.Row="10" Margin="6" Style="{StaticResource TextBlockDefault}">
+                    Refuel Door Delay:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="10" Style="{StaticResource SettingItemPanel}" ToolTip="Delay in Seconds to close a Cargo Door when the Loader is finished (ignored when Keep Doors Open is configured).">
-                    <TextBox Name="InputDoorCargoCloseDelay" Style="{StaticResource TextBoxCentered}"/>
-                    <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
+                <StackPanel Grid.Column="1" Grid.Row="10" Orientation="Horizontal" Margin="6,0,0,0">
+                    <StackPanel Orientation="Horizontal" ToolTip="Delay in Seconds to open &amp; Power on the Refuel Panel after GSX Refuel became active (5).">
+                        <TextBlock Margin="0,0,6,0" Style="{StaticResource TextBlockDefault}">Open:</TextBlock>
+                        <TextBox Name="InputRefuelOpenDelay" Style="{StaticResource TextBoxCentered}"/>
+                        <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="10" Style="{StaticResource SettingItemPanel}" ToolTip="Delay in Seconds to close &amp; Power off the Refuel Panel after the Refuel Process has finished.">
+                        <TextBlock Margin="12,0,6,0" Style="{StaticResource TextBlockDefault}">Close:</TextBlock>
+                        <TextBox Name="InputRefuelCloseDelay" Style="{StaticResource TextBoxCentered}"/>
+                        <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
+                    </StackPanel>
                 </StackPanel>
 
                 <TextBlock Grid.Column="0" Grid.Row="11" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Automatically skip to the Cockpit in MSFS 2024 on Session Start.&#x0a;This can only work if you use the default Binding of 'Shift+C' for 'Take Control of Character'!&#x0a;You can use Walkaround Mode while the Departure Services run, except when any Door is about to be opened or closed.">
@@ -151,20 +168,20 @@
                 </TextBlock>
                 <CheckBox Grid.Column="1" Grid.Row="13" IsChecked="{Binding RestartGsxStartupFail}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready."/>
 
-                <!--<TextBlock Grid.Column="0" Grid.Row="13" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State.">
-                    Reset EFB on Session Start:
-                </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="13" IsChecked="{Binding EfbResetOnStartup}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Reset EFB and FOB on Session Start to ensure a 'clean' State."/>-->
-
                 <TextBlock Grid.Column="0" Grid.Row="14" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control.">
                     Run GSX Controller:
                 </TextBlock>
                 <CheckBox Grid.Column="1" Grid.Row="14" IsChecked="{Binding RunGsxService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="15" Margin="6" Style="{StaticResource TextBlockDefault}" VerticalAlignment="Top" ToolTip="The Fuel-on-Board Values currently stored by Any2GSX for the various Aircrafts.">
+                <TextBlock Grid.Column="0" Grid.Row="15" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the Audio Controller for App Volume Control.&#x0a;Disable if you want to use Fenix' native Implementation.">
+                    Run Audio Controller:
+                </TextBlock>
+                <CheckBox Grid.Column="1" Grid.Row="15" IsChecked="{Binding RunAudioService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the Audio Controller for App Volume Control.&#x0a;Disable if you want to use Fenix' native Implementation."/>
+
+                <TextBlock Grid.Column="0" Grid.Row="16" Margin="6" Style="{StaticResource TextBlockDefault}" VerticalAlignment="Top" ToolTip="The Fuel-on-Board Values currently stored by Any2GSX for the various Aircrafts.">
                     Saved Fuel Values:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="15" Margin="6" Orientation="Horizontal">
+                <StackPanel Grid.Column="1" Grid.Row="16" Margin="6" Orientation="Horizontal">
                     <ListView MinWidth="228" MaxWidth="384" Height="96" MaxHeight="142" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                               HorizontalAlignment="Left" HorizontalContentAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center"
                               Name="ListSavedFuel">

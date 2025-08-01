@@ -205,8 +205,13 @@ namespace Fenix2GSX.GSX.Services
 
         public virtual void ForceComplete()
         {
-            Logger.Debug($"Force Complete for {Type}");
-            WasCompleted = true;
+            if (!WasCompleted)
+            {
+                Logger.Debug($"Force Complete for {Type}");
+                WasCompleted = true;
+                NotifyCompleted();
+                NotifyStateChange();
+            }
         }
     }
 }

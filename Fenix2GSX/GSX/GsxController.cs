@@ -40,6 +40,7 @@ namespace Fenix2GSX.GSX
         public virtual MessageReceiver<MsgGsxCouatlStarted> MsgCouatlStarted { get; protected set; }
         public virtual MessageReceiver<MsgGsxCouatlStopped> MsgCouatlStopped { get; protected set; }
         public virtual ConcurrentDictionary<GsxServiceType, GsxService> GsxServices { get; } = [];
+        public virtual bool IsRefuelActive => GsxServices[GsxServiceType.Refuel].State == GsxServiceState.Active;
         
         public virtual bool CouatlVarsValid { get; protected set; } = false;
         public virtual int CouatlLastProgress { get; protected set; } = 0;
@@ -50,6 +51,8 @@ namespace Fenix2GSX.GSX
         public virtual bool IsProcessRunning { get; protected set; } = false;
         protected virtual DateTime NextProcessCheck { get; set; } = DateTime.MinValue;
         public virtual bool IsActive { get; protected set; } = false;
+        public virtual bool IsAutomationStarted => AutomationController?.IsStarted == true;
+        public virtual AutomationState AutomationState => AutomationController?.State ?? AutomationState.SessionStart;
         public virtual bool IsGsxRunning => IsProcessRunning && CouatlVarsValid;
         public virtual bool IsOnGround => SimStore["SIM ON GROUND"]?.GetNumber() == 1;
         public virtual bool FirstGroundCheck { get; protected set; } = true;
@@ -156,7 +159,6 @@ namespace Fenix2GSX.GSX
                         CouatlVarsValid = true;
                         CouatlInvalidCount = 0;
                         MessageService.Send(MessageGsx.Create<MsgGsxCouatlStarted>(this, true));
-                        _ = AutomationController.OnCouatlStarted();
                     }
                 }
                 else
@@ -167,7 +169,6 @@ namespace Fenix2GSX.GSX
                         MessageService.Send(MessageGsx.Create<MsgGsxCouatlStopped>(this, true));
                         CouatlVarsValid = false;
                         CouatlConfigSet = false;
-                        AutomationController.OnCouatlStopped();
                     }
                 }
 

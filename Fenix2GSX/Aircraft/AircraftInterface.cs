@@ -79,7 +79,8 @@ namespace Fenix2GSX.Aircraft
                 Controller.WalkaroundWasSkipped += OnWalkaroundWasSkipped;
                 Controller.AutomationController.OnStateChange += OnAutomationState;
                 Controller.GsxServices[GsxServiceType.Stairs].OnStateChanged += OnStairChange;
-                (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnActive += OnRefuelActive;
+                (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnStateChanged += OnRefuelStateChanged;
+                (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnHoseConnection += OnHoseChanged;
                 (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnActive += OnBoardingActive;
                 (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnCompleted += OnBoardingCompleted;
                 (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnPaxChange += OnPaxChangeBoarding;
@@ -88,6 +89,8 @@ namespace Fenix2GSX.Aircraft
                 (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnCompleted += OnDeboardingCompleted;
                 (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnPaxChange += OnPaxChangeDeboarding;
                 (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnCargoChange += OnCargoChangeDeboarding;
+
+                Controller.MsgCouatlStarted.OnMessage += OnCouatlStarted;
 
                 FenixInterface.Init();
 
@@ -102,7 +105,8 @@ namespace Fenix2GSX.Aircraft
             Controller.WalkaroundWasSkipped -= OnWalkaroundWasSkipped;
             Controller.AutomationController.OnStateChange -= OnAutomationState;
             Controller.GsxServices[GsxServiceType.Stairs].OnStateChanged -= OnStairChange;
-            (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnActive -= OnRefuelActive;
+            (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnStateChanged -= OnRefuelStateChanged;
+            (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnHoseConnection -= OnHoseChanged;
             (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnActive -= OnBoardingActive;
             (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnCompleted -= OnBoardingCompleted;
             (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnPaxChange -= OnPaxChangeBoarding;
@@ -111,6 +115,8 @@ namespace Fenix2GSX.Aircraft
             (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnCompleted -= OnDeboardingCompleted;
             (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnPaxChange -= OnPaxChangeDeboarding;
             (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnCargoChange -= OnCargoChangeDeboarding;
+
+            Controller.MsgCouatlStarted.OnMessage -= OnCouatlStarted;
 
             SimStore.Remove(FenixConstants.VarAcpIntCallCpt);
             SimStore.Remove(FenixConstants.VarAcpIntCallFo);
@@ -173,9 +179,71 @@ namespace Fenix2GSX.Aircraft
             await FenixInterface.OnStairChange((int)GsxServices[GsxServiceType.Stairs].State, (int)GsxServices[GsxServiceType.Jetway].State);
         }
 
-        protected virtual async Task OnRefuelActive(GsxService service)
+        protected virtual async Task OnRefuelStateChanged(GsxService service)
         {
-            await FenixInterface.OnRefuelActive();
+            if (!AppService.Instance.IsFenixAircraft)
+                return;
+            var serviceRefuel = service as GsxServiceRefuel;
+
+            if (serviceRefuel.State == GsxServiceState.Active)
+                await FenixInterface.OnRefuelActive();
+            else if (serviceRefuel.State == GsxServiceState.Completed)
+            {
+                if (FenixInterface.IsRefueling)
+                {
+                    if (Profile.RefuelFinishOnHose)
+                    {
+                        Logger.Information($"GSX Refuel reported completed while Refueling - aborting Refuel Process");
+                        await FenixInterface.RefuelAbort();
+                    }
+                    else
+                        Logger.Information($"GSX Refuel reported completed while Refueling - continuing Refuel Process");
+                }
+                else
+                    await FenixInterface.RefuelComplete();
+            }
+        }
+
+        public virtual async Task OnHoseChanged(bool hoseConnected)
+        {
+            if (hoseConnected && !FenixInterface.IsRefueling)
+            {
+                Logger.Information($"Fuel Hose connected - start Refuel Process");
+                await FenixInterface.RefuelStart();
+            }
+            
+            if (!hoseConnected && FenixInterface.IsRefueling)
+            {
+                if (Profile.RefuelFinishOnHose)
+                {
+                    Logger.Information($"GSX Fuelhose reported disconnected while Refueling - aborting Refuel Process");
+                    await FenixInterface.RefuelAbort();
+                }
+                else
+                    Logger.Information($"GSX Fuelhose reported disconnected while Refueling - continuing Refuel Process");
+            }
+        }
+
+        protected virtual void OnCouatlStarted(MsgGsxCouatlStarted msg)
+        {
+            try
+            {
+                if (!AppService.Instance.IsFenixAircraft || Controller.AutomationController.IsStarted)
+                    return;
+
+                var serviceBoarding = Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding;
+                if (serviceBoarding.WasActive)
+                    serviceBoarding.ForceComplete();
+
+                var serviceRefuel = Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel;
+                if (serviceRefuel.WasActive)
+                    serviceRefuel.ForceComplete();
+            }
+            catch (Exception ex)
+            {
+                if (ex is not TaskCanceledException)
+                    Logger.LogException(ex);
+            }
         }
 
         protected virtual async Task OnBoardingActive(GsxService service)
@@ -247,21 +315,6 @@ namespace Fenix2GSX.Aircraft
         public virtual int GetPaxDeboarding()
         {
             return FenixInterface.GetPaxDeboarding();
-        }
-
-        public virtual void RefuelStart()
-        {
-            FenixInterface.RefuelStart();
-        }
-
-        public virtual async Task RefuelStop()
-        {
-            await FenixInterface.RefuelStop();
-        }
-
-        public virtual async Task RefuelComplete()
-        {
-            await FenixInterface.RefuelComplete();
         }
 
         public virtual async Task DingCabin()

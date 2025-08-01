@@ -1,6 +1,8 @@
 ﻿using CFIT.AppLogger;
+using CFIT.AppTools;
 using CFIT.SimConnectLib.SimResources;
 using Fenix2GSX.GSX.Menu;
+using System;
 using System.Threading.Tasks;
 
 namespace Fenix2GSX.GSX.Services
@@ -11,7 +13,10 @@ namespace Fenix2GSX.GSX.Services
         public virtual ISimResourceSubscription SubRefuelService { get; protected set; }
         public virtual ISimResourceSubscription SubRefuelHose { get; protected set; }
         public virtual bool IsRefueling => IsActive && SubRefuelHose.GetNumber() == 1;
+        public virtual bool WasHoseConnected { get; protected set; } = false;
         protected virtual bool CompleteNotified { get; set; } = false;
+
+        public event Func<bool, Task> OnHoseConnection;
 
         protected override GsxMenuSequence InitCallSequence()
         {
@@ -40,6 +45,7 @@ namespace Fenix2GSX.GSX.Services
             if (sub.GetNumber() == 4)
             {
                 Logger.Information($"{Type} Service requested");
+                WasHoseConnected = false;
             }
             else if (sub.GetNumber() == 5)
             {
@@ -50,11 +56,16 @@ namespace Fenix2GSX.GSX.Services
             else if (sub.GetNumber() == 1 && WasActive && !CompleteNotified)
             {
                 Logger.Information($"{Type} Service completed");
-                CompleteNotified = true;
-                _ = Controller.AircraftInterface.RefuelComplete();
+                WasCompleted = true;
                 NotifyCompleted();
             }
             NotifyStateChange();
+        }
+
+        protected override void NotifyCompleted()
+        {
+            CompleteNotified = true;
+            base.NotifyCompleted();
         }
 
         protected virtual void OnHoseChange(ISimResourceSubscription sub, object data)
@@ -64,41 +75,24 @@ namespace Fenix2GSX.GSX.Services
 
             if (sub.GetNumber() == 1 && State != GsxServiceState.Unknown && State != GsxServiceState.Completed)
             {
-                Logger.Information($"Fuel Hose connected");
+                Logger.Debug($"Fuel Hose connected");
                 if (State == GsxServiceState.Active)
-                    Controller.AircraftInterface.RefuelStart();
+                {
+                    WasHoseConnected = true;
+                    TaskTools.RunLogged(() => OnHoseConnection?.Invoke(true), Controller.Token);
+                }
             }
             else if (sub.GetNumber() == 0 && State != GsxServiceState.Unknown && WasActive)
             {
-                if (Controller?.AircraftProfile?.RefuelFinishOnHose == true && Controller?.AircraftInterface?.IsRefueling == true)
-                {
-                    Logger.Information($"Fuel Hose disconnected while Refuel still in Progress - stopping Refuel");
-                    if (!Controller.SimConnect.IsPaused)
-                        _ = Controller.AircraftInterface.RefuelStop();
-                    else
-                        _ = DelayedFuelStop();
-                }
-                else if (Controller.AircraftInterface.IsRefueling)
-                    Logger.Information($"Fuel Hose disconnected while Refuel still in Progress - Refuel continues");
-                else
-                    Logger.Information($"Fuel Hose disconnected");
+                Logger.Debug($"Fuel Hose disconnected");
+                TaskTools.RunLogged(() => OnHoseConnection?.Invoke(false), Controller.Token);
             }
-        }
-
-        protected virtual async Task DelayedFuelStop()
-        {
-            Logger.Information($"Waiting for Sim to be unpaused");
-            while (Controller.SimConnect.IsPaused)
-            {
-                Logger.Debug($"Waiting for Sim to be unpaused");
-                await Task.Delay(Controller.Config.CheckInterval, Controller.Token);
-            }
-            await Controller.AircraftInterface.RefuelStop();
         }
 
         protected override void DoReset()
         {
             CompleteNotified = false;
+            WasHoseConnected = false;
         }
 
         public override void FreeResources()
@@ -113,7 +107,7 @@ namespace Fenix2GSX.GSX.Services
         protected override GsxServiceState GetState()
         {
             var state = ReadState(SubRefuelService);
-            if (state == GsxServiceState.Callable && WasActive)
+            if ((state == GsxServiceState.Callable && WasActive) || WasCompleted)
                 return GsxServiceState.Completed;
             else if (state == GsxServiceState.Active && !WasActive)
             {

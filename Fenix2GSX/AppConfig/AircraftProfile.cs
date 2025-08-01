@@ -48,9 +48,10 @@ namespace Fenix2GSX.AppConfig
         public virtual bool FuelSaveLoadFob { get; set; } = true;
         public virtual bool RandomizePax { get; set; } = true;
         public virtual double ChancePerSeat { get; set; } = 0.025;
+        public virtual RefuelMethod RefuelMethod { get; set; } = RefuelMethod.FixedRate;
         public virtual double RefuelRateKgSec { get; set; } = 28;
         public virtual bool RefuelFinishOnHose { get; set; } = false;
-        public virtual bool UseRefuelTimeTarget { get; set; } = false;
+        public virtual bool UseRefuelTimeTarget { get; set; } = false; //LEGACY
         public virtual int RefuelTimeTargetSeconds { get; set; } = 300;
         public virtual bool DoorsCargoKeepOpenOnLoaded { get; set; } = false;
         public virtual bool DoorsCargoKeepOpenOnUnloaded { get; set; } = false;

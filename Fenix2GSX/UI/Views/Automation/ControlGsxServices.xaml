@@ -147,21 +147,29 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0" Grid.Row="0" Style="{StaticResource SettingItemPanel}" ToolTip="Refuel the Aircraft with a fixed Rate. Refueling Duration is variable (depending on planned Fuel)">
+                <StackPanel Grid.Column="0" Grid.Row="0" Style="{StaticResource SettingItemPanel}" ToolTip="Select the Method to be used for Refueling the Aircraft: via Fixed Rate, via Dynamic Rate or using the Refuel Panel.">
+                    <TextBlock Style="{StaticResource TextBlockDefault}" Margin="0,0,6,0">Refuel Method:</TextBlock>
+                    <ComboBox Style="{StaticResource ComboBoxDefault}" SelectedValue="{Binding RefuelMethod}" ItemsSource="{Binding RefuelMethodOptions}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="0" Grid.Row="1" Style="{StaticResource SettingItemPanel}" Visibility="{Binding RefuelFixedVisible, Converter={StaticResource BoolVisibilityConverter}}"
+                            ToolTip="Refuel the Aircraft with a fixed Rate. Refueling Duration is variable (depending on planned Fuel)">
                     <TextBlock Style="{StaticResource TextBlockDefault}">Fixed Refuel Rate:</TextBlock>
-                    <TextBox Name="InputRefuelRate" Margin="6,0,0,0" Style="{StaticResource TextBoxCentered}" IsEnabled="{Binding UseFixedRefuelRate}" IsReadOnly="{Binding UseRefuelTimeTarget}"/>
+                    <TextBox Name="InputRefuelRate" Margin="6,0,0,0" Style="{StaticResource TextBoxCentered}"/>
                     <TextBlock Text="{Binding DisplayUnitCurrentString}" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}"/>
                     <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">per sec</TextBlock>
                 </StackPanel>
 
-                <StackPanel Grid.Column="0" Grid.Row="1" Style="{StaticResource SettingItemPanel}" ToolTip="Refuel the Aircraft with a variable Rate. Refueling Duration is fixed (independent of planned Fuel)">
-                    <CheckBox IsChecked="{Binding UseRefuelTimeTarget}" Margin="0" Style="{StaticResource CheckBoxSettingItem}"
-                          ToolTip="">
-                        <TextBlock>Use dynamic Rate for fixed <Underline>Time Target</Underline>:</TextBlock>
-                    </CheckBox>
-                    <TextBox Name="InputTimeTarget" Margin="6,0,0,0" Style="{StaticResource TextBoxCentered}" IsEnabled="{Binding UseRefuelTimeTarget}" IsReadOnly="{Binding UseFixedRefuelRate}"/>
+                <StackPanel Grid.Column="0" Grid.Row="1" Style="{StaticResource SettingItemPanel}" Visibility="{Binding RefuelDynamicVisible, Converter={StaticResource BoolVisibilityConverter}}"
+                            ToolTip="Refuel the Aircraft with a variable Rate. Refueling Duration is fixed (independent of planned Fuel)">
+                    <TextBlock Margin="0,0,6,0" Style="{StaticResource TextBlockDefault}">Use dynamic Rate for fixed <Underline>Time Target</Underline>:</TextBlock>
+                    <TextBox Name="InputTimeTarget" Margin="6,0,0,0" Style="{StaticResource TextBoxCentered}"/>
                     <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
                 </StackPanel>
+
+                <Label Grid.Column="0" Grid.Row="1" Visibility="{Binding RefuelPanelVisible, Converter={StaticResource BoolVisibilityConverter}}">
+                    <Italic>Use the Fenix EFB (Sim Settings -> Controls) to configure the Refuel Rate!</Italic>
+                </Label>
 
                 <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding SkipFuelOnTankering}" Style="{StaticResource CheckBoxSettingItem}"
                           ToolTip="Do not call and ignore GSX Refuel Service if the Fuel on Board is already equal or higher than the planned Fuel Value.">

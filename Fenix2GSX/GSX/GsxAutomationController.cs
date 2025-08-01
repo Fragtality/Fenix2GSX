@@ -6,6 +6,7 @@ using Fenix2GSX.Aircraft;
 using Fenix2GSX.AppConfig;
 using Fenix2GSX.GSX.Menu;
 using Fenix2GSX.GSX.Services;
+using FenixInterface;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -16,18 +17,18 @@ using System.Threading.Tasks;
 
 namespace Fenix2GSX.GSX
 {
-    public enum AutomationState
-    {
-        SessionStart = 0,
-        Preparation = 1,
-        Departure = 2,
-        PushBack = 3,
-        TaxiOut = 4,
-        Flight = 5,
-        TaxiIn = 6,
-        Arrival = 7,
-        TurnAround = 8,
-    }
+    //public enum AutomationState
+    //{
+    //    SessionStart = 0,
+    //    Preparation = 1,
+    //    Departure = 2,
+    //    PushBack = 3,
+    //    TaxiOut = 4,
+    //    Flight = 5,
+    //    TaxiIn = 6,
+    //    Arrival = 7,
+    //    TurnAround = 8,
+    //}
 
     public class GsxAutomationController(GsxController controller)
     {
@@ -84,12 +85,17 @@ namespace Fenix2GSX.GSX
         public virtual void Init()
         {
             if (!IsInitialized)
+            {
+                Controller.MsgCouatlStarted.OnMessage += OnCouatlStarted;
+                Controller.MsgCouatlStopped.OnMessage += OnCouatlStopped;
                 IsInitialized = true;
+            }
         }
 
         public virtual void FreeResources()
         {
-
+            Controller.MsgCouatlStarted.OnMessage -= OnCouatlStarted;
+            Controller.MsgCouatlStopped.OnMessage -= OnCouatlStopped;
         }
 
         public virtual void Reset()
@@ -365,38 +371,44 @@ namespace Fenix2GSX.GSX
             TaskTools.RunLogged(() => OnStateChange?.Invoke(State), RequestToken);
         }
 
-        public virtual async Task OnCouatlStarted()
+        public virtual async void OnCouatlStarted(MsgGsxCouatlStarted msg)
         {
-            if (!IsStarted)
-                return;
-
-            if (State == AutomationState.Departure && !DepartureServicesCompleted)
+            try
             {
-                if (!DepartureServicesEnumerator.CheckEnumeratorValid())
+                if (!IsStarted)
+                    return;
+
+                if (State == AutomationState.Departure && !DepartureServicesCompleted)
                 {
-                    Controller.GsxServices[GsxServiceType.Boarding].ForceComplete();
-                    Logger.Information($"GSX Restart on last Departure Service detected - skip to Pushback");
-                    StateChange(AutomationState.PushBack);
-                    await Aircraft.OnBoardingCompleted(Controller.GsxServices[GsxServiceType.Boarding]);
-                    await Aircraft.RefuelComplete();
+                    if (!DepartureServicesEnumerator.CheckEnumeratorValid())
+                    {
+                        Controller.GsxServices[GsxServiceType.Boarding].ForceComplete();
+                        Logger.Information($"GSX Restart on last Departure Service detected - skip to Pushback");
+                        StateChange(AutomationState.PushBack);
+                    }
+                    else if (DepartureServicesCalled.Any(s => s.Type == GsxServiceType.Refuel && s.WasActive && !s.WasCompleted))
+                    {
+                        Logger.Information($"GSX Restart during Departure Service detected - completing Refuel");
+                        Controller.GsxServices[GsxServiceType.Refuel].ForceComplete();
+                    }
                 }
-                else if (DepartureServicesCalled.Any(s => s.Type == GsxServiceType.Refuel && s.WasActive && s.State != GsxServiceState.Completed))
+
+                if (State == AutomationState.Arrival && ServiceDeboard.WasActive && !ServiceDeboard.WasCompleted)
                 {
-                    Logger.Information($"GSX Restart during Departure Service detected - completing Refuel");
-                    await Aircraft.RefuelComplete();
+                    Controller.GsxServices[GsxServiceType.Deboarding].ForceComplete();
+                    Logger.Information($"GSX Restart on Deboarding Service detected - skip to Turnaround");
+                    await SetTurnaround();
+                    await Aircraft.OnDeboardingCompleted(Controller.GsxServices[GsxServiceType.Deboarding]);
                 }
             }
-
-            if (State == AutomationState.Arrival && ServiceDeboard.WasActive && !ServiceDeboard.WasCompleted)
+            catch (Exception ex)
             {
-                Controller.GsxServices[GsxServiceType.Deboarding].ForceComplete();
-                Logger.Information($"GSX Restart on Deboarding Service detected - skip to Turnaround");
-                await SetTurnaround();
-                await Aircraft.OnDeboardingCompleted(Controller.GsxServices[GsxServiceType.Deboarding]);
+                if (ex is not TaskCanceledException)
+                    Logger.LogException(ex);
             }
         }
 
-        public virtual void OnCouatlStopped()
+        public virtual void OnCouatlStopped(MsgGsxCouatlStopped msg)
         {
             if (!IsStarted)
                 return;
@@ -440,8 +452,8 @@ namespace Fenix2GSX.GSX
                 if (!Profile.CallReposition)
                     await Task.Delay(3000);
                 Logger.Information("Automation: Placing Ground Equipment");
-                await Aircraft.SetChocks(false);
-                await Task.Delay(750);
+                await Aircraft.SetChocks(false, true);
+                await Task.Delay(1000);
                 await Aircraft.SetChocks(true);
                 await Aircraft.SetGroundPower(true);
                 if (Profile.ConnectPca == 1 || (Profile.ConnectPca == 2 && ServiceJetway.State != GsxServiceState.NotAvailable))
@@ -659,6 +671,8 @@ namespace Fenix2GSX.GSX
                     await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
                 }
             }
+            else if (GroundEquipmentClear)
+                GroundEquipmentPlaced = false;
 
             if (ServicePushBack.TugAttachedOnBoarding && Profile.CallPushbackWhenTugAttached > 0 && !ServicePushBack.IsCalled && ServicePushBack.State < GsxServiceState.Requested)
             {

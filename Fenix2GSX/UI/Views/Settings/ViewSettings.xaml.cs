@@ -21,6 +21,8 @@ namespace Fenix2GSX.UI.Views.Settings
             ViewModel.BindStringInteger(nameof(ViewModel.CargoPercentChangePerSec), InputCargoRate);
             ViewModel.BindStringInteger(nameof(ViewModel.DoorCargoDelay), InputDoorCargoCloseDelay);
             ViewModel.BindStringInteger(nameof(ViewModel.DoorCargoOpenDelay), InputDoorCargoOpenDelay);
+            ViewModel.BindStringInteger(nameof(ViewModel.RefuelPanelOpenDelay), InputRefuelOpenDelay);
+            ViewModel.BindStringInteger(nameof(ViewModel.RefuelPanelCloseDelay), InputRefuelCloseDelay);
 
             ViewModelSelector = new(ListSavedFuel, ViewModel.ModelSavedFuel);
             ViewModelSelector.BindRemoveButton(ButtonRemove);

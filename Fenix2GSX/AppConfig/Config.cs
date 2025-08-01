@@ -90,7 +90,6 @@ namespace Fenix2GSX.AppConfig
         public virtual int MenuCheckInterval { get; set; } = 250;
         public virtual int MenuOpenTimeout { get; set; } = 2500;
         public virtual int EfbCheckInterval { get; set; } = 1500;
-        //public virtual bool EfbResetOnStartup { get; set; } = true;
         public virtual bool DingOnStartup { get; set; } = true;
         public virtual bool DingOnFinal { get; set; } = true;
         public virtual bool DingOnTurnaround { get; set; } = true;
@@ -102,6 +101,8 @@ namespace Fenix2GSX.AppConfig
         public virtual DisplayUnitSource DisplayUnitSource { get; set; }
         public virtual double FuelResetDefaultKg { get; set; } = 3000;
         public virtual bool FuelRoundUp100 { get; set; } = true;
+        public virtual int RefuelPanelCloseDelay { get; set; } = 42;
+        public virtual int RefuelPanelOpenDelay { get; set; } = 10;
         public virtual Dictionary<string, double> FuelFobSaved { get; set; } = [];
         public virtual int CargoPercentChangePerSec { get; set; } = 5;
         public int DoorCargoDelay { get; set; } = 16;
@@ -156,6 +157,17 @@ namespace Fenix2GSX.AppConfig
             {
                 DelayGsxBinaryStart = 2000;
                 MenuOpenTimeout = 2500;
+            }
+
+            if (ConfigVersion < 15 && buildConfigVersion >= 15)
+            {
+                foreach (var profile in AircraftProfiles)
+                {
+                    if (profile.UseRefuelTimeTarget)
+                        profile.RefuelMethod = RefuelMethod.DynamicRate;
+                    else
+                        profile.RefuelMethod = RefuelMethod.FixedRate;
+                }
             }
         }
 
