@@ -62,7 +62,24 @@ For Auto-Start either your FSUIPC7.ini or EXE.xml (MSFS) is modified. The Instal
 If you use Addon Linker to start your Addons/Tools, you can also add it there:<br/>
 **Program to launch** C:\Users\YOURUSERNAME\AppData\Roaming\Fenix2GSX\bin\Fenix2GSX.exe<br/>
 **Wait for simconnect** checked<br/>
-The Rest can be left at Default.<br/>
+The Rest can be left at Default.
+<br/><br/>
+
+### 1.4 - Release & Dev/Beta Versions
+
+There are two Version Channel for Updates to be released:
+
+1) The "**Dev**" or "Beta" Version is located in the Source Files as [Fenix2GSX-Installer-latest](https://github.com/Fragtality/Fenix2GSX/blob/master/Fenix2GSX-Installer-latest.exe)
+2) The "**Release**" or "Stable" Version is located under [Releases](https://github.com/Fragtality/Fenix2GSX/releases) (Under Assests, the Fenix2GSX-Installer-vXYZ.exe File)
+
+Whenever there is a new Commit to Code, the -latest Installer will contain these Changes. For example Fixes to open Issues, Changes for Fenix or GSX Updates or new Features added. So that these Changes & Fixes can be tested publicly.<br/>
+After some Time and positive/good Feedback, all these Changes will be published as the Release Version.<br/>
+So some general Rule-of-Thumbs:
+
+- Most Users should use the Release Version
+- If experiencing an Issue, then try if the Dev Versions works better
+- When eager to test new Stuff as soon as possible, you're welcome to use the Dev Version, as long as you understand it as something that is being worked on 😉
+
 
 <br/><br/><br/>
 
