@@ -37,6 +37,9 @@ namespace Fenix2GSX.UI.Views.Profiles
             ViewModelSelector.RemoveCommand.Executed += () => ViewModel.CheckActiveProfile();
 
             ButtonSetActive.Command = ViewModel.SetActiveCommand;
+
+            InputType.SelectedIndex = 1;
+            ViewModelSelector.ClearInputs += () => InputType.SelectedIndex = 1;
         }
 
         protected virtual AircraftProfile GetItem()
@@ -65,7 +68,6 @@ namespace Fenix2GSX.UI.Views.Profiles
 
         public virtual void Start()
         {
-            SelectorProfiles.SelectedItem = AppService.Instance?.Config?.CurrentProfile;
             ViewModel.Start();
         }
 
