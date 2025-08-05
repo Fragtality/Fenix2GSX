@@ -42,7 +42,7 @@ namespace Fenix2GSX.UI.Views.Profiles
             SetActiveCommand = new CommandWrapper(() => GsxController.SetAircraftProfile((Selector?.SelectedValue as AircraftProfile)?.Name), () => Selector?.SelectedValue is AircraftProfile);
             SetActiveCommand.Subscribe(Selector);
 
-            CloneCommand = new CommandWrapper(CloneProfile, () => Selector?.SelectedValue is AircraftProfile profile && profile.MatchType != ProfileMatchType.Default);
+            CloneCommand = new CommandWrapper(CloneProfile, () => Selector?.SelectedValue is AircraftProfile);
             CloneCommand.Subscribe(Selector);
         }
 
@@ -68,12 +68,6 @@ namespace Fenix2GSX.UI.Views.Profiles
                     return;
                 }
 
-                if (profile.MatchType == ProfileMatchType.Default)
-                {
-                    Logger.Warning($"Can not clone Default Profiles");
-                    return;
-                }
-
                 string json = JsonSerializer.Serialize<AircraftProfile>(profile);
                 var clone = JsonSerializer.Deserialize<AircraftProfile>(json);
                 clone.Name = $"Clone of {profile.Name}";
@@ -82,6 +76,11 @@ namespace Fenix2GSX.UI.Views.Profiles
                 {
                     Logger.Warning($"The Profile '{clone.Name}' is already configured");
                     return;
+                }
+                if (profile.MatchType == ProfileMatchType.Default)
+                {
+                    Logger.Debug($"Cloning default Profile");
+                    clone.MatchType = ProfileMatchType.Airline;
                 }
 
                 Config.AircraftProfiles.Add(clone);
