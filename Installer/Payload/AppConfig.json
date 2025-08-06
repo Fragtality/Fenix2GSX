@@ -17,7 +17,7 @@
   "TimerGsxCheck": 1000,
   "TimerGsxProcessCheck": 5000,
   "TimerGsxStartupMenuCheck": 5000,
-  "GsxMenuStartupMaxFail": 3,
+  "GsxMenuStartupMaxFail": 4,
   "RestartGsxStartupFail": false,
   "DelayGsxBinaryStart": 2000,
   "RunGsxService": true,
@@ -217,7 +217,7 @@
       }
     }
   ],
-  "ConfigVersion": 15,
+  "ConfigVersion": 16,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

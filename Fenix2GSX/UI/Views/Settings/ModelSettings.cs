@@ -82,6 +82,7 @@ namespace Fenix2GSX.UI.Views.Settings
         public virtual bool SkipWalkAround { get => Source.SkipWalkAround; set => SetModelValue<bool>(value); }
         public virtual bool RestartGsxOnTaxiIn { get => Source.RestartGsxOnTaxiIn; set => SetModelValue<bool>(value); }
         public virtual bool RestartGsxStartupFail { get => Source.RestartGsxStartupFail; set => SetModelValue<bool>(value); }
+        public virtual int GsxMenuStartupMaxFail { get => Source.GsxMenuStartupMaxFail; set => SetModelValue<int>(value); }
         public virtual bool RunGsxService { get => Source.RunGsxService; set => SetModelValue<bool>(value); }
         public virtual bool RunAudioService { get => Source.RunAudioService; set => SetModelValue<bool>(value); }
         public virtual bool OpenAppWindowOnStart { get => Source.OpenAppWindowOnStart; set => SetModelValue<bool>(value); }

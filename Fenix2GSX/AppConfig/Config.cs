@@ -34,7 +34,7 @@ namespace Fenix2GSX.AppConfig
         public virtual int TimerGsxCheck { get; set; } = 1000;
         public virtual int TimerGsxProcessCheck { get; set; } = 5000;
         public virtual int TimerGsxStartupMenuCheck { get; set; } = 5000;
-        public virtual int GsxMenuStartupMaxFail { get; set; } = 3;
+        public virtual int GsxMenuStartupMaxFail { get; set; } = 4;
         public virtual bool RestartGsxStartupFail { get; set; } = false;
         public virtual int DelayGsxBinaryStart { get; set; } = 2000;
         public virtual bool RunGsxService { get; set; } = true;
@@ -168,6 +168,11 @@ namespace Fenix2GSX.AppConfig
                     else
                         profile.RefuelMethod = RefuelMethod.FixedRate;
                 }
+            }
+
+            if (ConfigVersion < 16 && buildConfigVersion >= 16)
+            {
+                GsxMenuStartupMaxFail = 4;
             }
         }
 

@@ -166,7 +166,11 @@
                 <TextBlock Grid.Column="0" Grid.Row="13" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready.">
                     Restart GSX on Startup:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="13" IsChecked="{Binding RestartGsxStartupFail}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready."/>
+                <StackPanel Grid.Column="1" Grid.Row="13" Orientation="Horizontal" Margin="6,0,0,0">
+                    <CheckBox IsChecked="{Binding RestartGsxStartupFail}" Style="{StaticResource CheckBoxDefault}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready after a certain Amount of failed Attempts to open the Menu."/>
+                    <TextBlock Margin="12,-1,6,0" Style="{StaticResource TextBlockDefault}">Max Failures:</TextBlock>
+                    <TextBox Name="InputGsxMaxFail" Style="{StaticResource TextBoxCentered}"/>
+                </StackPanel>
 
                 <TextBlock Grid.Column="0" Grid.Row="14" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control.">
                     Run GSX Controller:
