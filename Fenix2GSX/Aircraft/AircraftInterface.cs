@@ -199,7 +199,7 @@ namespace Fenix2GSX.Aircraft
                     else
                         Logger.Information($"GSX Refuel reported completed while Refueling - continuing Refuel Process");
                 }
-                else
+                else if (Controller.AutomationState < AutomationState.Departure)
                     await FenixInterface.RefuelComplete();
             }
         }
