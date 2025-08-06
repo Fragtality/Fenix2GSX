@@ -51,6 +51,7 @@ namespace Fenix2GSX.GSX.Services
             {
                 Logger.Information($"{Type} Service active");
                 WasActive = true;
+                CompleteNotified = false;
                 NotifyActive();
             }
             else if (sub.GetNumber() == 1 && WasActive && !CompleteNotified)
@@ -107,7 +108,7 @@ namespace Fenix2GSX.GSX.Services
         protected override GsxServiceState GetState()
         {
             var state = ReadState(SubRefuelService);
-            if ((state == GsxServiceState.Callable && WasActive) || WasCompleted)
+            if ((state == GsxServiceState.Callable && WasActive) || (state == GsxServiceState.Callable && WasCompleted))
                 return GsxServiceState.Completed;
             else if (state == GsxServiceState.Active && !WasActive)
             {
