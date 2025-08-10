@@ -248,10 +248,15 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <ListBox Name="LogControl" Grid.Column="0" Grid.Row="0" ItemsSource="{Binding MessageLog}" BorderThickness="0" MaxWidth="760" IsHitTestVisible="False" FontFamily="Consolas" FontSize="10" ToolTip="Informational Log Messages.&#x0a;NOTE: A Screenshot is NOT sufficient when reporting Issues - always provide the actual Log File!"/>
-                <Button Grid.Column="0" Grid.Row="0" Name="ButtonGetLog" Command="{Binding LogDirCommand}" Visibility="Visible"
+                <TextBlock Grid.Column="0" Grid.Row="0" FontWeight="DemiBold" Style="{StaticResource TextBlockDefault}" Margin="4" ToolTip="A Screenshot is NOT sufficient when reporting Issues - always provide the actual Log File!">
+                    You need to provide the Log-<Underline>File</Underline> to get Support!
+                </TextBlock>
+
+                <ListBox Name="LogControl" Grid.Column="0" Grid.Row="1" ItemsSource="{Binding MessageLog}" BorderThickness="0" MaxWidth="760" IsHitTestVisible="False" FontFamily="Consolas" FontSize="10" ToolTip="Informational Log Messages.&#x0a;NOTE: A Screenshot is NOT sufficient when reporting Issues - always provide the actual Log File!"/>
+                <Button Grid.Column="0" Grid.Row="1" Name="ButtonGetLog" Command="{Binding LogDirCommand}" Visibility="Visible"
                         HorizontalAlignment="Right" VerticalAlignment="Bottom" MinWidth="48" MinHeight="24" Padding="4" Margin="8">
                     Get Log
                 </Button>
