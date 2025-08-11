@@ -617,7 +617,7 @@ namespace Fenix2GSX.GSX
                 await Aircraft.SetPca(false);
             }
 
-            if (Aircraft.HasOpenDoors && Aircraft.IsFinalReceived && Profile.CloseDoorsOnFinal)
+            if (Aircraft.HasOpenDoors && !Aircraft.FenixInterface.CargoDoorsMoving() && Aircraft.IsFinalReceived && Profile.CloseDoorsOnFinal)
             {
                 Logger.Information($"Automation: Close Doors on Final Loadsheet");
                 await Aircraft.CloseAllDoors();
@@ -654,8 +654,9 @@ namespace Fenix2GSX.GSX
                 {
                     Logger.Information($"Automation: Remove Ground Equipment on Beacon");
                     await SetGroundEquip(false);
+                    GroundEquipmentPlaced = false;
                 }
-                GroundEquipmentPlaced = false;
+                
                 if (Profile.CallPushbackOnBeacon && !ServicePushBack.IsCalled && ServicePushBack.State < GsxServiceState.Requested)
                 {
                     Logger.Information($"Automation: Call Pushback (Beacon / Prepared for Push)");
@@ -690,16 +691,27 @@ namespace Fenix2GSX.GSX
                 }
             }
 
-            if (Aircraft.HasOpenDoors && (ServicePushBack.PushStatus > 0 || ServiceDeice.IsActive || Aircraft.EnginesRunning))
+            if (Aircraft.HasOpenDoors && !Aircraft.FenixInterface.CargoDoorsMoving() 
+                && ((ServicePushBack.PushStatus > 0 && ServicePushBack.IsRunning) || ServiceDeice.IsActive || Aircraft.EnginesRunning))
             {
-                Logger.Information($"Automation: Close Doors on Pushback");
+                if ((ServicePushBack.PushStatus > 0 && ServicePushBack.IsRunning))
+                    Logger.Information($"Automation: Close Doors on Pushback");
+                else if (ServiceDeice.IsActive)
+                    Logger.Information($"Automation: Close Doors on Deice");
+                else
+                    Logger.Information($"Automation: Close Doors on Engine running");
+
                 await Aircraft.CloseAllDoors();
                 await Task.Delay(Config.StateMachineInterval, RequestToken);
             }
 
-            if (GroundEquipmentPlaced && (ServicePushBack.PushStatus > 1 || ServicePushBack.State == GsxServiceState.Completed || ServiceDeice.IsActive))
+            if (GroundEquipmentPlaced && ((ServicePushBack.PushStatus > 1 && ServicePushBack.IsRunning) || ServiceDeice.IsActive))
             {
-                Logger.Information($"Automation: Remove Ground Equipment on Pushback");
+                if (!ServiceDeice.IsActive)
+                    Logger.Information($"Automation: Remove Ground Equipment on Pushback");
+                else
+                    Logger.Information($"Automation: Remove Ground Equipment on Deice");
+
                 await SetGroundEquip(false);
                 GroundEquipmentPlaced = false;
                 await Task.Delay(Config.StateMachineInterval, RequestToken);
@@ -725,7 +737,7 @@ namespace Fenix2GSX.GSX
                     await Aircraft.SetChocks(false);
                 }
 
-                if (Aircraft.HasOpenDoors)
+                if (Aircraft.HasOpenDoors && !Aircraft.FenixInterface.CargoDoorsMoving())
                 {
                     Logger.Information($"Automation: Close all Doors {reason}");
                     await Aircraft.CloseAllDoors();

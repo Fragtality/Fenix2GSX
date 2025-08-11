@@ -235,9 +235,14 @@ namespace Fenix2GSX.AppConfig
                     var strings = profile.MatchString.Split('|');
                     foreach (var s in strings)
                     {
-                        if (aircraft.Airline.StartsWith(s, StringComparison.InvariantCultureIgnoreCase))
+                        if (!AppService.Instance.GsxService.IsMsfs2024 && aircraft.Airline.StartsWith(s, StringComparison.InvariantCultureIgnoreCase))
                         {
                             Logger.Information($"Loading Profile '{profile.Name}' (matched on Airline - '{aircraft.Airline}' starts with '{s}')");
+                            return profile;
+                        }
+                        else if (AppService.Instance.GsxService.IsMsfs2024 && aircraft.Title.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            Logger.Information($"Loading Profile '{profile.Name}' (matched on Livery - '{aircraft.Title}' contains '{s}')");
                             return profile;
                         }
                     }
