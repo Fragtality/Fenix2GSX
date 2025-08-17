@@ -88,7 +88,7 @@ So some general Rule-of-Thumbs:
 ### 2.1 - Fenix EFB
 
 Make sure your **Default State** is set to either Cold & Dark or Turn-Around with GPU or APU - GSX won't provide any Services when the Engines are running.<br/>
-All other relevant EFB Options will automatically be disabled by Fenix2GSX. Note that they are not re-enabled!<br/>
+All other relevant EFB Options will automatically be disabled by Fenix2GSX (including Audio Mappings). Note that they are not re-enabled!<br/>
 
 <br/><br/>
 
@@ -146,7 +146,8 @@ Note: Basic Ground Equipment Handling (GPU, Chocks) is always active and can not
 Configure how the GSX Services are handled:
 - Reposition on Startup (either use Fenix2GSX for that or the GSX Setting - but not both!)
 - The Service Activation (if and when) and Order of the Departure Services (Refuel, Catering, Boarding as well as Lavatory & Water)
-- How Refueling is handled: with a fixed Rate or a fixed Time Target (or if it is called at all to support Tankering)
+- How Refueling is handled: with a fixed Rate, a fixed Time Target or via Refuel Panel (or if the GSX Service is called at all to support Tankering)
+- With the Refuel Panel Method, the Rate is determined by the EFB Settingn
 - If and when Pushback should be called automatically
 
 <br/>
@@ -186,8 +187,8 @@ The Idea behind Aircraft Profiles is to have *different Automation Settings* for
 The *Profile Name* is only for display Purposes, it doesn't have a functional Impact. The *Match Type* defines on what Aircraft Information the *Match String* will be compared to. The Match String can contain multiple Values separated by a Pipe `|` - for Example `Condor|CFG` for a Match String for the Airline.<br/>
 When the Session starts and the Connection to the Fenix EFB was successful, Fenix2GSX will automatically switch to the Profile with the best Match:
 1) The Aircraft Registration (as reported by the EFB) is matching exactly (case insensitive)
-2) The Aircraft Title (as reported by the Sim) contains the Match String (case insensitive)
-3) The Aircraft Airline (as reported by the Sim) starts with the Match String (case insensitive)
+2) The Aircraft Title or Livery (as reported by the Sim) contains the Match String (case insensitive)
+3) The Aircraft Airline (as reported by the Sim) starts with the Match String (case insensitive) - only applies to 2020! Use Title/Livery to match an Airline on 2024.
 
 If there a multiple Results, only the first one will be used. If you want to switch to another Profile, do so before the Departure Phase (OFP was imported).<br/>
 The **default Profile** can not be deleted and there can only ever be one Profile using the 'Default' Match Type.
@@ -197,6 +198,8 @@ The **default Profile** can not be deleted and there can only ever be one Profil
 #### 2.3.3 - Volume Control
 
 Fenix2GSX will only start to control Volume once the Plane is **powered** (=DC Essential Bus powered). When the Aircraft is powered, Fenix2GSX will set each Audio-Channel to the configured Startup State (e.g. 100% Volume and unmuted for VHF1). **Only one ACP** Panel is used for Volume Control at any given time. But you can change your Seat Position / Panel at any Time (the Startup State is only applied to the Panel selected at that Time).<br/>
+Fenix2GSX will automatically disable the native Volume Control when it starts. If you want to use the native Volume Control, disable the Volume Controller in the App Settings. In any Case: do not let both Apps control the same Stuff!<br/><br/>
+
 When you end your Session (or close Fenix2GSX), Fenix2GSX will try to reset all Audio Sessions of the controlled Applications to their last known State (before it started controlling the Volume). That might not work on Applications which reset their Audio Sessions at the same Time (like GSX). So **GSX can stay muted** when switching to another Plane (if it was muted) - keep that in Mind.<br/>
 Fenix2GSX will control **all Audio Sessions** on all Devices for a configured Application by default. You can change the Configuration to limit the Volume Control to a certain Device per Application - but on that Device it will still control all Sessions at once.<br/><br/>
 
@@ -239,6 +242,7 @@ Besides these general Best Practices, there is nothing Special to consider - Pla
 - MSFS2024: When **Walkaround** is configured to be **skipped**, Fenix2GSX refocuses MSFS Window repeatedly. This already starts when the Session is about to become ready. So refrain from doing something else in another Window while Walkaround is skipped.
 - **Wait** until Fenix2GSX has finished it Startup Steps like Repositioning (if configured), calling Jetway/Stairs (if configured) and restoring the last stored Shutdown FOB.<br/>You will be informed with the Cabin **"Ding" Sound** when it has finished these Steps. **Wait** for that Signal **before doing anything** in the EFB or powering up the Plane (when starting Cold & Dark).
 - If you have disabled to call Jetway/Stairs on Session Start, you can use the **INT/RAD** Switch (move to the INT Position) to call them at your Discretion (before the Flightplan is imported).
+- When the Jetway/Stairs are called after Walkaround has ended (either Way), Fenix2GSX will remove Fenix' native Stairs
 - Mind that selecting a **Panel-State** in the EFB also changes the **ACP State** - that will override Startup State set by Fenix2GSX.
 - After that **import the Flightplan** into the EFB to get the Automatic Service-Flow going -OR- **before** you call any GSX Service manually (if you have disabled the Automations).
 - It is recommended to **power-up** the Aircraft **before importing** the Flightplan
@@ -356,6 +360,39 @@ NOTE: Please **uninstall** the Plugin **[Flow GSX Launcher](https://de.flightsim
 **FS2Crew (Fenix Edition)**: You basically don't need any Ground- or Door-Handling Features of Fs2Crew. This is what another User recommends as Settings to let Fenix2GSX and FS2Crew work together (thanks for sharing):<br/>
 <img src="img/Fs2Crew.png" width="1006"><br/><br/>
 If you deviate from that, that is fine, but don't bother me with Fenix2GSX is not working properly then - Generally you only want one Application to control the Service-Flow and Ground-Equipment 😜
+
+<br/><br/>
+
+### 4.4 - Any2GSX
+
+Both Any2GSX and Fenix2GSX can be used together and also can run at the same Time. *BUT* do not let both do the same Stuff at the same Time! 😉<br/>
+For Example, if you use Fenix2GSX for the GSX Automation and Volume Control, do not configure Any2GSX to handle Automation and/or Volume Control. With Any2GSX' default Settings, respectively how the default Aircraft Profile is configured out-of-the-box, there is no Issue of both being active at the same Time!<br/>
+So it all comes down how Any2GSX' Aircraft Profiles are set up. If for Example the GSX Automation should be enabled per Default on all Aircraft and thus is enabled in the default Profile, a dedicated Profile for the Fenix needs to be created with Automation disabled.<br/>
+If Fenix2GSX was only used in a 'hybrid' Scenario before, so only assisting/enhancing Fenix' native Automation/Integration, Any2GSX is indeed the Replacement for Fenix2GSX in these Use-Cases! In these Use-Cases Fenix2GSX can be removed and Any2GSX needs to be configured with an appropiate Aircraft Profile.<br/>
+To summarize:
+<br/>
+
+**Fenix2GSX for Automation and Volume Control**
+
+- Do not enable GSX Automation or Volume Control in the default Profile -OR-
+- Create a dedicated Profile (with a SimObject contains Match for 'FNX_3') for the Fenix with GSX Automation and Volume Control disabled
+- You can use/install the 'Fenix - PilotsDeck only' Profile in the Plugins View as a Template and then just disable PilotsDeck Integration
+
+<br/>
+
+**Fenix2GSX for Automation and Volume Control & Any2GSX for PilotsDeck Integration**
+
+- Install the 'Fenix - PilotsDeck only' Profile in the Plugins View from the [Plugin-Repository](https://github.com/Fragtality/Any2GSX-Plugins)
+
+<br/>
+
+**Fenix native Automation (and Volume Control)**
+
+- Remove Fenix2GSX from your System (via the Installer)
+- Install the 'Fenix - Native' Profile in the Plugins View from the [Plugin-Repository](https://github.com/Fragtality/Any2GSX-Plugins)
+- If you want to use Fenix' native Volume Control, disable the Volume Control in this Any2GSX Profile
+- Check/Restore the Fenix EFB GSX Settings to your Preference
+- Only start loading the Aircraft in the EFB when being in the Departure Phase (Avionic Powered + External Power connected + Nav Lights on)
 
 <br/><br/><br/>
 
