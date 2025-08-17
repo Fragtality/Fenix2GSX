@@ -34,10 +34,9 @@ namespace Installer
             PageBehaviors.Add(InstallerPages.CONFIG, new ConfigPage());
         }
 
-        //protected override void ParseArguments(string[] args)
-        //{
-        //    base.ParseArguments(args);
-        //    WorkerPackagePaths<ConfigBase>.ParseSimArguments(args, BaseConfig);
-        //}
+        protected override void CreatePageSummary()
+        {
+            PageBehaviors.Add(InstallerPages.SUMMARY, new SummaryPage());
+        }
     }
 }
