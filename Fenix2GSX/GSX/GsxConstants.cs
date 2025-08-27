@@ -13,6 +13,8 @@
 
         //Variables
         public static string VarCouatlStarted { get; } = "L:FSDT_GSX_COUATL_STARTED";
+        public static string VarCouatlStartProg5 { get; } = "L:FSDT_GSX_COUATL_STARTED_5_PROGRESS";
+        public static string VarCouatlStartProg6 { get; } = "L:FSDT_GSX_COUATL_STARTED_6_PROGRESS";
         public static string VarCouatlStartProg7 { get; } = "L:FSDT_GSX_COUATL_STARTED_7_PROGRESS";
         public static string VarMenuOpen { get; } = "L:FSDT_GSX_MENU_OPEN";
         public static string VarMenuChoice { get; } = "L:FSDT_GSX_MENU_CHOICE";
