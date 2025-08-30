@@ -75,6 +75,7 @@ namespace Fenix2GSX.AppConfig
         public virtual bool ClearGroundEquipOnBeacon { get; set; } = true;
         public virtual bool GradualGroundEquipRemoval { get; set; } = false;
         public virtual bool CallDeboardOnArrival { get; set; } = true;
+        public virtual bool RunDepartureOnArrival { get; set; } = false;
         public virtual bool AnswerCabinCallGround { get; set; } = true;
         public virtual int DelayCabinCallGround { get; set; } = 4000;
         public virtual bool AnswerCabinCallAir { get; set; } = true;
