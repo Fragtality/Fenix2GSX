@@ -129,6 +129,7 @@ namespace Fenix2GSX.UI.Views.Automation
         //GSX Services
         public virtual bool CallReposition { get => Source.CallReposition; set => SetModelValue<bool>(value); }
         public virtual bool CallDeboardOnArrival { get => Source.CallDeboardOnArrival; set => SetModelValue<bool>(value); }
+        public virtual bool RunDepartureOnArrival { get => Source.RunDepartureOnArrival; set => SetModelValue<bool>(value); }
         public virtual ModelDepartureServices DepartureServices { get; }
         public virtual Dictionary<GsxServiceActivation, string> TextServiceActivations => ServiceConfig.TextServiceActivations;
         public virtual Dictionary<GsxServiceConstraint, string> TextServiceConstraints => ServiceConfig.TextServiceConstraints;

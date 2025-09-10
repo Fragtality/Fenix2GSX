@@ -154,9 +154,9 @@ namespace Fenix2GSX.Aircraft
             FenixInterface.ResetFlight();
         }
 
-        public virtual async Task UnloadOfp()
+        public virtual async Task UnloadOfp(bool unloadOfp = true)
         {
-            await FenixInterface.UnloadOfp();
+            await FenixInterface.UnloadOfp(unloadOfp);
         }
 
         protected virtual async Task OnWalkaroundWasSkipped()

@@ -79,6 +79,9 @@ namespace Fenix2GSX.GSX
         public virtual int ChockDelay { get; protected set; } = 0;
         public virtual bool ChockFlashed { get; protected set; } = false;
         public virtual bool CabinDinged { get; protected set; } = false;
+        public virtual string FlightPlanId => Aircraft.FenixInterface.FlightPlanId;
+        public virtual string OfpArrivalId { get; protected set; } = "0";
+        public virtual bool RunDepartureOnArrival { get; protected set; } = false;
 
         public event Action<AutomationState> OnStateChange;
 
@@ -116,11 +119,13 @@ namespace Fenix2GSX.GSX
             ChockFlashed = false;
             CabinDinged = false;
             DepartureIcao = "";
+            OfpArrivalId = "0";
             ServiceCountRunning = 0;
             ServiceCountCompleted = 0;
             ServiceCountTotal = 0;
 
             DepartureServicesCompleted = false;
+            RunDepartureOnArrival = false;
             DepartureServicesCalled?.Clear();
             if (Profile?.DepartureServices != null)
             {
@@ -145,8 +150,10 @@ namespace Fenix2GSX.GSX
             ChockFlashed = false;
             CabinDinged = false;
             DepartureIcao = "";
+            OfpArrivalId = "0";
 
             DepartureServicesCompleted = false;
+            RunDepartureOnArrival = false;
             DepartureServicesCalled.Clear();
             DepartureServicesEnumerator = Profile.DepartureServices.GetEnumerator();
             DepartureServicesEnumerator.MoveNext();
@@ -314,15 +321,25 @@ namespace Fenix2GSX.GSX
                 if (!Aircraft.EnginesRunning && Aircraft.IsBrakeSet && !Aircraft.LightBeacon)
                 {
                     await Controller.Menu.OpenHide();
+                    OfpArrivalId = FlightPlanId;
                     StateChange(AutomationState.Arrival);
                     await ServiceDeboard.SetPaxTarget(Aircraft.GetPaxDeboarding());
                 }
             }
-            //Arrival => Turnaround
+            //Arrival => Turnaround (or Departure)
             else if (State == AutomationState.Arrival)
             {
                 if (ServiceDeboard.IsCompleted)
-                    await SetTurnaround();
+                {
+                    if (!RunDepartureOnArrival)
+                        await SetTurnaround();
+                    else
+                    {
+                        await Aircraft.UnloadOfp(false);
+                        Controller.Menu.SuppressMenuRefresh = false;
+                        await SkipTurn(AutomationState.Departure);
+                    }
+                }
             }
             //Turnaround => Departure
             else if (State == AutomationState.TurnAround)
@@ -361,6 +378,8 @@ namespace Fenix2GSX.GSX
         protected virtual async Task SkipTurn(AutomationState state)
         {
             await Controller.ReloadSimbrief();
+            if (string.IsNullOrWhiteSpace(DepartureIcao))
+                DepartureIcao = await Controller.Flightplan.GetDestinationIcao();
             StateChange(AutomationState.Departure);
         }
 
@@ -386,7 +405,7 @@ namespace Fenix2GSX.GSX
                         Logger.Information($"GSX Restart on last Departure Service detected - skip to Pushback");
                         StateChange(AutomationState.PushBack);
                     }
-                    else if (DepartureServicesCalled.Any(s => s.Type == GsxServiceType.Refuel && s.WasActive && !s.WasCompleted))
+                    else if (DepartureServicesCalled.Any(s => s.Type == GsxServiceType.Refuel && s.WasActive && !s.WasCompleted) && !RunDepartureOnArrival)
                     {
                         Logger.Information($"GSX Restart during Departure Service detected - completing Refuel");
                         Controller.GsxServices[GsxServiceType.Refuel].ForceComplete();
@@ -490,7 +509,7 @@ namespace Fenix2GSX.GSX
 
         protected virtual async Task RunDeparture()
         {
-            if (Aircraft.IsApuBleedOn && Aircraft.EquipmentPca)
+            if (Aircraft.IsApuBleedOn && Aircraft.EquipmentPca && State == AutomationState.Departure)
             {
                 Logger.Information($"Disconnecting PCA");
                 await Aircraft.SetPca(false);
@@ -511,7 +530,7 @@ namespace Fenix2GSX.GSX
                         }
                     }
                 }
-                else if (Aircraft.IsEfbBoardingCompleted && !ServiceBoard.IsCalled)
+                else if (Aircraft.IsEfbBoardingCompleted && !ServiceBoard.IsCalled && State == AutomationState.Departure)
                 {
                     Logger.Information($"EFB Boarding detected - skipping all Departure Services {Aircraft.EfbBoardingState}");
                     DepartureServicesCompleted = true;
@@ -842,6 +861,17 @@ namespace Fenix2GSX.GSX
                     Logger.Information("Automation: Call Stairs on Arrival");
                     await ServiceStairs.Call();
                 }
+            }
+
+            if (Profile.RunDepartureOnArrival && !RunDepartureOnArrival && ServiceDeboard.IsActive && OfpArrivalId != FlightPlanId)
+            {
+                Logger.Information("Automation: Run Departure Services during Arrival");
+                RunDepartureOnArrival = true;
+            }
+
+            if (RunDepartureOnArrival && DepartureServicesCurrent.ServiceType != GsxServiceType.Boarding)
+            {
+                await RunDeparture();
             }
         }
     }

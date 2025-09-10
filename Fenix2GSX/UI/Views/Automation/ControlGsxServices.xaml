@@ -47,7 +47,12 @@
                     <TextBlock>Call Deboard on <Underline>Arrival</Underline> (after Engines &amp; Beacon off)</TextBlock>
                 </CheckBox>
 
-                <Grid Grid.Column="0" Grid.Row="2">
+                <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding RunDepartureOnArrival}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="When the Deboarding Service becomes active, importing a new Flightplan (different OFP ID) will start the Departure Services.&#x0a;The Departure Services will be called as configured - as long as the next Service is not Boarding!&#x0a;The Deboard Service will not be considered as previous Service.">
+                    <TextBlock>Start <Underline>Departure</Underline> Services while <Underline>Deboarding</Underline> is active</TextBlock>
+                </CheckBox>
+
+                <Grid Grid.Column="0" Grid.Row="3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
