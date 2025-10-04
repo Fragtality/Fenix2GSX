@@ -146,6 +146,7 @@ Note: Basic Ground Equipment Handling (GPU, Chocks) is always active and can not
 Configure how the GSX Services are handled:
 - Reposition on Startup (either use Fenix2GSX for that or the GSX Setting - but not both!)
 - The Service Activation (if and when) and Order of the Departure Services (Refuel, Catering, Boarding as well as Lavatory & Water)
+- If the Departure Services should already be called while Deboarding
 - How Refueling is handled: with a fixed Rate, a fixed Time Target or via Refuel Panel (or if the GSX Service is called at all to support Tankering)
 - With the Refuel Panel Method, the Rate is determined by the EFB Settingn
 - If and when Pushback should be called automatically
@@ -312,6 +313,11 @@ Besides these general Best Practices, there is nothing Special to consider - Pla
 - With default Settings, Fenix2GSX will **automatically call Deboard** (which in turn calls the Jetway/Stairs). If not configured, you can still call Deboarding manually with the **INT/RAD** Switch.
 - **Dismiss** the Deboard Pop-Up in the **EFB** - Deboarding is handled by Fenix2GSX at its Synchronization!
 - **Wait** for Deboarding to **finish** if you plan for a **Turn-Around** - *do not import* a new Flightplan yet!
+- If Fenix2GSX is configured to start Departures Services while Deboarding:
+  - Wait until Deboarding is fully running (Passengers are deboarding, Cargo is unloaded) before importing the new OFP
+  - Departure Services will be called according to the configured Activation & Order - but do mind that it is up to GSX to decide which Services can run in parallel (i.e. the Fuel Truck will only arrive when Cargo has finised)
+  - The new Pax Number will only be applied in the EFB after Deboarding has completed
+  - The App will skip the Turn-Around Phase completely and switches directly to the Departure Phase (after Deboarding has completed)
 
 <br/><br/>
 
