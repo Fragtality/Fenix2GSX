@@ -61,7 +61,7 @@
                     </ComboBox>
                 </StackPanel>
 
-                <CheckBox Grid.Column="0" Grid.Row="4" IsChecked="{Binding GradualGroundEquipRemoval}" Margin="18,2,6,6" Style="{StaticResource CheckBoxSettingItem}"
+                <CheckBox Grid.Column="0" Grid.Row="4" IsChecked="{Binding PcaOverride}" Margin="18,2,6,6" Style="{StaticResource CheckBoxSettingItem}"
                           ToolTip="PCA will be removed/disconnected if it should be connected (i.e. default Panel State) but isn't allowed currently as per Configuration above.">
                     <TextBlock><Underline>Override</Underline> PCA State (disconnect) on Session Start &amp; Arrival</TextBlock>
                 </CheckBox>
