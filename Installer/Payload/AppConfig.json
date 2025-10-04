@@ -141,6 +141,7 @@
       "MatchType": 0,
       "MatchString": "",
       "ConnectPca": 2,
+      "PcaOverride": true,
       "DoorStairHandling": true,
       "DoorStairIncludeL2": false,
       "DoorCargoHandling": true,
@@ -218,7 +219,7 @@
       }
     }
   ],
-  "ConfigVersion": 17,
+  "ConfigVersion": 18,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,
