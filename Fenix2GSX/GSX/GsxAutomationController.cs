@@ -672,16 +672,17 @@ namespace Fenix2GSX.GSX
                 await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
             }
 
-            if (GroundEquipmentPlaced && !Aircraft.IsExternalPowerConnected && Aircraft.IsBrakeSet && Aircraft.LightBeacon)
+            if (!Aircraft.IsExternalPowerConnected && Aircraft.IsBrakeSet && Aircraft.LightBeacon && !Aircraft.EnginesRunning)
             {
-                if (Profile.ClearGroundEquipOnBeacon)
+                if (Profile.ClearGroundEquipOnBeacon && GroundEquipmentPlaced)
                 {
                     Logger.Information($"Automation: Remove Ground Equipment on Beacon");
                     await SetGroundEquip(false);
                     GroundEquipmentPlaced = false;
+                    await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
                 }
                 
-                if (Profile.CallPushbackOnBeacon && !ServicePushBack.IsCalled && ServicePushBack.State < GsxServiceState.Requested)
+                if (Profile.CallPushbackOnBeacon && !ServicePushBack.IsCalled && ServicePushBack.State < GsxServiceState.Requested && !ServicePushBack.WasActive)
                 {
                     Logger.Information($"Automation: Call Pushback (Beacon / Prepared for Push)");
                     await ServicePushBack.Call();
@@ -696,7 +697,8 @@ namespace Fenix2GSX.GSX
                     await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
                 }
             }
-            else if (GroundEquipmentClear)
+            
+            if (GroundEquipmentClear && GroundEquipmentPlaced)
                 GroundEquipmentPlaced = false;
 
             if (ServicePushBack.TugAttachedOnBoarding && Profile.CallPushbackWhenTugAttached > 0 && !ServicePushBack.IsCalled && ServicePushBack.State < GsxServiceState.Requested)
