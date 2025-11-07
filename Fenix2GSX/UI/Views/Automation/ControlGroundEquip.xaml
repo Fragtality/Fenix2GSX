@@ -36,6 +36,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Label Grid.Column="0" Grid.Row="0" Margin="4,-4,0,0">
@@ -52,7 +53,12 @@
                     <TextBlock><Underline>Gradually remove</Underline> Ground Equipment in the Pushback <Underline>Phase</Underline></TextBlock>
                 </CheckBox>
 
-                <StackPanel Grid.Column="0" Grid.Row="3" Style="{StaticResource SettingItemPanel}" ToolTip="Automatically connect PCA in the EFB on Session Start and Arrival.&#x0a;Note: PCA will always be disconnected as soon as the Bleed Air is turned on or latest for Pushback.">
+                <CheckBox Grid.Column="0" Grid.Row="3" IsChecked="{Binding ConnectGpuWithApuRunning}" Margin="6,6,6,6" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Connect the GPU in the Preparation Phase (Session Start) when the APU is already running.&#x0a;Intended for starting at the Gate with the APU running - starting with Engines running skips the Preparation Phase.">
+                    <TextBlock>Connect <Underline>GPU</Underline> on Session Start when <Underline>APU</Underline> is already running</TextBlock>
+                </CheckBox>
+
+                <StackPanel Grid.Column="0" Grid.Row="4" Style="{StaticResource SettingItemPanel}" ToolTip="Automatically connect PCA in the EFB on Session Start and Arrival.&#x0a;Note: PCA will always be disconnected as soon as the Bleed Air is turned on or latest for Pushback.">
                     <TextBlock Style="{StaticResource TextBlockDefault}">Connect <Underline>Pre Conditioned Air</Underline> (PCA) on Session Start &amp; Arrival</TextBlock>
                     <ComboBox SelectedValue="{Binding ConnectPca}" SelectedValuePath="Tag" Margin="8,0,0,0" Style="{StaticResource ComboBoxDefault}">
                         <ComboBoxItem Tag="0">Never</ComboBoxItem>
@@ -61,12 +67,12 @@
                     </ComboBox>
                 </StackPanel>
 
-                <CheckBox Grid.Column="0" Grid.Row="4" IsChecked="{Binding PcaOverride}" Margin="18,2,6,6" Style="{StaticResource CheckBoxSettingItem}"
+                <CheckBox Grid.Column="0" Grid.Row="5" IsChecked="{Binding PcaOverride}" Margin="18,2,6,6" Style="{StaticResource CheckBoxSettingItem}"
                           ToolTip="PCA will be removed/disconnected if it should be connected (i.e. default Panel State) but isn't allowed currently as per Configuration above.">
                     <TextBlock><Underline>Override</Underline> PCA State (disconnect) on Session Start &amp; Arrival</TextBlock>
                 </CheckBox>
 
-                <Grid Grid.Column="0" Grid.Row="5" Margin="6">
+                <Grid Grid.Column="0" Grid.Row="6" Margin="6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -90,7 +96,7 @@
                     <TextBlock Grid.Column="2" Grid.Row="1" Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
                 </Grid>
 
-                <Label Grid.Column="0" Grid.Row="6" Margin="0,10,6,6">
+                <Label Grid.Column="0" Grid.Row="7" Margin="0,10,6,6">
                     <Italic>
                         Note: Basic Ground Equipment Handling (GPU, Chocks) is always active and can not be disabled.
                         <LineBreak/>

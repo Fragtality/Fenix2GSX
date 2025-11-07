@@ -471,10 +471,14 @@ namespace Fenix2GSX.GSX
                 if (!Profile.CallReposition)
                     await Task.Delay(3000);
                 Logger.Information("Automation: Placing Ground Equipment");
+
                 await Aircraft.SetChocks(false, true);
                 await Task.Delay(1000);
+
                 await Aircraft.SetChocks(true);
-                await Aircraft.SetGroundPower(true);
+                if (!Aircraft.EquipmentGpu && (Profile.ConnectGpuWithApuRunning || (!Profile.ConnectGpuWithApuRunning && !Aircraft.IsApuRunning)))
+                    await Aircraft.SetGroundPower(true);
+
                 if (Profile.ConnectPca == 1 || (Profile.ConnectPca == 2 && ServiceJetway.State != GsxServiceState.NotAvailable))
                 {
                     Logger.Information($"Automation: Connecting PCA");
@@ -485,6 +489,7 @@ namespace Fenix2GSX.GSX
                     Logger.Information($"Automation: Disconnecting PCA (not configured)");
                     await Aircraft.SetPca(false);
                 }
+
                 GroundEquipmentPlaced = true;
             }
 

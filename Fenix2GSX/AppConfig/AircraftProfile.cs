@@ -36,6 +36,7 @@ namespace Fenix2GSX.AppConfig
         }
 
         //Settings
+        public virtual bool ConnectGpuWithApuRunning { get; set; } = true;
         public virtual int ConnectPca { get; set; } = 2; // 0 => false | 1 => true | 2 => only on jetway stand
         public virtual bool PcaOverride { get; set; } = true;
         public virtual bool DoorStairHandling { get; set; } = true;

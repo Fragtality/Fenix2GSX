@@ -51,6 +51,7 @@ namespace Fenix2GSX.Aircraft
         public virtual bool EnginesRunning => FenixInterface.GetEnginesRunning();
         public virtual bool IsFinalReceived => FenixInterface.GetFinalReceived();
         public virtual bool IsExternalPowerConnected => FenixInterface.GetExternalPowerConnected();
+        public virtual bool IsApuRunning => FenixInterface.IsApuRunning;
         public virtual bool IsApuBleedOn => FenixInterface.IsApuBleedOn;
         public virtual bool HasOpenDoors => FenixInterface.GetOpenDoors();
         public virtual bool IsBrakeSet => FenixInterface.GetBrake();

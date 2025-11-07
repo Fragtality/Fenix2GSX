@@ -140,6 +140,7 @@
       "Name": "default",
       "MatchType": 0,
       "MatchString": "",
+      "ConnectGpuWithApuRunning": true,
       "ConnectPca": 2,
       "PcaOverride": true,
       "DoorStairHandling": true,
@@ -219,7 +220,7 @@
       }
     }
   ],
-  "ConfigVersion": 18,
+  "ConfigVersion": 19,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,
