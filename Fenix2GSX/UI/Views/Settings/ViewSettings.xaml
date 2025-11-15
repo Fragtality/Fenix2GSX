@@ -151,13 +151,6 @@
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="11" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Automatically skip to the Cockpit in MSFS 2024 on Session Start.&#x0a;This can only work if you use the default Binding of 'Shift+C' for 'Take Control of Character'!&#x0a;You can use Walkaround Mode while the Departure Services run, except when any Door is about to be opened or closed.">
-                    Skip Walkaround:
-                </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="11" IsChecked="{Binding SkipWalkAround}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Automatically skip to the Cockpit in MSFS 2024 on Session Start.&#x0a;This can only work if you use the default Binding of 'Shift+C' for 'Take Control of Character'!&#x0a;You can use Walkaround Mode while the Departure Services run, except when any Door is about to be opened or closed.">
-                    (requires default Binding)
-                </CheckBox>
-
                 <TextBlock Grid.Column="0" Grid.Row="12" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already).">
                     Restart GSX on Taxi-In:
                 </TextBlock>

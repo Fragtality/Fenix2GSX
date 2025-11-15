@@ -263,7 +263,9 @@ namespace Fenix2GSX.GSX
 
                     if (!SkippedWalkAround && !WalkAroundSkipActive)
                     {
-                        if (AutomationController.IsOnGround)
+                        if (AutomationController.IsOnGround && AutomationController.State == AutomationState.SessionStart && !AircraftProfile.SkipWalkAround && AircraftProfile.PlaceFenixStairsWalkaround && !AircraftInterface.FenixInterface.StairsFwd)
+                            await AircraftInterface.FenixInterface.SetStairsFwd(true);
+                        else if (AutomationController.IsOnGround)
                             _ = SkipWalkaround();
                         else
                             SkippedWalkAround = true;
@@ -378,7 +380,7 @@ namespace Fenix2GSX.GSX
         {
             WalkAroundSkipActive = true;
             Logger.Verbose($"ac: {SimStore["IS AIRCRAFT"]?.GetNumber()} | av: {SimStore["IS AVATAR"]?.GetNumber()}");
-            while (IsWalkaround && !SkippedWalkAround && Config.SkipWalkAround && IsExecutionAllowed && !RequestToken.IsCancellationRequested)
+            while (IsWalkaround && !SkippedWalkAround && AircraftProfile.SkipWalkAround && IsExecutionAllowed && !RequestToken.IsCancellationRequested)
             {
                 Logger.Information("Automation: Skip Walkaround");
                 string title = Tools.GetMsfsWindowTitle();

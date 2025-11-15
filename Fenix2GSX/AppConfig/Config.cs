@@ -163,16 +163,19 @@ namespace Fenix2GSX.AppConfig
             {
                 foreach (var profile in AircraftProfiles)
                 {
-                    if (profile.UseRefuelTimeTarget)
-                        profile.RefuelMethod = RefuelMethod.DynamicRate;
-                    else
-                        profile.RefuelMethod = RefuelMethod.FixedRate;
+                    profile.RefuelMethod = RefuelMethod.FixedRate;
                 }
             }
 
             if (ConfigVersion < 16 && buildConfigVersion >= 16)
             {
                 GsxMenuStartupMaxFail = 4;
+            }
+
+            if (ConfigVersion < 20 && buildConfigVersion >= 20)
+            {
+                foreach (var profile in AircraftProfiles)
+                    profile.SkipWalkAround = this.SkipWalkAround;
             }
         }
 

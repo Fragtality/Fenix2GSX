@@ -36,6 +36,7 @@ namespace Fenix2GSX.AppConfig
         }
 
         //Settings
+        public virtual bool PlaceFenixStairsWalkaround { get; set; } = true;
         public virtual bool ConnectGpuWithApuRunning { get; set; } = true;
         public virtual int ConnectPca { get; set; } = 2; // 0 => false | 1 => true | 2 => only on jetway stand
         public virtual bool PcaOverride { get; set; } = true;
@@ -53,7 +54,6 @@ namespace Fenix2GSX.AppConfig
         public virtual RefuelMethod RefuelMethod { get; set; } = RefuelMethod.FixedRate;
         public virtual double RefuelRateKgSec { get; set; } = 28;
         public virtual bool RefuelFinishOnHose { get; set; } = false;
-        public virtual bool UseRefuelTimeTarget { get; set; } = false; //LEGACY
         public virtual int RefuelTimeTargetSeconds { get; set; } = 300;
         public virtual bool DoorsCargoKeepOpenOnLoaded { get; set; } = false;
         public virtual bool DoorsCargoKeepOpenOnUnloaded { get; set; } = false;
@@ -68,6 +68,7 @@ namespace Fenix2GSX.AppConfig
         public virtual int RemoveStairsAfterDepature { get; set; } = 2; // 0 => false | 1 => true | 2 => only on jetway stand
         public virtual int AttachTugDuringBoarding { get; set; } = 1; // 0 => not answer | 1 => no | 2 => yes
         public virtual int CallPushbackWhenTugAttached { get; set; } = 2; // 0 => false | 1 => after Departure Services | 2 => after Final LS
+        public virtual bool SkipWalkAround { get; set; } = true;
         public virtual bool SkipCrewQuestion { get; set; } = true;
         public virtual bool SkipFollowMe { get; set; } = true;
         public virtual bool KeepDirectionMenuOpen { get; set; } = true;

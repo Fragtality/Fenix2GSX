@@ -79,10 +79,12 @@ namespace Fenix2GSX.GSX.Services
         {
             if (Profile.SkipCrewQuestion)
             {
+                Logger.Debug("Setting GSX Crew/Pilot Variables to not boarding");
                 await SimStore[GsxConstants.VarNoCrewBoard].WriteValue(1);
                 await SimStore[GsxConstants.VarNoPilotsBoard].WriteValue(1);
             }
-            
+
+            Logger.Debug($"Setting GSX Pax Number/Target to {num}");
             return await SubPaxTarget.WriteValue(num);
         }
 

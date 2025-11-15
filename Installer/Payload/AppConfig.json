@@ -140,6 +140,7 @@
       "Name": "default",
       "MatchType": 0,
       "MatchString": "",
+      "PlaceFenixStairsWalkaround": true,
       "ConnectGpuWithApuRunning": true,
       "ConnectPca": 2,
       "PcaOverride": true,
@@ -157,7 +158,6 @@
       "RefuelMethod": 0,
       "RefuelRateKgSec": 28,
       "RefuelFinishOnHose": false,
-      "UseRefuelTimeTarget": false,
       "RefuelTimeTargetSeconds": 300,
       "DoorsCargoKeepOpenOnLoaded": false,
       "DoorsCargoKeepOpenOnUnloaded": false,
@@ -172,6 +172,7 @@
       "RemoveStairsAfterDepature": 2,
       "AttachTugDuringBoarding": 1,
       "CallPushbackWhenTugAttached": 2,
+      "SkipWalkAround": true,
       "SkipCrewQuestion": true,
       "SkipFollowMe": true,
       "KeepDirectionMenuOpen": true,
@@ -220,7 +221,7 @@
       }
     }
   ],
-  "ConfigVersion": 19,
+  "ConfigVersion": 20,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

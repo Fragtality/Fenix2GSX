@@ -104,6 +104,7 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual bool RemoveJetwayStairsOnFinal { get => Source.RemoveJetwayStairsOnFinal; set => SetModelValue<bool>(value); }
 
         //Ground Equipment
+        public virtual bool PlaceFenixStairsWalkaround { get => Source.PlaceFenixStairsWalkaround; set => SetModelValue<bool>(value); }
         public virtual bool ClearGroundEquipOnBeacon { get => Source.ClearGroundEquipOnBeacon; set => SetModelValue<bool>(value); }
         public virtual bool GradualGroundEquipRemoval { get => Source.GradualGroundEquipRemoval; set => SetModelValue<bool>(value); }
         public virtual bool ConnectGpuWithApuRunning { get => Source.ConnectGpuWithApuRunning; set => SetModelValue<bool>(value); }
@@ -169,6 +170,7 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual ModelCompanyHubs CompanyHubs { get; }
 
         //Skip Questions
+        public virtual bool SkipWalkAround { get => Source.SkipWalkAround; set => SetModelValue<bool>(value); }
         public virtual bool SkipCrewQuestion { get => Source.SkipCrewQuestion; set => SetModelValue<bool>(value); }
         public virtual bool SkipFollowMe { get => Source.SkipFollowMe; set => SetModelValue<bool>(value); }
         public virtual bool KeepDirectionMenuOpen { get => Source.KeepDirectionMenuOpen; set => SetModelValue<bool>(value); }
