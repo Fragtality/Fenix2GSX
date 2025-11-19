@@ -69,8 +69,10 @@ The Rest can be left at Default.
 
 There are two Version Channel for Updates to be released:
 
-1) The "**Dev**" or "Beta" Version is located in the Source Files as [Fenix2GSX-Installer-latest](https://github.com/Fragtality/Fenix2GSX/blob/master/Fenix2GSX-Installer-latest.exe) (Click 'View Raw' or the Download Icon to the Right to download)
-2) The "**Release**" or "Stable" Version is located under [Releases](https://github.com/Fragtality/Fenix2GSX/releases) (Under Assests, the Fenix2GSX-Installer-vXYZ.exe File)
+1) The "**Dev**" or "Beta" Version is located in the Source Files as [Fenix2GSX-Installer-latest](https://github.com/Fragtality/Fenix2GSX/blob/master/Fenix2GSX-Installer-latest.exe)<br/>
+(Click 'View Raw' or the Download Icon to the Right to download)
+2) The "**Release**" or "Stable" Version is located under [Releases](https://github.com/Fragtality/Fenix2GSX/releases)<br/>
+(Under Assests, the Fenix2GSX-Installer-vXYZ.exe File)
 
 Whenever there is a new Commit to Code, the -latest Installer will contain these Changes. For example Fixes to open Issues, Changes for Fenix or GSX Updates or new Features added. So that these Changes & Fixes can be tested publicly.<br/>
 After some Time and positive/good Feedback, all these Changes will be published as the Release Version.<br/>
