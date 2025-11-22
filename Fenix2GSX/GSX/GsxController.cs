@@ -107,6 +107,7 @@ namespace Fenix2GSX.GSX
             _ = new GsxServiceDeice(this);
             _ = new GsxServiceLavatory(this);
             _ = new GsxServiceWater(this);
+            _ = new GsxServiceCleaning(this);
         }
 
         protected override Task InitReceivers()

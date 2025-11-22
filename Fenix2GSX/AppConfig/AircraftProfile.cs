@@ -85,11 +85,12 @@ namespace Fenix2GSX.AppConfig
         public virtual int DelayCabinCallAir { get; set; } = 2500;
         public virtual SortedDictionary<int, ServiceConfig> DepartureServices { get; set; } = new()
         {
-            { 0, new ServiceConfig(GsxServiceType.Refuel, GsxServiceActivation.AfterCalled) },
-            { 1, new ServiceConfig(GsxServiceType.Catering, GsxServiceActivation.AfterCalled) },
-            { 2, new ServiceConfig(GsxServiceType.Lavatory, GsxServiceActivation.Skip) },
-            { 3, new ServiceConfig(GsxServiceType.Water, GsxServiceActivation.AfterRequested) },
-            { 4, new ServiceConfig(GsxServiceType.Boarding, GsxServiceActivation.AfterAllCompleted) },
+            { 0, new ServiceConfig(GsxServiceType.Cleaning, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround) },
+            { 1, new ServiceConfig(GsxServiceType.Lavatory, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround) },
+            { 2, new ServiceConfig(GsxServiceType.Refuel, GsxServiceActivation.AfterCalled) },
+            { 3, new ServiceConfig(GsxServiceType.Catering, GsxServiceActivation.AfterCalled) },
+            { 4, new ServiceConfig(GsxServiceType.Water, GsxServiceActivation.AfterRequested) },            
+            { 5, new ServiceConfig(GsxServiceType.Boarding, GsxServiceActivation.AfterAllCompleted) },
         };
 
         public virtual bool IsCompanyHub(string icao)

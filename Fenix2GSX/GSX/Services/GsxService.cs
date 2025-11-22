@@ -24,6 +24,7 @@ namespace Fenix2GSX.GSX.Services
         Lavatory = 10,
         Jetway = 11,
         Stairs = 12,
+        Cleaning = 13,
     }
 
     public enum GsxServiceActivation

@@ -593,6 +593,11 @@ namespace Fenix2GSX.GSX
                         Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Constraint '{DepartureServicesCurrent.ServiceConstraintName}'");
                         MoveDepartureQueue(current, true);
                     }
+                    else if (current.State == GsxServiceState.NotAvailable || current.State == GsxServiceState.Bypassed)
+                    {
+                        Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to State '{current.State}'");
+                        MoveDepartureQueue(current, true);
+                    }
                     else if (SmartButtonRequest
                             || activation == GsxServiceActivation.AfterCalled
                             || (activation == GsxServiceActivation.AfterRequested && (DepartureServicesCalled?.Count == 0 || DepartureServicesCalled?.SafeLast()?.State >= GsxServiceState.Requested || DepartureServicesCalled?.SafeLast()?.IsSkipped == true))

@@ -11,6 +11,7 @@
   "SimbriefUrlBase": "https://www.simbrief.com",
   "SimbriefUrlPathName": "/api/xml.fetcher.php?username={0}\u0026json=v2",
   "SimbriefUrlPathId": "/api/xml.fetcher.php?userid={0}\u0026json=v2",
+  "HttpRequestTimeoutMs": 10000,
   "UiRefreshInterval": 500,
   "FenixWeightBag": 15,
   "FuelCompareVariance": 25,
@@ -189,30 +190,36 @@
       "DelayCabinCallAir": 2500,
       "DepartureServices": {
         "0": {
+          "ServiceType": 13,
+          "ServiceActivation": 2,
+          "ServiceConstraint": 2,
+          "MinimumFlightDuration": "00:00:00"
+        },
+        "1": {
+          "ServiceType": 10,
+          "ServiceActivation": 2,
+          "ServiceConstraint": 2,
+          "MinimumFlightDuration": "00:00:00"
+        },
+        "2": {
           "ServiceType": 2,
           "ServiceActivation": 2,
           "ServiceConstraint": 0,
           "MinimumFlightDuration": "00:00:00"
         },
-        "1": {
+        "3": {
           "ServiceType": 3,
           "ServiceActivation": 2,
           "ServiceConstraint": 0,
           "MinimumFlightDuration": "00:00:00"
         },
-        "2": {
-          "ServiceType": 10,
-          "ServiceActivation": 0,
-          "ServiceConstraint": 0,
-          "MinimumFlightDuration": "00:00:00"
-        },
-        "3": {
+        "4": {
           "ServiceType": 9,
           "ServiceActivation": 3,
           "ServiceConstraint": 0,
           "MinimumFlightDuration": "00:00:00"
         },
-        "4": {
+        "5": {
           "ServiceType": 4,
           "ServiceActivation": 6,
           "ServiceConstraint": 0,
@@ -221,7 +228,7 @@
       }
     }
   ],
-  "ConfigVersion": 20,
+  "ConfigVersion": 21,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

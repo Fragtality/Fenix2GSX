@@ -40,6 +40,7 @@
         public static string VarServiceDeice { get; } = "L:FSDT_GSX_DEICING_STATE";
         public static string VarServiceLavatory { get; } = "L:FSDT_GSX_LAVATORY_STATE";
         public static string VarServiceWater { get; } = "L:FSDT_GSX_WATER_STATE";
+        public static string VarServiceCleaning { get; } = "L:FSDT_GSX_CLEANING_STATE";
         public static string VarPaxTarget { get; } = "L:FSDT_GSX_NUMPASSENGERS";
         public static string VarPaxTotalBoard { get; } = "L:FSDT_GSX_NUMPASSENGERS_BOARDING_TOTAL";
         public static string VarPaxTotalDeboard { get; } = "L:FSDT_GSX_NUMPASSENGERS_DEBOARDING_TOTAL";
@@ -55,7 +56,7 @@
         //Menu
         public static string GsxChoice { get; } = "[GSX choice]";
         public static string MenuGate { get; } = "Activate Services at";
-        public static string MenuParkingSelect { get; } = "Select Parking at";
+        public static string MenuParkingSelect { get; } = "Select Position at";
         public static string MenuParkingChange { get; } = "Change parking or service";
         public static string MenuAdditionalServices { get; } = "Activate Ground Services";
         public static string MenuOperatorHandling { get; } = "Select handling operator";

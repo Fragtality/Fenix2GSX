@@ -3,6 +3,7 @@ using CFIT.AppLogger;
 using CoreAudio;
 using Fenix2GSX.Aircraft;
 using Fenix2GSX.Audio;
+using Fenix2GSX.GSX.Services;
 using FenixInterface;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace Fenix2GSX.AppConfig
         public virtual string SimbriefUrlBase { get; set; } = "https://www.simbrief.com";
         public virtual string SimbriefUrlPathName { get; set; } = "/api/xml.fetcher.php?username={0}&json=v2";
         public virtual string SimbriefUrlPathId { get; set; } = "/api/xml.fetcher.php?userid={0}&json=v2";
+        public virtual int HttpRequestTimeoutMs { get; set; } = 10000;
         public virtual int UiRefreshInterval { get; set; } = 500;
         public virtual double FenixWeightBag { get; set; } = 15;
         public virtual double FuelCompareVariance { get; set; } = 25;
@@ -139,6 +141,25 @@ namespace Fenix2GSX.AppConfig
             }
         }
 
+        protected virtual AircraftProfile CheckServices(AircraftProfile profile)
+        {
+            if (!profile.DepartureServices.Any(s => s.Value.ServiceType == GsxServiceType.Cleaning))
+            {
+                var old = profile.DepartureServices.ToDictionary();
+                profile.DepartureServices.Clear();
+                int index = 0;
+                profile.DepartureServices.Add(index, new ServiceConfig(GsxServiceType.Cleaning, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround));
+                index++;
+                foreach (var service in old)
+                {
+                    profile.DepartureServices.Add(index, service.Value);
+                    index++;
+                }
+            }
+
+            return profile;
+        }
+
         protected override void UpdateConfiguration(int buildConfigVersion)
         {
             if (ConfigVersion < 7 && buildConfigVersion >= 7)
@@ -176,6 +197,26 @@ namespace Fenix2GSX.AppConfig
             {
                 foreach (var profile in AircraftProfiles)
                     profile.SkipWalkAround = this.SkipWalkAround;
+            }
+
+            if (ConfigVersion < 21 && buildConfigVersion >= 21)
+            {
+                foreach (var profile in AircraftProfiles)
+                {
+                    if (!profile.DepartureServices.Any(s => s.Value.ServiceType == GsxServiceType.Cleaning))
+                    {
+                        var old = profile.DepartureServices.ToDictionary();
+                        profile.DepartureServices.Clear();
+                        int index = 0;
+                        profile.DepartureServices.Add(index, new ServiceConfig(GsxServiceType.Cleaning, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround));
+                        index++;
+                        foreach (var service in old)
+                        {
+                            profile.DepartureServices.Add(index, service.Value);
+                            index++;
+                        }
+                    }
+                }
             }
         }
 
@@ -253,7 +294,7 @@ namespace Fenix2GSX.AppConfig
             }
 
             Logger.Information($"Loading default Aircraft Profile");
-            return AircraftProfiles.Where(p => p.Name == "default").First() ?? new AircraftProfile();
+            return CheckServices(AircraftProfiles.Where(p => p.Name == "default").First() ?? new AircraftProfile());
         }
 
         public virtual void SetDisplayUnit(DisplayUnit displayUnit)
