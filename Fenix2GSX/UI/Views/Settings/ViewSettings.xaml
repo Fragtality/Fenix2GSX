@@ -48,6 +48,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Column="0" Grid.Row="0" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Which Source is used to get the Unit used in the UI.">
@@ -151,34 +152,39 @@
                     </StackPanel>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="12" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already).">
+                <TextBlock Grid.Column="0" Grid.Row="12" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Reset (write) the GSX Service State Variables to 1 (callable) when switching to the Flight Phase.&#x0a;This can prevent Situations where a Service is already considered Completed when GSX never reset its State Variables.">
+                    Reset GSX Vars in Flight:
+                </TextBlock>
+                <CheckBox Grid.Column="1" Grid.Row="12" IsChecked="{Binding ResetGsxStateVarsFlight}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Reset (write) the GSX Service State Variables to 1 (callable) when switching to the Flight Phase.&#x0a;This can prevent Situations where a Service is already considered Completed when GSX never reset its State Variables."/>
+
+                <TextBlock Grid.Column="0" Grid.Row="13" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already).">
                     Restart GSX on Taxi-In:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="12" IsChecked="{Binding RestartGsxOnTaxiIn}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already)."/>
+                <CheckBox Grid.Column="1" Grid.Row="13" IsChecked="{Binding RestartGsxOnTaxiIn}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Restart the GSX Binary on Taxi-In (~after Touchdown) to ensure a 'clean' State.&#x0a;The Binary will be killed and started (if GSX' Watchdog has not restarted it already)."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="13" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready.">
+                <TextBlock Grid.Column="0" Grid.Row="14" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready.">
                     Restart GSX on Startup:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="13" Orientation="Horizontal" Margin="6,0,0,0">
+                <StackPanel Grid.Column="1" Grid.Row="14" Orientation="Horizontal" Margin="6,0,0,0">
                     <CheckBox IsChecked="{Binding RestartGsxStartupFail}" Style="{StaticResource CheckBoxDefault}" ToolTip="Restart the GSX Binary on Startup when the Menu doesn't open / become ready after a certain Amount of failed Attempts to open the Menu."/>
                     <TextBlock Margin="12,-1,6,0" Style="{StaticResource TextBlockDefault}">Max Failures:</TextBlock>
                     <TextBox Name="InputGsxMaxFail" Style="{StaticResource TextBoxCentered}"/>
                 </StackPanel>
 
-                <TextBlock Grid.Column="0" Grid.Row="14" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control.">
+                <TextBlock Grid.Column="0" Grid.Row="15" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control.">
                     Run GSX Controller:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="14" IsChecked="{Binding RunGsxService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control."/>
+                <CheckBox Grid.Column="1" Grid.Row="15" IsChecked="{Binding RunGsxService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the core GSX Controller of the App.&#x0a;NOTE: Only disable the Controller if you only want to use Volume Control."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="15" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the Audio Controller for App Volume Control.&#x0a;Disable if you want to use Fenix' native Implementation.">
+                <TextBlock Grid.Column="0" Grid.Row="16" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Enable / Disable the Audio Controller for App Volume Control.&#x0a;Disable if you want to use Fenix' native Implementation.">
                     Run Audio Controller:
                 </TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="15" IsChecked="{Binding RunAudioService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the Audio Controller for App Volume Control.&#x0a;Disable if you want to use Fenix' native Implementation."/>
+                <CheckBox Grid.Column="1" Grid.Row="16" IsChecked="{Binding RunAudioService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the Audio Controller for App Volume Control.&#x0a;Disable if you want to use Fenix' native Implementation."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="16" Margin="6" Style="{StaticResource TextBlockDefault}" VerticalAlignment="Top" ToolTip="The Fuel-on-Board Values currently stored by Any2GSX for the various Aircrafts.">
+                <TextBlock Grid.Column="0" Grid.Row="17" Margin="6" Style="{StaticResource TextBlockDefault}" VerticalAlignment="Top" ToolTip="The Fuel-on-Board Values currently stored by Any2GSX for the various Aircrafts.">
                     Saved Fuel Values:
                 </TextBlock>
-                <StackPanel Grid.Column="1" Grid.Row="16" Margin="6" Orientation="Horizontal">
+                <StackPanel Grid.Column="1" Grid.Row="17" Margin="6" Orientation="Horizontal">
                     <ListView MinWidth="228" MaxWidth="384" Height="96" MaxHeight="142" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                               HorizontalAlignment="Left" HorizontalContentAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center"
                               Name="ListSavedFuel">

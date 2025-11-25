@@ -10,8 +10,10 @@ namespace Fenix2GSX.GSX.Services
     public class GsxServiceRefuel(GsxController controller) : GsxService(controller)
     {
         public override GsxServiceType Type => GsxServiceType.Refuel;
+        protected override double NumStateCompleted { get; } = 1;
         public virtual ISimResourceSubscription SubRefuelService { get; protected set; }
         public virtual ISimResourceSubscription SubRefuelHose { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubRefuelService;
         public virtual bool IsRefueling => IsActive && SubRefuelHose.GetNumber() == 1;
         public virtual bool WasHoseConnected { get; protected set; } = false;
         protected virtual bool CompleteNotified { get; set; } = false;
@@ -37,36 +39,28 @@ namespace Fenix2GSX.GSX.Services
             SubRefuelHose.OnReceived += OnHoseChange;
         }
 
-        protected override void OnStateChange(ISimResourceSubscription sub, object data)
+        protected override bool EvaluateComplete(ISimResourceSubscription sub)
         {
-            if (!IsFenixAircraft)
-                return;
-
-            if (sub.GetNumber() == 4)
-            {
-                Logger.Information($"{Type} Service requested");
-                WasHoseConnected = false;
-            }
-            else if (sub.GetNumber() == 5)
-            {
-                Logger.Information($"{Type} Service active");
-                WasActive = true;
-                CompleteNotified = false;
-                NotifyActive();
-            }
-            else if (sub.GetNumber() == 1 && WasActive && !CompleteNotified)
-            {
-                Logger.Information($"{Type} Service completed");
-                WasCompleted = true;
-                NotifyCompleted();
-            }
-            NotifyStateChange();
+            return sub?.GetNumber() == 1 && WasActive && !CompleteNotified;
         }
 
-        protected override void NotifyCompleted()
+        protected override void RunStateRequested()
         {
+            base.RunStateRequested();
+            WasActive = false;
+            WasHoseConnected = false;
+        }
+
+        protected override void RunStateActive()
+        {
+            CompleteNotified = false;
+            base.RunStateActive();
+        }
+
+        protected override void RunStateCompleted()
+        {
+            base.RunStateCompleted();
             CompleteNotified = true;
-            base.NotifyCompleted();
         }
 
         protected virtual void OnHoseChange(ISimResourceSubscription sub, object data)
@@ -76,7 +70,7 @@ namespace Fenix2GSX.GSX.Services
 
             if (sub.GetNumber() == 1 && State != GsxServiceState.Unknown && State != GsxServiceState.Completed)
             {
-                Logger.Debug($"Fuel Hose connected");
+                Logger.Information($"Fuel Hose connected");
                 if (State == GsxServiceState.Active)
                 {
                     WasHoseConnected = true;
@@ -85,7 +79,7 @@ namespace Fenix2GSX.GSX.Services
             }
             else if (sub.GetNumber() == 0 && State != GsxServiceState.Unknown && WasActive)
             {
-                Logger.Debug($"Fuel Hose disconnected");
+                Logger.Information($"Fuel Hose disconnected");
                 TaskTools.RunLogged(() => OnHoseConnection?.Invoke(false), Controller.Token);
             }
         }
@@ -107,7 +101,7 @@ namespace Fenix2GSX.GSX.Services
 
         protected override GsxServiceState GetState()
         {
-            var state = ReadState(SubRefuelService);
+            var state = ReadState();
             if ((state == GsxServiceState.Callable && WasActive) || (state == GsxServiceState.Callable && WasCompleted))
                 return GsxServiceState.Completed;
             else if (state == GsxServiceState.Active && !WasActive)

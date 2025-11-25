@@ -141,7 +141,7 @@ namespace Fenix2GSX.GSX
         {
             Controller.Menu.ResetFlight();
             foreach (var service in GsxServices)
-                service.Value.ResetState();
+                service.Value.ResetState(Config.ResetGsxStateVarsFlight);
 
             Aircraft.ResetFlight();
             GroundEquipmentPlaced = false;
@@ -589,6 +589,11 @@ namespace Fenix2GSX.GSX
                         MoveDepartureQueue(current, true);
                     }
                     else if (DepartureServicesCurrent.ServiceConstraint == GsxServiceConstraint.CompanyHub && !Profile.IsCompanyHub(DepartureIcao))
+                    {
+                        Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Constraint '{DepartureServicesCurrent.ServiceConstraintName}'");
+                        MoveDepartureQueue(current, true);
+                    }
+                    else if (DepartureServicesCurrent.ServiceConstraint == GsxServiceConstraint.NonCompanyHub && Profile.IsCompanyHub(DepartureIcao))
                     {
                         Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Constraint '{DepartureServicesCurrent.ServiceConstraintName}'");
                         MoveDepartureQueue(current, true);

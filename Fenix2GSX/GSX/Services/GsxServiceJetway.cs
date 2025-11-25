@@ -9,6 +9,7 @@ namespace Fenix2GSX.GSX.Services
 
         public override GsxServiceType Type => GsxServiceType.Jetway;
         public virtual ISimResourceSubscription SubService { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubService;
         public virtual ISimResourceSubscription SubOperating { get; protected set; }
 
         public virtual bool IsAvailable => State != GsxServiceState.NotAvailable;
@@ -44,14 +45,9 @@ namespace Fenix2GSX.GSX.Services
             SimStore.Remove(GsxConstants.VarServiceJetwayOperation);
         }
 
-        protected override GsxServiceState GetState()
-        {
-            return ReadState(SubService);
-        }
-
         protected override bool CheckCalled()
         {
-            return IsOperating || IsConnected;
+            return IsOperating || IsRunning;
         }
 
         protected override async Task<bool> DoCall()

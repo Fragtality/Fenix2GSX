@@ -11,6 +11,7 @@ namespace Fenix2GSX.GSX.Services
     {
         public override GsxServiceType Type => GsxServiceType.Boarding;
         public virtual ISimResourceSubscription SubBoardService { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubBoardService;
         public virtual int PaxTarget => (int)SubPaxTarget.GetNumber();
         public virtual ISimResourceSubscription SubPaxTarget { get; protected set; }
         public virtual int PaxTotal => (int)SubPaxTotal.GetNumber();
@@ -51,11 +52,6 @@ namespace Fenix2GSX.GSX.Services
 
         }
 
-        public override async Task Call()
-        {
-            await base.Call();
-        }
-
         public override void FreeResources()
         {
             SubBoardService.OnReceived -= OnStateChange;
@@ -68,11 +64,6 @@ namespace Fenix2GSX.GSX.Services
             SimStore.Remove(GsxConstants.VarCargoPercentBoard);
             SimStore.Remove(GsxConstants.VarNoCrewBoard);
             SimStore.Remove(GsxConstants.VarNoPilotsBoard);
-        }
-
-        protected override GsxServiceState GetState()
-        {
-            return ReadState(SubBoardService);
         }
 
         public virtual async Task<bool> SetPaxTarget(int num)

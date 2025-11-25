@@ -167,7 +167,7 @@ The Strings you add to the Preferred Operator List will be used in a (case insen
 
 Manage a List of *Airport* ICAO Codes which define "Company Hubs" for this Aircraft Profile. 1 to 4 Letters per Code.<br/>
 The Codes are matched in the Order of the List, from Top to Bottom. For each Code, the Departure ICAO is matched if it starts (!) with the Code - so you can define whole Regions.<br/>
-If your current Departure Airport is matched, Departure Services with the "Only on Hub" Constraint will be called.
+If your current Departure Airport is matched, Departure Services with the "Only on Hub" Constraint will be called. Consequently, Services with the "Only on Non-Hub" Constraint, will only be called if the Airport is *not* matched.
 
 <br/>
 

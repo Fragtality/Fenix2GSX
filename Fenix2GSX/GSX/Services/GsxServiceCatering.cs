@@ -7,6 +7,7 @@ namespace Fenix2GSX.GSX.Services
     {
         public override GsxServiceType Type => GsxServiceType.Catering;
         public virtual ISimResourceSubscription SubCaterService { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubCaterService;
 
         protected override GsxMenuSequence InitCallSequence()
         {
@@ -34,11 +35,6 @@ namespace Fenix2GSX.GSX.Services
             SubCaterService.OnReceived -= OnStateChange;
 
             SimStore.Remove(GsxConstants.VarServiceCatering);
-        }
-
-        protected override GsxServiceState GetState()
-        {
-            return ReadState(SubCaterService);
         }
     }
 }

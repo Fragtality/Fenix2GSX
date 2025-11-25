@@ -1,5 +1,4 @@
-﻿using CFIT.AppLogger;
-using CFIT.SimConnectLib.SimResources;
+﻿using CFIT.SimConnectLib.SimResources;
 using Fenix2GSX.GSX.Menu;
 
 namespace Fenix2GSX.GSX.Services
@@ -7,7 +6,9 @@ namespace Fenix2GSX.GSX.Services
     public class GsxServiceWater(GsxController controller) : GsxService(controller)
     {
         public override GsxServiceType Type => GsxServiceType.Water;
+        protected override double NumStateCompleted { get; } = 1;
         public virtual ISimResourceSubscription SubWaterService { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubWaterService;
 
         protected override GsxMenuSequence InitCallSequence()
         {
@@ -41,35 +42,6 @@ namespace Fenix2GSX.GSX.Services
         protected override bool CheckCalled()
         {
             return SequenceResult;
-        }
-
-        protected override void OnStateChange(ISimResourceSubscription sub, object data)
-        {
-            if (sub.GetNumber() == 4)
-            {
-                Logger.Information($"{Type} Service requested");
-            }
-            else if (sub.GetNumber() == 5)
-            {
-                Logger.Information($"{Type} Service active");
-                WasActive = true;
-                NotifyActive();
-            }
-            else if (sub.GetNumber() == 1 && WasActive)
-            {
-                Logger.Information($"{Type} Service completed");
-                NotifyCompleted();
-            }
-            NotifyStateChange();
-        }
-
-        protected override GsxServiceState GetState()
-        {
-            var state = ReadState(SubWaterService);
-            if (state == GsxServiceState.Callable && WasActive)
-                return GsxServiceState.Completed;
-            else
-                return state;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CFIT.SimConnectLib.SimResources;
+﻿using CFIT.AppLogger;
+using CFIT.SimConnectLib.SimResources;
 using Fenix2GSX.GSX.Menu;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace Fenix2GSX.GSX.Services
 
         public override GsxServiceType Type => GsxServiceType.Stairs;
         public virtual ISimResourceSubscription SubService { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubService;
         public virtual ISimResourceSubscription SubOperating { get; protected set; }
 
         public virtual bool IsAvailable => State != GsxServiceState.NotAvailable;
@@ -44,14 +46,9 @@ namespace Fenix2GSX.GSX.Services
             SimStore.Remove(GsxConstants.VarServiceStairsOperation);
         }
 
-        protected override GsxServiceState GetState()
-        {
-            return ReadState(SubService);
-        }
-
         protected override bool CheckCalled()
         {
-            return IsOperating || IsConnected;
+            return IsOperating || IsRunning;
         }
 
         protected override async Task<bool> DoCall()
@@ -68,6 +65,16 @@ namespace Fenix2GSX.GSX.Services
                 return;
 
             await DoCall();
+        }
+
+        protected override void OnStateChange(ISimResourceSubscription sub, object data)
+        {
+            base.OnStateChange(sub, data);
+            if (State == GsxServiceState.Callable && IsCalled)
+            {
+                Logger.Debug($"Reset IsCalled for Stairs");
+                IsCalled = false;
+            }
         }
     }
 }

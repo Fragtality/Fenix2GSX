@@ -1,5 +1,4 @@
-﻿using CFIT.AppLogger;
-using CFIT.SimConnectLib.SimResources;
+﻿using CFIT.SimConnectLib.SimResources;
 using Fenix2GSX.GSX.Menu;
 
 namespace Fenix2GSX.GSX.Services
@@ -7,7 +6,9 @@ namespace Fenix2GSX.GSX.Services
     public class GsxServiceCleaning(GsxController controller) : GsxService(controller)
     {
         public override GsxServiceType Type => GsxServiceType.Cleaning;
+        protected override double NumStateCompleted { get; } = 1;
         public virtual ISimResourceSubscription SubCleaningService { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubCleaningService;
 
         protected override GsxMenuSequence InitCallSequence()
         {
@@ -43,38 +44,20 @@ namespace Fenix2GSX.GSX.Services
             return SequenceResult;
         }
 
-        protected override void OnStateChange(ISimResourceSubscription sub, object data)
+        protected override void RunStateRequested()
         {
-            if (sub.GetNumber() == 4)
+            base.RunStateRequested();
+            WasActive = true;
+            NotifyActive();
+        }
+
+        protected override void RunStateActive()
+        {
+            if (!WasActive)
             {
-                Logger.Information($"{Type} Service requested");
                 WasActive = true;
                 NotifyActive();
             }
-            else if (sub.GetNumber() == 5)
-            {
-                Logger.Information($"{Type} Service active");
-                if (!WasActive)
-                {
-                    WasActive = true;
-                    NotifyActive();
-                }
-            }
-            else if (sub.GetNumber() == 1 && WasActive)
-            {
-                Logger.Information($"{Type} Service completed");
-                NotifyCompleted();
-            }
-            NotifyStateChange();
-        }
-
-        protected override GsxServiceState GetState()
-        {
-            var state = ReadState(SubCleaningService);
-            if (state == GsxServiceState.Callable && WasActive)
-                return GsxServiceState.Completed;
-            else
-                return state;
         }
     }
 }

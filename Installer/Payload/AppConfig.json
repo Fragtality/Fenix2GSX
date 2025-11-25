@@ -22,6 +22,7 @@
   "RestartGsxStartupFail": false,
   "DelayGsxBinaryStart": 2000,
   "RunGsxService": true,
+  "ResetGsxStateVarsFlight": true,
   "RestartGsxOnTaxiIn": false,
   "RunAudioService": true,
   "AudioDebugFile": "log\\AudioDebug.txt",
@@ -228,7 +229,7 @@
       }
     }
   ],
-  "ConfigVersion": 21,
+  "ConfigVersion": 22,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

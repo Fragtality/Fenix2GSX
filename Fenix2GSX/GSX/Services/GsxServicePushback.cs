@@ -12,6 +12,7 @@ namespace Fenix2GSX.GSX.Services
         public override GsxServiceType Type => GsxServiceType.Pushback;
         public virtual ISimResourceSubscription SubDepartService { get; protected set; }
         public virtual ISimResourceSubscription SubPushStatus { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubDepartService;
         public virtual bool IsPinInserted => SubBypassPin.GetNumber() == 1;
         public virtual int PushStatus => (int)SubPushStatus.GetNumber();
         public virtual bool IsTugConnected => SubPushStatus.GetNumber() == 3 || SubPushStatus.GetNumber() == 4;
@@ -90,11 +91,6 @@ namespace Fenix2GSX.GSX.Services
                 sequence.Commands.Add(new(5, GsxConstants.MenuGate, true) { NoHide = true });
                 await Controller.Menu.RunSequence(sequence);
             }
-        }
-
-        protected override GsxServiceState GetState()
-        {
-            return ReadState(SubDepartService);
         }
 
         public virtual async Task EndPushback(int selection = 1)

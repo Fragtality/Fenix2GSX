@@ -1,10 +1,12 @@
-﻿using Fenix2GSX.GSX.Menu;
+﻿using CFIT.SimConnectLib.SimResources;
+using Fenix2GSX.GSX.Menu;
 
 namespace Fenix2GSX.GSX.Services
 {
     public class GsxServiceReposition(GsxController controller) : GsxService(controller)
     {
         public override GsxServiceType Type => GsxServiceType.Reposition;
+        protected override ISimResourceSubscription SubStateVar => null;
         protected override GsxMenuSequence InitCallSequence()
         {
             var sequence = new GsxMenuSequence();
@@ -44,6 +46,11 @@ namespace Fenix2GSX.GSX.Services
         protected override bool CheckCalled()
         {
             return SequenceResult;
+        }
+
+        protected override void SetStateVariable(GsxServiceState state)
+        {
+            
         }
     }
 }

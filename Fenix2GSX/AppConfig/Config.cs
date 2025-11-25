@@ -40,6 +40,7 @@ namespace Fenix2GSX.AppConfig
         public virtual bool RestartGsxStartupFail { get; set; } = false;
         public virtual int DelayGsxBinaryStart { get; set; } = 2000;
         public virtual bool RunGsxService { get; set; } = true;
+        public virtual bool ResetGsxStateVarsFlight { get; set; } = true;
         public virtual bool RestartGsxOnTaxiIn { get; set; } = false;
         public virtual bool RunAudioService { get; set; } = true;
         public virtual string AudioDebugFile { get; set; } = "log\\AudioDebug.txt";

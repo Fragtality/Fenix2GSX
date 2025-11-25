@@ -11,6 +11,7 @@ namespace Fenix2GSX.GSX.Services
     {
         public override GsxServiceType Type => GsxServiceType.Deboarding;
         public virtual ISimResourceSubscription SubDeboardService { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubDeboardService;
         public virtual int PaxTarget => (int)SubPaxTarget.GetNumber();
         public virtual ISimResourceSubscription SubPaxTarget { get; protected set; }
         public virtual int PaxTotal => (int)SubPaxTotal.GetNumber();
@@ -63,11 +64,6 @@ namespace Fenix2GSX.GSX.Services
             SimStore.Remove(GsxConstants.VarCargoPercentDeboard);
             SimStore.Remove(GsxConstants.VarNoCrewDeboard);
             SimStore.Remove(GsxConstants.VarNoPilotsDeboard);
-        }
-
-        protected override GsxServiceState GetState()
-        {
-            return ReadState(SubDeboardService);
         }
 
         public virtual async Task<bool> SetPaxTarget(int num)

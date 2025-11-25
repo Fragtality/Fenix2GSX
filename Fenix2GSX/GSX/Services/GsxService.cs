@@ -44,6 +44,7 @@ namespace Fenix2GSX.GSX.Services
         FirstLeg = 1,
         TurnAround = 2,
         CompanyHub = 3,
+        NonCompanyHub = 4,
     }
 
     public enum GsxServiceState
@@ -69,11 +70,13 @@ namespace Fenix2GSX.GSX.Services
         public virtual bool IsCalled { get; protected set; } = false;
         protected virtual bool SequenceResult => CallSequence?.IsSuccess ?? false;
         protected virtual GsxMenuSequence CallSequence { get; }
+        protected abstract ISimResourceSubscription SubStateVar { get; }
         public virtual GsxServiceState State => GetState();
         public virtual bool IsCalling => CallSequence.IsExecuting;
         public virtual bool IsRunning => State == GsxServiceState.Requested || State == GsxServiceState.Active;
         public virtual bool IsActive => State == GsxServiceState.Active;
         public virtual bool IsCompleted => State == GsxServiceState.Completed;
+        protected virtual double NumStateCompleted { get; } = 6;
         public virtual bool IsSkipped { get; set; } = false;
         public virtual bool WasActive { get; protected set; } = false;
         public virtual bool WasCompleted { get; protected set; } = false;
@@ -94,6 +97,27 @@ namespace Fenix2GSX.GSX.Services
 
         protected abstract void InitSubscriptions();
 
+        protected virtual bool EvaluateComplete(ISimResourceSubscription sub)
+        {
+            return sub?.GetNumber() == NumStateCompleted && WasActive;
+        }
+
+        protected virtual void RunStateRequested()
+        {
+
+        }
+
+        protected virtual void RunStateActive()
+        {
+            WasActive = true;
+            NotifyActive();
+        }
+
+        protected virtual void RunStateCompleted()
+        {
+
+        }
+
         protected virtual void OnStateChange(ISimResourceSubscription sub, object data)
         {
             if (!IsFenixAircraft)
@@ -102,30 +126,32 @@ namespace Fenix2GSX.GSX.Services
             if (sub.GetNumber() == 4)
             {
                 Logger.Information($"{Type} Service requested");
+                RunStateRequested();
             }
             else if (sub.GetNumber() == 5)
             {
                 Logger.Information($"{Type} Service active");
-                WasActive = true;
-                NotifyActive();
+                RunStateActive();
             }
-            else if (sub.GetNumber() == 6)
+            else if (EvaluateComplete(sub))
             {
                 Logger.Information($"{Type} Service completed");
-                WasActive = true;
                 WasCompleted = true;
+                RunStateCompleted();
                 NotifyCompleted();
             }
             NotifyStateChange();
         }
 
-        public virtual void ResetState()
+        public virtual void ResetState(bool resetVariable = false)
         {
             IsCalled = false;
             IsSkipped = false;
             WasActive = false;
             WasCompleted = false;
             CallSequence.Reset();
+            if (resetVariable)
+                SetStateVariable(GsxServiceState.Callable);
             DoReset();
         }
 
@@ -133,11 +159,11 @@ namespace Fenix2GSX.GSX.Services
 
         public abstract void FreeResources();
 
-        protected static GsxServiceState ReadState(ISimResourceSubscription sub)
+        protected virtual GsxServiceState ReadState()
         {
             try
             {
-                return (GsxServiceState)sub.GetValue<int>();
+                return (GsxServiceState)SubStateVar.GetValue<int>();
             }
             catch (Exception ex)
             {
@@ -146,7 +172,26 @@ namespace Fenix2GSX.GSX.Services
             }
         }
 
-        protected abstract GsxServiceState GetState();
+        protected virtual GsxServiceState GetState()
+        {
+            var state = ReadState();
+
+            if (NumStateCompleted == 6)
+                return ReadState();
+            else
+            {
+                if (state == (GsxServiceState)NumStateCompleted && WasActive)
+                    return GsxServiceState.Completed;
+                else
+                    return state;
+            }
+        }
+
+        protected virtual void SetStateVariable(GsxServiceState state)
+        {
+            Logger.Debug($"Resetting State L-Var for Service {Type} to '{state}'");
+            SubStateVar.WriteValue((int)state);
+        }
 
         protected virtual bool CheckCalled()
         {
@@ -178,7 +223,7 @@ namespace Fenix2GSX.GSX.Services
 
             if (State == GsxServiceState.Unknown)
             {
-                Logger.Debug($"Ignoring State Change - State is unknown");
+                Logger.Debug($"Ignoring State Change - State for {Type} is unknown");
                 return;
             }
 

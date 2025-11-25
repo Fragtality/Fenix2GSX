@@ -7,6 +7,7 @@ namespace Fenix2GSX.GSX.Services
     {
         public override GsxServiceType Type => GsxServiceType.Deice;
         public virtual ISimResourceSubscription SubDeiceService { get; protected set; }
+        protected override ISimResourceSubscription SubStateVar => SubDeiceService;
 
         protected override GsxMenuSequence InitCallSequence()
         {
@@ -35,11 +36,6 @@ namespace Fenix2GSX.GSX.Services
             SubDeiceService.OnReceived -= OnStateChange;
 
             SimStore.Remove(GsxConstants.VarServiceDeice);
-        }
-
-        protected override GsxServiceState GetState()
-        {
-            return ReadState(SubDeiceService);
         }
     }
 }
