@@ -142,9 +142,9 @@
                     <Label>Water</Label>
                     <Label Content="{Binding ServiceWater}"/>
                 </StackPanel>
-                <StackPanel Grid.Column="5" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="GSX (!) GPU Service State">
-                    <Label>GPU</Label>
-                    <Label Content="{Binding ServiceGpu}"/>
+                <StackPanel Grid.Column="5" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="Cleaning Service State">
+                    <Label>Cleaning</Label>
+                    <Label Content="{Binding ServiceCleaning}"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="0" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Boarding Service State">
@@ -166,6 +166,10 @@
                 <StackPanel Grid.Column="4" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Stair Service State">
                     <Label>Stairs</Label>
                     <Label Content="{Binding ServiceStairs}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="5" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="GSX (!) GPU Service State">
+                    <Label>GPU</Label>
+                    <Label Content="{Binding ServiceGpu}"/>
                 </StackPanel>
             </Grid>
         </GroupBox>

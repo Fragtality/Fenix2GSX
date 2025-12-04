@@ -180,6 +180,7 @@ namespace Fenix2GSX.UI.Views.Monitor
             UpdateState<GsxServiceState>(nameof(ServiceCatering), GsxServices[GsxServiceType.Catering].State);
             UpdateState<GsxServiceState>(nameof(ServiceLavatory), GsxServices[GsxServiceType.Lavatory].State);
             UpdateState<GsxServiceState>(nameof(ServiceWater), GsxServices[GsxServiceType.Water].State);
+            UpdateState<GsxServiceState>(nameof(ServiceCleaning), GsxServices[GsxServiceType.Cleaning].State);
             UpdateState<GsxServiceState>(nameof(ServiceGpu), GsxServices[GsxServiceType.GPU].State);
 
             UpdateState<GsxServiceState>(nameof(ServiceBoarding), GsxServices[GsxServiceType.Boarding].State);
@@ -225,6 +226,9 @@ namespace Fenix2GSX.UI.Views.Monitor
 
         [ObservableProperty]
         protected GsxServiceState _ServiceWater = GsxServiceState.Unknown;
+
+        [ObservableProperty]
+        protected GsxServiceState _ServiceCleaning = GsxServiceState.Unknown;
 
         [ObservableProperty]
         protected GsxServiceState _ServiceGpu = GsxServiceState.Unknown;
