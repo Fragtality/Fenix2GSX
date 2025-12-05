@@ -547,7 +547,7 @@ namespace Fenix2GSX.GSX
                 }
             }
 
-            if (!DepartureServicesCompleted && !IsGateConnected && Profile.CallJetwayStairsDuringDeparture)
+            if (!DepartureServicesCompleted && !IsGateConnected && !JetwayStairRemoved && Profile.CallJetwayStairsDuringDeparture)
             {
                 if (ServiceJetway.IsAvailable && !ServiceJetway.IsConnected && !ServiceJetway.IsCalled)
                 {
@@ -637,6 +637,9 @@ namespace Fenix2GSX.GSX
                     MoveDepartureQueue(current, skipped);
                 }
             }
+
+            if (State == AutomationState.Departure || State == AutomationState.PushBack)
+                await RunLoadsheet();
         }
 
         protected virtual void MoveDepartureQueue(GsxService service, bool asSkipped = false)
@@ -648,19 +651,37 @@ namespace Fenix2GSX.GSX
             DepartureServicesEnumerator.MoveNext();
         }
 
-        protected virtual async Task RunPushback()
+        protected virtual async Task RunLoadsheet()
         {
-            if (Aircraft.IsApuBleedOn && Aircraft.EquipmentPca)
-            {
-                Logger.Information($"Disconnecting PCA");
-                await Aircraft.SetPca(false);
-            }
+            bool boardCompleted = State == AutomationState.PushBack || DepartureServicesCalled.Any(s => s.Type == GsxServiceType.Boarding && (s.IsCompleted || s.IsSkipped)) || Profile.DepartureServices.Any(kv => kv.Value.ServiceType == GsxServiceType.Boarding && kv.Value.ServiceActivation == GsxServiceActivation.Skip);
+            bool cateringCompleted = State == AutomationState.PushBack || DepartureServicesCalled.Any(s => s.Type == GsxServiceType.Catering && (s.IsCompleted || s.IsSkipped)) || Profile.DepartureServices.Any(kv => kv.Value.ServiceType == GsxServiceType.Catering && kv.Value.ServiceActivation == GsxServiceActivation.Skip);
+            bool cleanCompleted = State == AutomationState.PushBack || DepartureServicesCalled.Any(s => s.Type == GsxServiceType.Cleaning && (s.IsCompleted || s.IsSkipped)) || Profile.DepartureServices.Any(kv => kv.Value.ServiceType == GsxServiceType.Cleaning && kv.Value.ServiceActivation == GsxServiceActivation.Skip);
 
-            if (Aircraft.HasOpenDoors && !Aircraft.FenixInterface.CargoDoorsMoving() && Aircraft.IsFinalReceived && Profile.CloseDoorsOnFinal)
+            if (boardCompleted && cateringCompleted && cleanCompleted && Aircraft.HasOpenDoors && !Aircraft.FenixInterface.CargoDoorsMoving() && Aircraft.IsFinalReceived && Profile.CloseDoorsOnFinal)
             {
                 Logger.Information($"Automation: Close Doors on Final Loadsheet");
                 await Aircraft.CloseAllDoors();
                 await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
+            }
+
+            if (boardCompleted && cleanCompleted && !JetwayStairRemoved && IsGateConnected && Aircraft.IsFinalReceived && Profile.RemoveJetwayStairsOnFinal)
+            {
+                Logger.Information($"Automation: Remove Jetway/Stairs on Final Loadsheet");
+                await ServiceJetway.Remove();
+                await ServiceStairs.Remove();
+                JetwayStairRemoved = true;
+                await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
+            }
+        }
+
+        protected virtual async Task RunPushback()
+        {
+            await RunLoadsheet();
+
+            if (Aircraft.IsApuBleedOn && Aircraft.EquipmentPca)
+            {
+                Logger.Information($"Disconnecting PCA");
+                await Aircraft.SetPca(false);
             }
 
             if (Profile.GradualGroundEquipRemoval)
@@ -676,15 +697,6 @@ namespace Fenix2GSX.GSX
                     Logger.Information($"Automation: Removing Chocks on Parking Brake set");
                     await Aircraft.SetChocks(false);
                 }
-            }
-
-            if (!JetwayStairRemoved && IsGateConnected && Aircraft.IsFinalReceived && Profile.RemoveJetwayStairsOnFinal)
-            {
-                Logger.Information($"Automation: Remove Jetway/Stairs on Final Loadsheet");
-                await ServiceJetway.Remove();
-                await ServiceStairs.Remove();
-                JetwayStairRemoved = true;
-                await Task.Delay(Config.StateMachineInterval * 2, RequestToken);
             }
 
             if (!Aircraft.IsExternalPowerConnected && Aircraft.IsBrakeSet && Aircraft.LightBeacon && !Aircraft.EnginesRunning)
