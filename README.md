@@ -313,7 +313,7 @@ Besides these general Best Practices, there is nothing Special to consider - Pla
 - **Chocks** will be placed 10-20 Seconds after the Aircraft is parked. When the Chocks were placed, "MECH" Indicator on both ACPs (INT Button) will flash briefly to indicate that. You can release the Parking Brakes then.
 - **GPU** and **PCA** (if configured) will be connected once the Jetway or Stairs are connected (or latest when Deboarding starts).
 - With default Settings, Fenix2GSX will **automatically call Deboard** (which in turn calls the Jetway/Stairs). If not configured, you can still call Deboarding manually with the **INT/RAD** Switch.
-- **Dismiss** the Deboard Pop-Up in the **EFB** - Deboarding is handled by Fenix2GSX at its Synchronization!
+- **Dismiss** the Deboard Pop-Up in the **EFB** - Deboarding is handled by Fenix2GSX and its Synchronization!
 - **Wait** for Deboarding to **finish** if you plan for a **Turn-Around** - *do not import* a new Flightplan yet!
 - If Fenix2GSX is configured to start Departures Services while Deboarding:
   - Wait until Deboarding is fully running (Passengers are deboarding, Cargo is unloaded) before importing the new OFP
