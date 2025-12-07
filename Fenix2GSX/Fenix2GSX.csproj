@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Nullable>annotations</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -13,7 +14,7 @@
   
   <PropertyGroup>
     <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd.HHmm"))</SourceRevisionId>
-    <Version>0.5.3</Version>
+    <Version>0.6.0</Version>
     <Title>$(AssemblyName)</Title>
     <Authors>Fragtality</Authors>
     <Company>Fragtality</Company>
@@ -45,12 +46,11 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="CFIT.AppFramework" Version="2025.339.17.107" />
-    <PackageReference Include="CFIT.AppLogger" Version="2025.319.13.1841" />
-    <PackageReference Include="CFIT.AppTools" Version="2025.319.13.1949" />
-    <PackageReference Include="CFIT.SimConnectLib" Version="2025.319.13.1973" />
+    <PackageReference Include="CFIT.AppFramework" Version="2025.341.14.926" />
+    <PackageReference Include="CFIT.AppLogger" Version="2025.341.14.881" />
+    <PackageReference Include="CFIT.AppTools" Version="2025.341.14.889" />
+    <PackageReference Include="CFIT.SimConnectLib" Version="2025.341.14.914" />
     <PackageReference Include="CoreAudio" Version="1.40.0" />
-    <PackageReference Include="System.Private.Uri" Version="4.3.2" />
   </ItemGroup>
 
   <ItemGroup>

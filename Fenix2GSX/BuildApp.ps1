@@ -26,7 +26,7 @@ try {
 	$pathProject = $args[2]
 	$appName = $args[3]
 	$appCfg = $args[4]
-	$msBuildDir = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64"
+	$msBuildDir = "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64"
 	
 	$pathPublish = Join-Path $pathProject "bin\publish"
 	$pathDeploy = Join-Path (Join-Path ($env:APPDATA) $appName) "bin"
