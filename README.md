@@ -97,7 +97,7 @@ All other relevant EFB Options will automatically be disabled by Fenix2GSX (incl
 ### 2.2 - GSX Pro
 
 - Make sure you do not have a customized Aircraft Profile (GSX In-Game Menu -> Customize Aircraft -> should show as used Profile "Developer provided" or "Internal GSX Database"). A fair Chunk of Problems come from People having an outdated Custom Profile without knowing it. Just hit the "Reset" Button in the Customize Aircraft Dialog to delete the custom Profile (needs to be done on each Variant!)
-- It is recommended (but not required) to enter your **SimBrief Username** and have **Ignore Time** checked to have correct Information on the VDGS Displays.
+- It is recommended (but not required) to enter your **SimBrief Username** and have **Iore Time** checked to have correct Information on the VDGS Displays.
 - For **Automated staircases** semi-automatic (half-checked) is recommended - but it should work with all Modes.
 - It is **not recommended** to use the **Always ask for pushback** Option (and if you use it: Fenix2GSX will default to auto-answer with 'Yes')
 - The De-/Boarding Speed of Passengers is dependant on the Passenger Density Setting (GSX In-Game Menu -> GSX Settings -> Timings). Higher Density => faster De/Boarding (But "Extreme" can be to extreme in some Cases).
@@ -129,33 +129,33 @@ In general, it is up to **your Preference how much Automation** you want. I you 
 These are basically the core Settings to customize the Automation to your own Service-Flow. All Settings in this View are associated to an Aircraft Profile. The currently loaded Profile's Name is displayed on the Category Selection.<br/>
 The Settings are grouped into different Categories:<br/><br/>
 
-**Gate & Doors**
+##### **Gate & Doors**
 
 Handling if and when the Jetway and or the Stairs are called or removed.<br/>
 It also allows you to completely disable the Door Automation. But even then the Doors will automatically be closed when Pushback or Deice become active!
 
 <br/>
 
-**Ground Equipment**
+##### **Ground Equipment**
 
 Configure the Chock-Delay, PCA Handling or the Removal when the Beacon is turned on.<br/>
 Note: Basic Ground Equipment Handling (GPU, Chocks) is always active and can not be disabled. Fenix2GSX will automatically place or remove the Equipment on Startup, during Pushback and on Arrival.
 
 <br/>
 
-**GSX Services**
+##### **GSX Services**
 
 Configure how the GSX Services are handled:
 - Reposition on Startup (either use Fenix2GSX for that or the GSX Setting - but not both!)
 - The Service Activation (if and when) and Order of the Departure Services (Refuel, Catering, Boarding as well as Lavatory & Water)
 - If the Departure Services should already be called while Deboarding
 - How Refueling is handled: with a fixed Rate, a fixed Time Target or via Refuel Panel (or if the GSX Service is called at all to support Tankering)
-- With the Refuel Panel Method, the Rate is determined by the EFB Settingn
+- With the Refuel Panel Method, the Rate is determined by the EFB Setting
 - If and when Pushback should be called automatically
 
 <br/>
 
-**Operator Selection**
+##### **Operator Selection**
 
 Enable or Disable the automatic Operator Selection. You can also define Preferences to control which Operator is picked by Fenix2GSX! If no preferred Operator is found, it will use the 'GSX Choice' in the Menu.<br/>
 The Preferred Operator List Operator List works only on the *Name* of the Operator as seen in the *GSX Menu*!<br/>
@@ -163,7 +163,7 @@ The Strings you add to the Preferred Operator List will be used in a (case insen
 
 <br/>
 
-**Company Hubs**
+##### **Company Hubs**
 
 Manage a List of *Airport* ICAO Codes which define "Company Hubs" for this Aircraft Profile. 1 to 4 Letters per Code.<br/>
 The Codes are matched in the Order of the List, from Top to Bottom. For each Code, the Departure ICAO is matched if it starts (!) with the Code - so you can define whole Regions.<br/>
@@ -171,13 +171,13 @@ If your current Departure Airport is matched, Departure Services with the "Only 
 
 <br/>
 
-**Skip Questions**
+##### **Skip Questions**
 
 All Options related to skip / automatically Answer certain GSX Questions or Aircraft Interactions: Crew Question, Tug Question, Follow-Me Question, Fenix Cabin-Calls and reopen the Pushback Menu.
 
 <br/>
 
-**Aircraft Options**
+##### **Aircraft Options**
 
 Delay for the Final Loadsheet, Save & Load of the Fuel on Board, Randomization of Passengers on OFP Import.<br/>
 By default, Fenix2GSX saves the FOB per Aircraft Registration upon Arrival. When you load the same Registration in another Session, it will load/restore the last saved FOB on Startup. If no saved Fuel Value can be found, it uses the Default Value set under App Settings (3000kg).
