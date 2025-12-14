@@ -45,6 +45,8 @@ namespace Fenix2GSX.GSX.Services
         TurnAround = 2,
         CompanyHub = 3,
         NonCompanyHub = 4,
+        TurnOnHub = 5,
+        TurnOnNonHub = 6,
     }
 
     public enum GsxServiceState

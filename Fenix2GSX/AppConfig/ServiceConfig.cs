@@ -27,6 +27,8 @@ namespace Fenix2GSX.AppConfig
             { GsxServiceConstraint.TurnAround, "Only Turn" },
             { GsxServiceConstraint.CompanyHub, "Only on Hub" },
             { GsxServiceConstraint.NonCompanyHub, "Only on Non-Hub" },
+            { GsxServiceConstraint.TurnOnHub, "Turn on Hub" },
+            { GsxServiceConstraint.TurnOnNonHub, "Turn on Non-Hub" },
         };
 
         public virtual GsxServiceType ServiceType { get; set; } = GsxServiceType.Unknown;

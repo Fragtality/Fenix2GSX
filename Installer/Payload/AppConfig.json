@@ -229,7 +229,7 @@
       }
     }
   ],
-  "ConfigVersion": 22,
+  "ConfigVersion": 23,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,
