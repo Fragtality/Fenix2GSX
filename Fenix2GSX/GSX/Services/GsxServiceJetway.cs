@@ -47,7 +47,8 @@ namespace Fenix2GSX.GSX.Services
 
         protected override bool CheckCalled()
         {
-            return IsOperating || IsRunning;
+            IsCalled = IsOperating || IsRunning;
+            return IsCalled;
         }
 
         protected override async Task<bool> DoCall()

@@ -197,18 +197,19 @@ namespace Fenix2GSX.GSX.Services
 
         protected virtual bool CheckCalled()
         {
-            return IsRunning;
+            IsCalled = IsRunning;
+            return IsCalled;
         }
 
         public virtual async Task Call()
         {
-            if (IsCalled)
+            if (CheckCalled())
                 return;
 
             if (await DoCall() == false)
                 return;
             await Task.Delay(Controller.Config.DelayServiceStateChange, Controller.Token);
-            IsCalled = CheckCalled();
+            CheckCalled();
         }
 
         protected virtual async Task<bool> DoCall()

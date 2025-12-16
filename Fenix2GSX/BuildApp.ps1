@@ -31,10 +31,6 @@ try {
 	$pathPublish = Join-Path $pathProject "bin\publish"
 	$pathDeploy = Join-Path (Join-Path ($env:APPDATA) $appName) "bin"
 	$pathInstallerPayload = Join-Path $pathBase "Installer\Payload"
-	
-	$projectFile = Join-Path $pathProject "$appName.csproj"
-	[xml]$projectXml = Get-Content $projectFile
-	$appVersion = "$($projectXml.Project.ChildNodes.Version)".Trim()
 
 	######### BUILD
 	## Create Lock
@@ -53,11 +49,14 @@ try {
 	}
 	Write-Host ("Build Configuration: '$buildConfiguration'")
 	
+	$timestamp = "build" + (Get-Content -Raw (Join-Path $pathInstallerPayload version.json) | ConvertFrom-Json).Timestamp
+	$appVersion = (Get-Content -Raw (Join-Path $pathInstallerPayload version.json) | ConvertFrom-Json).Version
+	
 	## Build App
-	Write-Host "dotnet publish for $appName (v$appVersion) ..."
+	Write-Host "dotnet publish for $appName (v$appVersion+$timestamp) ..."
 	Remove-Item -Recurse -Force -Path ($pathPublish + "\*") -ErrorAction SilentlyContinue | Out-Null
 	cd $pathProject
-	dotnet publish -p:PublishProfile=FolderProfile$buildConfiguration -c $buildConfiguration --verbosity quiet
+	dotnet publish -p:PublishProfile=FolderProfile$buildConfiguration -p:Version="$appVersion" -p:SourceRevisionId="$timestamp" -c $buildConfiguration --verbosity quiet
 	if ($buildConfiguration -eq "Release") {
 		Remove-Item -Recurse -Force -Path ($pathPublish + "\*.pdb") -ErrorAction SilentlyContinue | Out-Null
 	}
