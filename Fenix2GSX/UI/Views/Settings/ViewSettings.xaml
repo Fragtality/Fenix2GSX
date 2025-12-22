@@ -129,11 +129,6 @@
                         <TextBox Name="InputDoorCargoOpenDelay" Style="{StaticResource TextBoxCentered}"/>
                         <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Grid.Row="10" Style="{StaticResource SettingItemPanel}" ToolTip="Delay in Seconds to close a Cargo Door when the Loader is finished (ignored when Keep Doors Open is configured).">
-                        <TextBlock Margin="12,0,6,0" Style="{StaticResource TextBlockDefault}">Close:</TextBlock>
-                        <TextBox Name="InputDoorCargoCloseDelay" Style="{StaticResource TextBoxCentered}"/>
-                        <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
-                    </StackPanel>
                 </StackPanel>
 
                 <TextBlock Grid.Column="0" Grid.Row="10" Margin="6" Style="{StaticResource TextBlockDefault}">

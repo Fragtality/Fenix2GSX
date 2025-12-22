@@ -108,8 +108,7 @@ namespace Fenix2GSX.AppConfig
         public virtual int RefuelPanelOpenDelay { get; set; } = 10;
         public virtual Dictionary<string, double> FuelFobSaved { get; set; } = [];
         public virtual int CargoPercentChangePerSec { get; set; } = 5;
-        public int DoorCargoDelay { get; set; } = 16;
-        public int DoorCargoOpenDelay { get; set; } = 2; 
+        public int DoorCargoOpenDelay { get; set; } = 2;
         public virtual bool InterceptGpuAndChocksOnBeacon { get; set; } = true;
         public virtual int OperatorWaitTimeout { get; set; } = 1500;
         public virtual int OperatorSelectTimeout { get; set; } = 10000;
@@ -166,7 +165,6 @@ namespace Fenix2GSX.AppConfig
             if (ConfigVersion < 7 && buildConfigVersion >= 7)
             {
                 AudioDeviceCheckInterval = 60000;
-                DoorCargoDelay = 16;
                 SizeLimit = 10 * 1024 * 1024;
             }
 

@@ -125,7 +125,6 @@
   "RefuelPanelOpenDelay": 10,
   "FuelFobSaved": {},
   "CargoPercentChangePerSec": 5,
-  "DoorCargoDelay": 16,
   "DoorCargoOpenDelay": 2,
   "InterceptGpuAndChocksOnBeacon": true,
   "OperatorWaitTimeout": 1500,

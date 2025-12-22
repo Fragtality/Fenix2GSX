@@ -20,7 +20,6 @@ namespace Fenix2GSX.UI.Views.Settings
             ViewModel.BindStringNumber(nameof(ViewModel.FuelResetDefaultKg), InputFuelDefault, "3000", new ValidationRuleRange<double>(1000, 6000));
             ViewModel.BindStringNumber(nameof(ViewModel.FuelCompareVariance), InputFuelVariance, "25", new ValidationRuleRange<double>(10, 100));
             ViewModel.BindStringInteger(nameof(ViewModel.CargoPercentChangePerSec), InputCargoRate, "5", new ValidationRuleRange<int>(1, 25));
-            ViewModel.BindStringInteger(nameof(ViewModel.DoorCargoDelay), InputDoorCargoCloseDelay, "16", new ValidationRuleRange<int>(1, 180));
             ViewModel.BindStringInteger(nameof(ViewModel.DoorCargoOpenDelay), InputDoorCargoOpenDelay, "2", new ValidationRuleRange<int>(1, 90));
             ViewModel.BindStringInteger(nameof(ViewModel.RefuelPanelOpenDelay), InputRefuelOpenDelay, "10", new ValidationRuleRange<int>(1, 90));
             ViewModel.BindStringInteger(nameof(ViewModel.RefuelPanelCloseDelay), InputRefuelCloseDelay, "42", new ValidationRuleRange<int>(1, 180));
