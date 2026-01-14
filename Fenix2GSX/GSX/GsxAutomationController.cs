@@ -540,7 +540,7 @@ namespace Fenix2GSX.GSX
                         }
                     }
                 }
-                else if (Aircraft.IsEfbBoardingCompleted && !ServiceBoard.IsCalled && State == AutomationState.Departure)
+                else if (Aircraft.IsEfbBoardingCompleted && ServiceBoard.State != GsxServiceState.Completed && State == AutomationState.Departure)
                 {
                     Logger.Information($"EFB Boarding detected - skipping all Departure Services {Aircraft.EfbBoardingState}");
                     DepartureServicesCompleted = true;
@@ -780,7 +780,7 @@ namespace Fenix2GSX.GSX
                 await Task.Delay(Config.StateMachineInterval, RequestToken);
             }
 
-            if ((ServicePushBack.PushStatus > 1 || ServiceDeice.IsActive || Aircraft.EnginesRunning) && !GroundEquipmentPlaced)
+            if (((ServicePushBack.PushStatus > 1 && ServicePushBack.IsRunning) || ServiceDeice.IsActive || Aircraft.EnginesRunning) && !GroundEquipmentPlaced)
             {
                 string reason = "for Pushback";
                 if (ServiceDeice.IsActive)
