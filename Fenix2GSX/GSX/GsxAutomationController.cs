@@ -598,12 +598,12 @@ namespace Fenix2GSX.GSX
                         Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Constraint '{DepartureServicesCurrent.ServiceConstraintName}'");
                         MoveDepartureQueue(current, true);
                     }
-                    else if (DepartureServicesCurrent.ServiceConstraint == GsxServiceConstraint.TurnOnHub && DepartureServicesCurrent.ActivationCount == 0 && !Profile.IsCompanyHub(DepartureIcao))
+                    else if (DepartureServicesCurrent.ServiceConstraint == GsxServiceConstraint.TurnOnHub && (DepartureServicesCurrent.ActivationCount == 0 || !Profile.IsCompanyHub(DepartureIcao)))
                     {
                         Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Constraint '{DepartureServicesCurrent.ServiceConstraintName}'");
                         MoveDepartureQueue(current, true);
                     }
-                    else if (DepartureServicesCurrent.ServiceConstraint == GsxServiceConstraint.TurnOnNonHub && DepartureServicesCurrent.ActivationCount == 0 && Profile.IsCompanyHub(DepartureIcao))
+                    else if (DepartureServicesCurrent.ServiceConstraint == GsxServiceConstraint.TurnOnNonHub && (DepartureServicesCurrent.ActivationCount == 0 || Profile.IsCompanyHub(DepartureIcao)))
                     {
                         Logger.Information($"Automation: Departure Service {DepartureServicesCurrent.ServiceType} skipped due to Constraint '{DepartureServicesCurrent.ServiceConstraintName}'");
                         MoveDepartureQueue(current, true);
