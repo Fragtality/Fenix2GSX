@@ -38,5 +38,11 @@ namespace Fenix2GSX.GSX.Services
 
             SimStore.Remove(GsxConstants.VarServiceLavatory);
         }
+
+        protected override bool CheckCalled()
+        {
+            IsCalled = IsRunning || CallSequence.IsSuccess;
+            return IsCalled;
+        }
     }
 }
