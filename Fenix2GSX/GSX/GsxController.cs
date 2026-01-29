@@ -152,8 +152,10 @@ namespace Fenix2GSX.GSX
         {
             try
             {
+                while (_lock && !Token.IsCancellationRequested) { }
                 int state = (int)sub.GetNumber();
-                if (CouatlLastSimbrief == 1 && state == 0 && CouatlVarsValid && CouatlInhibitStateChanges < DateTime.Now)
+                int started = (int)(SimStore[GsxConstants.VarCouatlStarted]?.GetNumber() ?? 0);
+                if (CouatlLastSimbrief == 1 && state == 0 && started == 1 && CouatlInhibitStateChanges < DateTime.Now)
                 {
                     Logger.Debug("Simbrief Refresh detected - inhibiting Couatl State Changes for 5s");
                     CouatlInhibitStateChanges = DateTime.Now + TimeSpan.FromSeconds(5);
@@ -163,7 +165,8 @@ namespace Fenix2GSX.GSX
             }
             catch (Exception ex)
             {
-                Logger.LogException(ex);
+                if (ex is not TaskCanceledException)
+                    Logger.LogException(ex);
                 CouatlInhibitStateChanges = DateTime.MinValue;
                 CouatlLastSimbrief = 0;
             }
