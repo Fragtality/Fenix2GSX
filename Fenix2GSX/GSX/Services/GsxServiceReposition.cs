@@ -20,6 +20,11 @@ namespace Fenix2GSX.GSX.Services
             return sequence;
         }
 
+        protected override GsxMenuSequence InitCancelSequence()
+        {
+            return new GsxMenuSequence();
+        }
+
         protected override void InitSubscriptions()
         {
 

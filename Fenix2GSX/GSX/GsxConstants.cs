@@ -72,5 +72,6 @@
         public static string MenuFollowMe { get; } = "Request FollowMe";
         public static string MenuBoardCrew { get; } = "Do you want to board crew";
         public static string MenuDeboardCrew { get; } = "Do you want to deboard crew";
+        public static string MenuCancelService { get; } = "Service in progress";
     }
 }

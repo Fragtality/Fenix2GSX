@@ -148,7 +148,7 @@ namespace Fenix2GSX.AppConfig
                 var old = profile.DepartureServices.ToDictionary();
                 profile.DepartureServices.Clear();
                 int index = 0;
-                profile.DepartureServices.Add(index, new ServiceConfig(GsxServiceType.Cleaning, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround));
+                profile.DepartureServices.Add(index, new ServiceConfig(GsxServiceType.Cleaning, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround, TimeSpan.Zero, TimeSpan.Zero));
                 index++;
                 foreach (var service in old)
                 {
@@ -207,7 +207,7 @@ namespace Fenix2GSX.AppConfig
                         var old = profile.DepartureServices.ToDictionary();
                         profile.DepartureServices.Clear();
                         int index = 0;
-                        profile.DepartureServices.Add(index, new ServiceConfig(GsxServiceType.Cleaning, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround));
+                        profile.DepartureServices.Add(index, new ServiceConfig(GsxServiceType.Cleaning, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround, TimeSpan.Zero, TimeSpan.Zero));
                         index++;
                         foreach (var service in old)
                         {

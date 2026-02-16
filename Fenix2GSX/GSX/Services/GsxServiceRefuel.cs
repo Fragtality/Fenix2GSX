@@ -30,6 +30,14 @@ namespace Fenix2GSX.GSX.Services
             return sequence;
         }
 
+        protected override GsxMenuSequence InitCancelSequence()
+        {
+            var sequence = new GsxMenuSequence();
+            sequence.Commands.Add(new(3, GsxConstants.MenuGate, true) { WaitReady = true });
+
+            return sequence;
+        }
+
         protected override void InitSubscriptions()
         {
             SubRefuelService = SimStore.AddVariable(GsxConstants.VarServiceRefuel);
@@ -74,6 +82,7 @@ namespace Fenix2GSX.GSX.Services
                 if (State == GsxServiceState.Active)
                 {
                     WasHoseConnected = true;
+                    ActivationTime = DateTime.Now;
                     TaskTools.RunLogged(() => OnHoseConnection?.Invoke(true), Controller.Token);
                 }
             }

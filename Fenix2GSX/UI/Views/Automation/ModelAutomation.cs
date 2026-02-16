@@ -133,6 +133,13 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual bool CallReposition { get => Source.CallReposition; set => SetModelValue<bool>(value); }
         public virtual bool CallDeboardOnArrival { get => Source.CallDeboardOnArrival; set => SetModelValue<bool>(value); }
         public virtual bool RunDepartureOnArrival { get => Source.RunDepartureOnArrival; set => SetModelValue<bool>(value); }
+        public virtual int SmartButtonAbortService { get => Source.SmartButtonAbortService; set => SetModelValue<int>(value); }
+        public virtual Dictionary<int, string> AbortOptions { get; } = new()
+        {
+            { 0, "No" },
+            { 1, "Gracefully" },
+            { 2, "Forcefully" },
+        };
         public virtual ModelDepartureServices DepartureServices { get; }
         public virtual Dictionary<GsxServiceActivation, string> TextServiceActivations => ServiceConfig.TextServiceActivations;
         public virtual Dictionary<GsxServiceConstraint, string> TextServiceConstraints => ServiceConfig.TextServiceConstraints;
@@ -161,6 +168,7 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual int AttachTugDuringBoarding { get => Source.AttachTugDuringBoarding; set => SetModelValue<int>(value); }
         public virtual int CallPushbackWhenTugAttached { get => Source.CallPushbackWhenTugAttached; set => SetModelValue<int>(value); }
         public virtual bool CallPushbackOnBeacon { get => Source.CallPushbackOnBeacon; set => SetModelValue<bool>(value); }
+        public virtual bool CancelServicesOnPushPhase { get => Source.CancelServicesOnPushPhase; set => SetModelValue<bool>(value); }
 
         //Operator Selection
         public virtual bool OperatorAutoSelect { get => Source.OperatorAutoSelect; set => SetModelValue<bool>(value); }
@@ -199,5 +207,6 @@ namespace Fenix2GSX.UI.Views.Automation
         public virtual bool FuelSaveLoadFob { get => Source.FuelSaveLoadFob; set => SetModelValue<bool>(value); }
         public virtual bool RandomizePax { get => Source.RandomizePax; set => SetModelValue<bool>(value); }
         public virtual double ChancePerSeat { get => Source.ChancePerSeat * 100.0; set => SetModelValue<double>(value / 100.0); }
+        public virtual bool UseSimTime { get => Source.UseSimTime; set => SetModelValue<bool>(value); }
     }
 }

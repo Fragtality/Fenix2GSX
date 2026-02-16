@@ -155,6 +155,7 @@
       "ChockDelayMax": 20,
       "FuelSaveLoadFob": true,
       "RandomizePax": true,
+      "UseSimTime": true,
       "ChancePerSeat": 0.025,
       "RefuelMethod": 0,
       "RefuelRateKgSec": 28,
@@ -173,6 +174,7 @@
       "RemoveStairsAfterDepature": 2,
       "AttachTugDuringBoarding": 1,
       "CallPushbackWhenTugAttached": 2,
+      "CancelServicesOnPushPhase": true,
       "SkipWalkAround": true,
       "SkipCrewQuestion": true,
       "SkipFollowMe": true,
@@ -184,6 +186,7 @@
       "GradualGroundEquipRemoval": false,
       "CallDeboardOnArrival": true,
       "RunDepartureOnArrival": false,
+      "SmartButtonAbortService": 0,
       "AnswerCabinCallGround": true,
       "DelayCabinCallGround": 4000,
       "AnswerCabinCallAir": true,
@@ -193,42 +196,54 @@
           "ServiceType": 13,
           "ServiceActivation": 2,
           "ServiceConstraint": 2,
-          "MinimumFlightDuration": "00:00:00"
+          "MinimumFlightDuration": "00:00:00",
+          "MaxTimeBeforeDeparture": "00:00:00",
+          "MaxRunTime": "00:00:00"
         },
         "1": {
           "ServiceType": 10,
           "ServiceActivation": 2,
           "ServiceConstraint": 2,
-          "MinimumFlightDuration": "00:00:00"
+          "MinimumFlightDuration": "00:00:00",
+          "MaxTimeBeforeDeparture": "00:00:00",
+          "MaxRunTime": "00:00:00"
         },
         "2": {
           "ServiceType": 2,
           "ServiceActivation": 2,
           "ServiceConstraint": 0,
-          "MinimumFlightDuration": "00:00:00"
+          "MinimumFlightDuration": "00:00:00",
+          "MaxTimeBeforeDeparture": "00:00:00",
+          "MaxRunTime": "00:00:00"
         },
         "3": {
           "ServiceType": 3,
           "ServiceActivation": 2,
           "ServiceConstraint": 0,
-          "MinimumFlightDuration": "00:00:00"
+          "MinimumFlightDuration": "00:00:00",
+          "MaxTimeBeforeDeparture": "00:00:00",
+          "MaxRunTime": "00:00:00"
         },
         "4": {
           "ServiceType": 9,
           "ServiceActivation": 3,
           "ServiceConstraint": 0,
-          "MinimumFlightDuration": "00:00:00"
+          "MinimumFlightDuration": "00:00:00",
+          "MaxTimeBeforeDeparture": "00:00:00",
+          "MaxRunTime": "00:00:00"
         },
         "5": {
           "ServiceType": 4,
           "ServiceActivation": 6,
           "ServiceConstraint": 0,
-          "MinimumFlightDuration": "00:00:00"
+          "MinimumFlightDuration": "00:00:00",
+          "MaxTimeBeforeDeparture": "00:00:00",
+          "MaxRunTime": "00:00:00"
         }
       }
     }
   ],
-  "ConfigVersion": 23,
+  "ConfigVersion": 24,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

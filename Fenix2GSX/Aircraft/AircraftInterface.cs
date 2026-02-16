@@ -83,10 +83,12 @@ namespace Fenix2GSX.Aircraft
                 (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnStateChanged += OnRefuelStateChanged;
                 (Controller.GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel).OnHoseConnection += OnHoseChanged;
                 (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnActive += OnBoardingActive;
+                (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnStateChanged += OnBoardingStateChanged;
                 (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnCompleted += OnBoardingCompleted;
                 (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnPaxChange += OnPaxChangeBoarding;
                 (Controller.GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding).OnCargoChange += OnCargoChangeBoarding;
                 (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnActive += OnDeboardingActive;
+                (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnStateChanged += OnDeboardingStateChanged;
                 (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnCompleted += OnDeboardingCompleted;
                 (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnPaxChange += OnPaxChangeDeboarding;
                 (Controller.GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding).OnCargoChange += OnCargoChangeDeboarding;
@@ -188,11 +190,11 @@ namespace Fenix2GSX.Aircraft
 
             if (serviceRefuel.State == GsxServiceState.Active)
                 await FenixInterface.OnRefuelActive();
-            else if (serviceRefuel.State == GsxServiceState.Completed)
+            else if (serviceRefuel.IsCompleted || serviceRefuel.IsCompleting)
             {
                 if (FenixInterface.IsRefueling)
                 {
-                    if (Profile.RefuelFinishOnHose)
+                    if (Profile.RefuelFinishOnHose || serviceRefuel.IsCompleting)
                     {
                         Logger.Information($"GSX Refuel reported completed while Refueling - aborting Refuel Process");
                         await FenixInterface.RefuelAbort();
@@ -215,7 +217,7 @@ namespace Fenix2GSX.Aircraft
             
             if (!hoseConnected && FenixInterface.IsRefueling)
             {
-                if (Profile.RefuelFinishOnHose)
+                if (Profile.RefuelFinishOnHose || Controller.GsxServices[GsxServiceType.Refuel].IsCompleting)
                 {
                     Logger.Information($"GSX Fuelhose reported disconnected while Refueling - aborting Refuel Process");
                     await FenixInterface.RefuelAbort();
@@ -252,9 +254,16 @@ namespace Fenix2GSX.Aircraft
             await FenixInterface.BoardingStart();
         }
 
+        protected virtual async Task OnBoardingStateChanged(GsxService service)
+        {
+            if (service.IsCompleting && FenixInterface.IsBoarding)
+                await FenixInterface.BoardingStop();
+        }
+
         public virtual async Task OnBoardingCompleted(GsxService service)
         {
-            await FenixInterface.BoardingStop();
+            if (FenixInterface.IsBoarding)
+                await FenixInterface.BoardingStop();
         }
 
         protected virtual async void OnPaxChangeBoarding(GsxServiceBoarding service)
@@ -273,9 +282,16 @@ namespace Fenix2GSX.Aircraft
             return Task.CompletedTask;
         }
 
+        protected virtual async Task OnDeboardingStateChanged(GsxService service)
+        {
+            if (service.IsCompleting && FenixInterface.IsDeboarding)
+                await FenixInterface.OnDeboardingCompleted();
+        }
+
         public virtual async Task OnDeboardingCompleted(GsxService service)
         {
-            await FenixInterface.OnDeboardingCompleted();
+            if (FenixInterface.IsDeboarding)
+                await FenixInterface.OnDeboardingCompleted();
         }
 
         protected virtual async void OnPaxChangeDeboarding(GsxServiceDeboarding serviceDeboarding)

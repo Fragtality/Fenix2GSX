@@ -1,5 +1,6 @@
 ﻿using CFIT.SimConnectLib.SimResources;
 using Fenix2GSX.GSX.Menu;
+using System.Threading.Tasks;
 
 namespace Fenix2GSX.GSX.Services
 {
@@ -20,6 +21,11 @@ namespace Fenix2GSX.GSX.Services
             return sequence;
         }
 
+        protected override GsxMenuSequence InitCancelSequence()
+        {
+            return new GsxMenuSequence();
+        }
+
         protected override void InitSubscriptions()
         {
             SubGpuService = SimStore.AddVariable(GsxConstants.VarServiceGpu);
@@ -36,6 +42,11 @@ namespace Fenix2GSX.GSX.Services
             SubGpuService.OnReceived -= OnStateChange;
 
             SimStore.Remove(GsxConstants.VarServiceGpu);
+        }
+
+        public override async Task Cancel(int option = -1)
+        {
+            await DoCall();
         }
     }
 }

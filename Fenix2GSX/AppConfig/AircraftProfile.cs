@@ -50,6 +50,7 @@ namespace Fenix2GSX.AppConfig
         public virtual int ChockDelayMax { get; set; } = 20;
         public virtual bool FuelSaveLoadFob { get; set; } = true;
         public virtual bool RandomizePax { get; set; } = true;
+        public virtual bool UseSimTime { get; set; } = true;
         public virtual double ChancePerSeat { get; set; } = 0.025;
         public virtual RefuelMethod RefuelMethod { get; set; } = RefuelMethod.FixedRate;
         public virtual double RefuelRateKgSec { get; set; } = 28;
@@ -68,6 +69,7 @@ namespace Fenix2GSX.AppConfig
         public virtual int RemoveStairsAfterDepature { get; set; } = 2; // 0 => false | 1 => true | 2 => only on jetway stand
         public virtual int AttachTugDuringBoarding { get; set; } = 1; // 0 => not answer | 1 => no | 2 => yes
         public virtual int CallPushbackWhenTugAttached { get; set; } = 2; // 0 => false | 1 => after Departure Services | 2 => after Final LS
+        public virtual bool CancelServicesOnPushPhase { get; set; } = true;
         public virtual bool SkipWalkAround { get; set; } = true;
         public virtual bool SkipCrewQuestion { get; set; } = true;
         public virtual bool SkipFollowMe { get; set; } = true;
@@ -79,14 +81,15 @@ namespace Fenix2GSX.AppConfig
         public virtual bool GradualGroundEquipRemoval { get; set; } = false;
         public virtual bool CallDeboardOnArrival { get; set; } = true;
         public virtual bool RunDepartureOnArrival { get; set; } = false;
+        public virtual int SmartButtonAbortService { get; set; } = 0; // 0 => Never | 1 => abort current service gracefully | 2 => abort current service forcefully
         public virtual bool AnswerCabinCallGround { get; set; } = true;
         public virtual int DelayCabinCallGround { get; set; } = 4000;
         public virtual bool AnswerCabinCallAir { get; set; } = true;
         public virtual int DelayCabinCallAir { get; set; } = 2500;
         public virtual SortedDictionary<int, ServiceConfig> DepartureServices { get; set; } = new()
         {
-            { 0, new ServiceConfig(GsxServiceType.Cleaning, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround) },
-            { 1, new ServiceConfig(GsxServiceType.Lavatory, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround) },
+            { 0, new ServiceConfig(GsxServiceType.Cleaning, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround, TimeSpan.Zero, TimeSpan.Zero) },
+            { 1, new ServiceConfig(GsxServiceType.Lavatory, GsxServiceActivation.AfterCalled, TimeSpan.Zero, GsxServiceConstraint.TurnAround, TimeSpan.Zero, TimeSpan.Zero) },
             { 2, new ServiceConfig(GsxServiceType.Refuel, GsxServiceActivation.AfterCalled) },
             { 3, new ServiceConfig(GsxServiceType.Catering, GsxServiceActivation.AfterCalled) },
             { 4, new ServiceConfig(GsxServiceType.Water, GsxServiceActivation.AfterRequested) },            

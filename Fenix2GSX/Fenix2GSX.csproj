@@ -45,10 +45,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="CFIT.AppFramework" Version="2026.14.20.2931" />
-    <PackageReference Include="CFIT.AppLogger" Version="2025.350.17.2666" />
-    <PackageReference Include="CFIT.AppTools" Version="2026.14.20.2894" />
-    <PackageReference Include="CFIT.SimConnectLib" Version="2026.14.20.2917" />
+    <PackageReference Include="CFIT.AppFramework" Version="2026.45.16.1585" />
+    <PackageReference Include="CFIT.AppLogger" Version="2026.45.16.1541" />
+    <PackageReference Include="CFIT.AppTools" Version="2026.45.16.1551" />
+    <PackageReference Include="CFIT.SimConnectLib" Version="2026.45.16.1572" />
     <PackageReference Include="CoreAudio" Version="1.40.0" />
   </ItemGroup>
 

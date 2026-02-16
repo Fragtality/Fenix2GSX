@@ -34,6 +34,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Column="0" Grid.Row="0" Margin="6">
@@ -73,6 +74,11 @@
                     <TextBox Name="InputChanceSeat" Margin="6,0,0,0" Style="{StaticResource TextBoxCentered}"/>
                     <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">% Chance per Seat</TextBlock>
                 </StackPanel>
+
+                <CheckBox Grid.Column="0" Grid.Row="3" IsChecked="{Binding UseSimTime}" Style="{StaticResource CheckBoxSettingItem}"
+                          ToolTip="Use the Sim Time as current Time Source to compare against the SimBrief Departure Time (for Service Activation).&#x0a;If disabled the System (UTC) Time is used - so always 'Realtime'.">
+                    <TextBlock>Use Simulator Time as current Time Source</TextBlock>
+                </CheckBox>
             </Grid>
         </GroupBox>
     </Grid>

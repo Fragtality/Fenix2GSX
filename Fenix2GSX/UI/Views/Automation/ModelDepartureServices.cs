@@ -29,6 +29,8 @@ namespace Fenix2GSX.UI.Views.Automation
                     oldItem.ServiceActivation = newItem.ServiceActivation;
                     oldItem.MinimumFlightDuration = newItem.MinimumFlightDuration;
                     oldItem.ServiceConstraint = newItem.ServiceConstraint;
+                    oldItem.MaxTimeBeforeDeparture = newItem.MaxTimeBeforeDeparture;
+                    oldItem.MaxRunTime = newItem.MaxRunTime;
                     return true;
                 }
             }

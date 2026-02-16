@@ -31,13 +31,17 @@ namespace Fenix2GSX.UI.Views.Automation
             ViewModelSelector = new(GridDepartureServices, ViewModel.DepartureServices, AppWindow.IconLoader);
             ViewModelSelector.BindTextElement(LabelServiceName, nameof(ServiceConfig.ServiceType));
             ViewModelSelector.BindMember(SelectorActivation, nameof(ServiceConfig.ServiceActivation));
+            ViewModelSelector.BindTextElement(InputActivateAt, nameof(ServiceConfig.MaxTimeBeforeDeparture), "0", TimeSpanConverter);
             ViewModelSelector.BindTextElement(InputDuration, nameof(ServiceConfig.MinimumFlightDuration), "0", TimeSpanConverter);
             ViewModelSelector.BindMember(SelectorConstraint, nameof(ServiceConfig.ServiceConstraint));
+            ViewModelSelector.BindTextElement(InputRunTime, nameof(ServiceConfig.MaxRunTime), "0", TimeSpanConverter);
 
             ViewModelSelector.BindAddUpdateButton(ButtonEdit, null, GetItem, () => HasSelection);
             ViewModelSelector.AddUpdateCommand.Subscribe(SelectorActivation);
+            ViewModelSelector.AddUpdateCommand.Subscribe(InputActivateAt);
             ViewModelSelector.AddUpdateCommand.Subscribe(InputDuration);
             ViewModelSelector.AddUpdateCommand.Subscribe(SelectorConstraint);
+            ViewModelSelector.AddUpdateCommand.Subscribe(InputRunTime);
 
             GridDepartureServices.SelectionChanged += (_, _) => NotifyPropertyChanged(nameof(HasSelection));
 
@@ -64,9 +68,17 @@ namespace Fenix2GSX.UI.Views.Automation
             {
                 if (GridDepartureServices?.SelectedValue is ServiceConfig serviceConfig
                     && SelectorActivation?.SelectedValue is GsxServiceActivation activation
+                    && !string.IsNullOrWhiteSpace(InputActivateAt?.Text)
                     && !string.IsNullOrWhiteSpace(InputDuration?.Text)
-                    && SelectorConstraint?.SelectedValue is GsxServiceConstraint constraint)
-                    return new ServiceConfig(serviceConfig.ServiceType, activation, (TimeSpan)TimeSpanConverter.ConvertBack(InputDuration.Text, typeof(TimeSpan), null, null), constraint);
+                    && SelectorConstraint?.SelectedValue is GsxServiceConstraint constraint
+                    && !string.IsNullOrWhiteSpace(InputRunTime?.Text))
+                    
+                    return new ServiceConfig(serviceConfig.ServiceType,
+                                             activation,
+                                             (TimeSpan)TimeSpanConverter.ConvertBack(InputDuration.Text, typeof(TimeSpan), null, null),
+                                             constraint,
+                                             (TimeSpan)TimeSpanConverter.ConvertBack(InputActivateAt.Text, typeof(TimeSpan), null, null),
+                                             (TimeSpan)TimeSpanConverter.ConvertBack(InputRunTime.Text, typeof(TimeSpan), null, null));
             }
             catch { }
             

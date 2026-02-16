@@ -41,19 +41,27 @@ namespace Fenix2GSX.AppConfig
         public virtual TimeSpan MinimumFlightDuration { get; set; } = TimeSpan.Zero;
         [JsonIgnore]
         public virtual bool HasDurationConstraint => MinimumFlightDuration > TimeSpan.Zero;
+        public virtual TimeSpan MaxTimeBeforeDeparture { get; set; } = TimeSpan.Zero;
+        [JsonIgnore]
+        public virtual bool HasTobtConstraint => MaxTimeBeforeDeparture > TimeSpan.Zero;
+        public virtual TimeSpan MaxRunTime { get; set; } = TimeSpan.Zero;
+        [JsonIgnore]
+        public virtual bool HasMaxRunTime => MaxRunTime > TimeSpan.Zero;
         [JsonIgnore]
         public virtual int ActivationCount { get; set; } = 0;
 
         public ServiceConfig(){ }
 
-        public ServiceConfig(GsxServiceType type, GsxServiceActivation activation) : this(type, activation, TimeSpan.Zero, GsxServiceConstraint.NoneAlways) { }
+        public ServiceConfig(GsxServiceType type, GsxServiceActivation activation) : this(type, activation, TimeSpan.Zero, GsxServiceConstraint.NoneAlways, TimeSpan.Zero, TimeSpan.Zero) { }
 
-        public ServiceConfig(GsxServiceType type, GsxServiceActivation activation, TimeSpan duration, GsxServiceConstraint constraint)
+        public ServiceConfig(GsxServiceType type, GsxServiceActivation activation, TimeSpan duration, GsxServiceConstraint constraint, TimeSpan maxBeforeDepart, TimeSpan maxRun)
         {
             ServiceType = type;
             ServiceActivation = activation;
             MinimumFlightDuration = duration;
             ServiceConstraint = constraint;
+            MaxTimeBeforeDeparture = maxBeforeDepart;
+            MaxRunTime = maxRun;
         }
     }
 }

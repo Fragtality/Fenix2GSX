@@ -27,7 +27,7 @@ namespace Fenix2GSX.Aircraft
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        protected virtual async Task<JsonNode> GetJsonNode()
+        public virtual async Task<JsonNode> GetSimbriefJson()
         {
             if (long.TryParse(SimbriefUser, out _))
             {
@@ -53,12 +53,10 @@ namespace Fenix2GSX.Aircraft
                 return false;
         }
 
-        public virtual async Task<string> GetDestinationIcao()
+        public virtual async Task<string> GetDestinationIcao(JsonNode json)
         {
             try
             {
-                var json = await GetJsonNode();
-                Logger.Debug($"Received Result");
                 if (GetJsonString(json["origin"]!["icao_code"], out string icao))
                 {
                     Logger.Debug($"Departure ICAO received: {icao}");
@@ -67,10 +65,28 @@ namespace Fenix2GSX.Aircraft
             }
             catch (Exception ex)
             {
-                Logger.Warning($"Error while fetching SimBrief Departure ICAO (Exception: {ex.GetType().Name})");
+                Logger.Warning($"Error while extracting Departure ICAO from SimBrief (Exception: {ex.GetType().Name})");
             }
 
             return "";
+        }
+
+        public virtual async Task<DateTime> GetScheduledOut(JsonNode json)
+        {
+            try
+            {
+                if (GetJsonString(json["times"]!["sched_out"], out string estOut))
+                {
+                    Logger.Debug($"Out-Time received: {estOut}");
+                    return DateTime.Parse(estOut).ToUniversalTime();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warning($"Error while extracting scheduled Out-Time from SimBrief (Exception: {ex.GetType().Name})");
+            }
+
+            return DateTime.Now;
         }
     }
 }

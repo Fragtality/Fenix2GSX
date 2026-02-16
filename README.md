@@ -148,12 +148,61 @@ Note: Basic Ground Equipment Handling (GPU, Chocks) is always active and can not
 Configure how the GSX Services are handled:
 - Reposition on Startup (either use Fenix2GSX for that or the GSX Setting - but not both!)
 - The Service Activation (if and when) and Order of the Departure Services (Refuel, Catering, Boarding as well as Lavatory & Water)
-- If the Departure Services should already be called while Deboarding
+- If the Departure Services should already be called while Deboarding (in the Arrival Phase)
+- If the last called Service should be cancled when using the INT/RAD Switch (to call the next Service)
 - How Refueling is handled: with a fixed Rate, a fixed Time Target or via Refuel Panel (or if the GSX Service is called at all to support Tankering)
 - With the Refuel Panel Method, the Rate is determined by the EFB Setting
 - If and when Pushback should be called automatically
+- If Departure Services should be canceled in the Pushback Phase
 
 <br/>
+###### **Service Activation**
+
+The Activation Column determines how the respective Service is handled and/or called by the App:
+- **Skip / Ignore**: Service will neither be called nor monitored by the App
+- **Manual by User**: Service will be called externally by the User or another App. BUT: it must be completed to end the Departure Phase
+- **Previous called**: Service will directly be called after the previous Service was called
+- **Previous requested**: Service will be called as soon as the previous Service is reported as 'requested' by GSX
+- **Previous active**: Service will be called as soon as the previous Service is reported as 'active' by GSX
+- **Previous completed**: Service will be called as soon as the previous Service is reported as 'completed' by GSX
+- **All completed**: Service will only be called after all previous Service are reported as 'completed' by GSX
+
+Note: The first Service will always be called directly (if not set to skipped or manual or having Constraints set), as it has no previous Service!
+
+<br/>
+
+###### **Service Constraints**
+
+All other Columns allow to skip Services dynamically based on additional Constraints that can be set.<br/><br/>
+
+**Activate at**
+Wait to call the Service until X Minutes (or lower) before Departure. A Value of 0 calls the Service without Delay.<br/>
+The Service Activation still applies when the configured Minutes are reached. The INT/RAD Switch will override the Departure Time Check.<br/>
+Note that the Time is only evaluated for the next Service in Queue - other Services further down will not be checked until they are next.<br/>
+The SimBrief Departure Date/Time ('sched_out') is compared against the current Simulator Date/Time by default. The System (UTC) Time can also be used (=> Aircraft Options). But in any Case the current Time Source has to align with the Departure Time for this Constraint to work! I.e. if you change the Simulator Time away from Real-Time, use your System Time and ensure the SimBrief Departure Time is ahead of that.
+<br/><br/>
+
+**Min. Flight Time**
+Skip the Service when the scheduled Block Time is equal or above the configured Minutes - i.e. only call Catering on 'longer' Flights, else skip it.<br/>
+A Value of 0 ignores the Block Time.<br/>
+<br/><br/>
+
+**Constraint**
+Skip the Service in certain Situations:
+- **None**: No Constraint applied, the Service is called normally (according to the other Options)
+- **Only Departure**: The Service is only called on the first Departure (resetted by App Restart or new Session)
+- **Only Turn**: The Service is only called on Turn Arounds (resetted by App Restart or new Session)
+- **Only on Hub**: The Service is only called when the Departure ICAO (as of SimBrief) has a Match in the Company Hub List
+- **Only on Non-Hub**: The Service is only called when the Departure ICAO (as of SimBrief) has NO Match in the Company Hub List
+- **Turn on Hub**: The Service is only called on Turn Arounds when the Arrival ICAO (as of SimBrief) has a Match in the Company Hub List
+- **Turn on Non-Hub**: The Service is only called on Turn Arounds when the Arrival ICAO (as of SimBrief) has NO Match in the Company Hub List
+
+<br/>
+
+**Max Run Time**
+The maximum Time the Service is allowed to run before it is canceled (gracefully). A Value of 0 means no Limitation.
+
+<br/><br/>
 
 ##### **Operator Selection**
 
@@ -179,8 +228,9 @@ All Options related to skip / automatically Answer certain GSX Questions or Airc
 
 ##### **Aircraft Options**
 
-Delay for the Final Loadsheet, Save & Load of the Fuel on Board, Randomization of Passengers on OFP Import.<br/>
-By default, Fenix2GSX saves the FOB per Aircraft Registration upon Arrival. When you load the same Registration in another Session, it will load/restore the last saved FOB on Startup. If no saved Fuel Value can be found, it uses the Default Value set under App Settings (3000kg).
+Delay for the Final Loadsheet, Save & Load of the Fuel on Board, Randomization of Passengers on OFP Import and the Time Source used.<br/>
+By default, Fenix2GSX saves the FOB per Aircraft Registration upon Arrival. When you load the same Registration in another Session, it will load/restore the last saved FOB on Startup. If no saved Fuel Value can be found, it uses the Default Value set under App Settings (3000kg).<br/>
+The Time Source is relevant when Services should be called X Minutes before Departure Time.
 
 <br/><br/>
 
@@ -210,7 +260,7 @@ You can map freely Applications to any of the ACP Channels. Per Default ATC Appl
 To identify an Application you need to enter it's Binary Name without .exe Extension. The UI will present a List of matching (running!) Applications to your Input to ease Selection. The **Use Mute** Checkbox determines if the **Record Latch** (=Knob is pulled or pushed) is used to mute the Application.<br/><br/>
 
 Some Audio Devices act 'strangely' or throw Exceptions when being scanned by Fenix2GSX for Audio-Sessions. If you have such a Device, you can add it to the Blacklist so that Fenix2GSX ignores it (normally it should automatically add Devices throwing Exceptions).<br/>
-But there also Cases where Input (Capture) Devices are reported as Output (Render) Devices which leads to Any2GSX controlling the Volume of your Microphone! In such Cases these "false-output" also need to be added to the Blacklist.<br/>
+But there also Cases where Input (Capture) Devices are reported as Output (Render) Devices which leads to Fenix2GSX controlling the Volume of your Microphone! In such Cases these "false-output" also need to be added to the Blacklist.<br/>
 Matching is done on the Start of the Device Name, but it is recommended to use the exact Device Name for blacklisting. Tip: when you hit Ctrl+C on the Device Dropdown (under App Mappings), the selected Device's Name is automatically pasted to Blacklist Input Field.
 
 <br/><br/>
@@ -262,6 +312,7 @@ Besides these general Best Practices, there is nothing Special to consider - Pla
 - Use of **Walkaround Mode** while Services are running is **possible with Constraints**:
   - Do not use Walkaround Mode when Doors are about to be opened/closed (else they can't be handled)
 - When and in which Order the GSX Services are called depends on your Configuration, per Default it is Refuel + Catering -> Water -> Boarding. You can use the **INT/RAD** Switch to call the next Service in the Queue - i.e. call Boarding earlier.
+- You can cancel running Services in the GSX Menu if needed - the App will handle that like the normal Completion (and eventually take corrective Measures for planned Fuel/Payload)
 - The PCA will be removed anytime the **APU is running** and the APU **Bleed is On** (regardless if you have configured Fenix2GSX to place it).
 - When **all** Departure Services are **completed** (typically after Boarding), Fenix2GSX will switch to the Pushback Phase. The **Final Loadsheet** will be transmitted 90 - 150 Seconds (Delay configurable) after the Services are completed. 
 - With default Settings, the Rear-Stair on Jetway Stand will be removed once the Services are completed.
