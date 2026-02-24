@@ -187,15 +187,10 @@ namespace Fenix2GSX.GSX.Services
         {
             var state = ReadState();
 
-            if (NumStateCompleted == 6)
-                return ReadState();
+            if ((state == GsxServiceState.Callable || state == GsxServiceState.Bypassed || state == (GsxServiceState)NumStateCompleted) && WasActive)
+                return GsxServiceState.Completed;
             else
-            {
-                if ((state == GsxServiceState.Bypassed || state == (GsxServiceState)NumStateCompleted) && WasActive)
-                    return GsxServiceState.Completed;
-                else
-                    return state;
-            }
+                return state;
         }
 
         protected virtual void SetStateVariable(GsxServiceState state)
