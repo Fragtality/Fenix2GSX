@@ -119,6 +119,7 @@ namespace Fenix2GSX.AppConfig
         public virtual int DelayServiceStateChange { get; set; } = 500;
         public virtual int SpeedTresholdTaxiOut { get; set; } = 2;
         public virtual int SpeedTresholdTaxiIn { get; set; } = 30;
+        public virtual int RefuelDisconnectTimeout { get; set; } = 10000;
 
         [JsonIgnore]
         public virtual AircraftProfile CurrentProfile => AppService.Instance?.GsxService?.AircraftProfile;

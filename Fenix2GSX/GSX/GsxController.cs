@@ -41,7 +41,8 @@ namespace Fenix2GSX.GSX
         public virtual MessageReceiver<MsgGsxCouatlStopped> MsgCouatlStopped { get; protected set; }
         public virtual ConcurrentDictionary<GsxServiceType, GsxService> GsxServices { get; } = [];
         public virtual bool IsRefuelActive => GsxServices[GsxServiceType.Refuel].State == GsxServiceState.Active;
-        
+        public virtual bool IsFuelHoseConnected => (GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel)?.SubRefuelHose?.GetNumber() == 1;
+
         public virtual bool CouatlVarsValid { get; protected set; } = false;
         public virtual int CouatlLastProgress { get; protected set; } = 0;
         public virtual int CouatlLastStarted { get; protected set; } = 0;
@@ -500,6 +501,11 @@ namespace Fenix2GSX.GSX
             sequence.Commands.Add(GsxMenuCommand.CreateDummy());
 
             await Menu.RunSequence(sequence);
+        }
+
+        public virtual async Task CancelRefuel()
+        {
+            await GsxServices[GsxServiceType.Refuel].Cancel();
         }
 
         public override Task Stop()

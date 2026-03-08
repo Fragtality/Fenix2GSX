@@ -226,10 +226,14 @@ namespace Fenix2GSX.GSX.Services
         public virtual async Task Cancel(int option = -1)
         {
             if (option == -1)
-                option = Controller.AircraftProfile.SmartButtonAbortService;
+                if (Controller.AircraftProfile.SmartButtonAbortService > 0)
+                    option = Controller.AircraftProfile.SmartButtonAbortService;
+                else
+                    option = 1;
 
             var sequence = new GsxMenuSequence();
             sequence.Commands.AddRange(CancelSequence.Commands);
+            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
             sequence.Commands.Add(new(option, GsxConstants.MenuCancelService) { WaitReady = true });
             sequence.Commands.Add(GsxMenuCommand.CreateDummy());
 
