@@ -113,7 +113,7 @@ namespace Fenix2GSX.GSX.Menu
         protected virtual async Task OnPushQuestion(GsxMenu menu)
         {
             Logger.Debug($"Request Pushback Question active");
-            await Select(1, false, false, 2);
+            await Select(1, false, false, 2, true);
         }
 
         protected virtual async Task OnTugQuestion(GsxMenu menu)
@@ -121,9 +121,9 @@ namespace Fenix2GSX.GSX.Menu
             Logger.Debug($"Tug Question active");
             int hide = !AircraftProfile.SkipCrewQuestion ? 0 : 2;
             if (AircraftProfile.AttachTugDuringBoarding == 2)
-                await Select(1, true, false, hide);
+                await Select(1, true, false, hide, true);
             else if (AircraftProfile.AttachTugDuringBoarding == 1)
-                await Select(2, true, false, hide);
+                await Select(2, true, false, hide, true);
 
             if (AircraftProfile.SkipCrewQuestion && AircraftProfile.AttachTugDuringBoarding != 0)
                 SuppressMenuRefresh = false;
@@ -137,8 +137,11 @@ namespace Fenix2GSX.GSX.Menu
             if (AircraftProfile.SkipFollowMe && !FollowMeAnswered)
             {
                 var sequence = new GsxMenuSequence();
+                sequence.Commands.Add(GsxMenuCommand.CreateDummy());
                 sequence.Commands.Add(new GsxMenuCommand(2, GsxConstants.MenuFollowMe, false) { WaitReady = false});
+                sequence.Commands.Add(GsxMenuCommand.CreateDummy());
                 sequence.Commands.Add(GsxMenuCommand.CreateOperator());
+                sequence.Commands.Add(GsxMenuCommand.CreateDummy());
                 sequence.Commands.Add(GsxMenuCommand.CreateReset());
                 FollowMeAnswered = await RunSequence(sequence);
             }
@@ -148,7 +151,7 @@ namespace Fenix2GSX.GSX.Menu
         {
             Logger.Debug($"DeIce Question active");
             if (AircraftProfile.KeepDirectionMenuOpen && DeIceQuestionAnswered)
-                await Select(2);
+                await Select(2, true, false, 0, true);
         }
 
         protected virtual async Task OnParking(GsxMenu menu)
@@ -169,7 +172,7 @@ namespace Fenix2GSX.GSX.Menu
             Logger.Debug($"Board Crew Question active");
             if (AircraftProfile.SkipCrewQuestion)
             {
-                await Select(1, false, false, 2);
+                await Select(1, false, false, 2, true);
                 SuppressMenuRefresh = false;
             }
         }
@@ -179,7 +182,7 @@ namespace Fenix2GSX.GSX.Menu
             Logger.Debug($"Deboard Crew Question active");
             if (AircraftProfile.SkipCrewQuestion)
             {
-                await Select(1, false, false, 2);
+                await Select(1, false, false, 2, true);
                 SuppressMenuRefresh = false;
             }            
         }
@@ -358,7 +361,7 @@ namespace Fenix2GSX.GSX.Menu
             return result;
         }
 
-        public virtual async Task Select(int number, bool waitReady = true, bool openMenu = false, int hide = 0)
+        public virtual async Task Select(int number, bool waitReady = true, bool openMenu = false, int hide = 0, bool waitSelection = false)
         {
             if (openMenu && !IsMenuReady)
             {
@@ -372,8 +375,12 @@ namespace Fenix2GSX.GSX.Menu
                 await MsgMenuReady.ReceiveAsync(false, Config.MenuOpenTimeout, RequestToken);
             }
 
+            if (waitSelection)
+                await Task.Delay(Config.MenuCheckInterval * 2, RequestToken);
             Logger.Debug($"Menu Select Item {number} => Value {number - 1}");
             await SubMenuChoice.WriteValue(number - 1);
+            if (waitSelection && hide > 0)
+                await Task.Delay(Config.MenuCheckInterval * 2, RequestToken);
 
             if (hide == 1)
                 Hide();
@@ -500,12 +507,12 @@ namespace Fenix2GSX.GSX.Menu
             if (gsxOperator != null)
             {
                 Logger.Information($"Selecting Operator '{gsxOperator.Title}' (GSX Choice: {gsxOperator.GsxChoice})");
-                await Select(gsxOperator.Number, false);
+                await Select(gsxOperator.Number, false, false, 0, true);
             }
             else
             {
                 Logger.Warning($"Selecting Operator #1 - no Matches found");
-                await Select(1, false);
+                await Select(1, false, false, 0, true);
             }
         }
 

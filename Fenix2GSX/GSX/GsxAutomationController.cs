@@ -890,7 +890,7 @@ namespace Fenix2GSX.GSX
                 await ServicePushBack.Call();
                 await Controller.Menu.MsgMenuReady.ReceiveAsync();
                 if (Controller.Menu.MatchTitle(GsxConstants.MenuPushbackInterrupt) && Controller.Menu.MenuLines[2].StartsWith(GsxConstants.MenuPushbackChange, StringComparison.InvariantCultureIgnoreCase))
-                    await Controller.Menu.Select(3, false, false);
+                    await Controller.Menu.Select(3, false, false, 0, true);
             }
         }
 
