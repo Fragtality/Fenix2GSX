@@ -112,7 +112,7 @@
   "DelayForegroundChange": 1250,
   "DelayAircraftModeChange": 1250,
   "MenuCheckInterval": 250,
-  "MenuOpenTimeout": 2500,
+  "MenuOpenTimeout": 7500,
   "EfbCheckInterval": 1500,
   "DingOnStartup": true,
   "DingOnFinal": true,
@@ -243,7 +243,7 @@
       }
     }
   ],
-  "ConfigVersion": 24,
+  "ConfigVersion": 25,
   "LogInterval": 3,
   "SizeLimit": 10485760,
   "LogCount": 3,

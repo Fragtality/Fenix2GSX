@@ -14,7 +14,9 @@ namespace Fenix2GSX.GSX.Services
         {
             var sequence = new GsxMenuSequence();
             sequence.Commands.Add(new(8, GsxConstants.MenuGate, true));
+            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
             sequence.Commands.Add(new(4, GsxConstants.MenuAdditionalServices) { WaitReady = true });
+            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
             sequence.Commands.Add(GsxMenuCommand.CreateOperator());
             sequence.Commands.Add(GsxMenuCommand.CreateReset());
 
@@ -25,6 +27,7 @@ namespace Fenix2GSX.GSX.Services
         {
             var sequence = new GsxMenuSequence();
             sequence.Commands.Add(new(8, GsxConstants.MenuGate, true));
+            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
             sequence.Commands.Add(new(4, GsxConstants.MenuAdditionalServices) { WaitReady = true });
 
             return sequence;
@@ -46,12 +49,6 @@ namespace Fenix2GSX.GSX.Services
             SubWaterService.OnReceived -= OnStateChange;
 
             SimStore.Remove(GsxConstants.VarServiceWater);
-        }
-
-        protected override bool CheckCalled()
-        {
-            IsCalled = IsRunning || CallSequence.IsSuccess;
-            return IsCalled;
         }
     }
 }

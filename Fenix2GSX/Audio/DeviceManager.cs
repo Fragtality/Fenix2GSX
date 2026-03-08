@@ -43,12 +43,18 @@ namespace Fenix2GSX.Audio
             {
                 if (force || DateTime.Now >= LastDeviceScan + TimeSpan.FromMilliseconds(Config.AudioDeviceCheckInterval))
                 {
-                    Logger.Debug($"Scanning Audio Devices");
+                    if (!force)
+                        Logger.Debug($"Scanning Audio Devices");
+                    else
+                        Logger.Verbose($"Scanning Audio Devices");
                     var deviceList = EnumerateDevices(out int sessionCount);
 
                     if (LastDeviceCount != deviceList.Count || LastSessionCount != sessionCount || force)
                     {
-                        Logger.Debug($"Device Enumeration needed - DeviceCount {LastDeviceCount != deviceList.Count} | SessionCount {LastSessionCount != sessionCount}");
+                        if (!force)
+                            Logger.Debug($"Device Enumeration needed - DeviceCount {LastDeviceCount != deviceList.Count} | SessionCount {LastSessionCount != sessionCount}");
+                        else
+                            Logger.Verbose($"Device Enumeration forced - DeviceCount {LastDeviceCount != deviceList.Count} | SessionCount {LastSessionCount != sessionCount}");
                         result = true;
                         Clear();
                         Add(deviceList);

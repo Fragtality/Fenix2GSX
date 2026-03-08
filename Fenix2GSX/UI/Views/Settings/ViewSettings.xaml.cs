@@ -24,6 +24,8 @@ namespace Fenix2GSX.UI.Views.Settings
             ViewModel.BindStringInteger(nameof(ViewModel.RefuelPanelOpenDelay), InputRefuelOpenDelay, "10", new ValidationRuleRange<int>(1, 90));
             ViewModel.BindStringInteger(nameof(ViewModel.RefuelPanelCloseDelay), InputRefuelCloseDelay, "42", new ValidationRuleRange<int>(1, 180));
             ViewModel.BindStringInteger(nameof(ViewModel.GsxMenuStartupMaxFail), InputGsxMaxFail, "4", new ValidationRuleRange<int>(1,16));
+            ViewModel.BindStringInteger(nameof(ViewModel.AudioDeviceCheckInterval), InputAudioScanDevice, "60000", new ValidationRuleRange<int>(5000, 600000));
+            ViewModel.BindStringInteger(nameof(ViewModel.AudioProcessCheckInterval), InputAudioScanProcess, "2500", new ValidationRuleRange<int>(1000, 120000));
 
             ViewModelSelector = new(ListSavedFuel, ViewModel.ModelSavedFuel);
             ViewModelSelector.BindRemoveButton(ButtonRemove);

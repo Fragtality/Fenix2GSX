@@ -62,7 +62,10 @@ namespace Fenix2GSX.Audio
                     ProcessId = (uint)Manager.ProcessList.Where(p => p.ProcessName.Equals(Binary, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault().Id;
                     if (ProcessId != 0)
                     {
-                        Logger.Debug($"Binary '{Binary}' started (PID: {ProcessId})");
+                        if (!force)
+                            Logger.Debug($"Binary '{Binary}' started (PID: {ProcessId})");
+                        else
+                            Logger.Verbose($"Binary '{Binary}' started (PID: {ProcessId})");
                         SetSimSubscriptions();
                         result = 1;
                     }

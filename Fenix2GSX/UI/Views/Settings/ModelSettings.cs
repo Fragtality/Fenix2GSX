@@ -84,6 +84,8 @@ namespace Fenix2GSX.UI.Views.Settings
         public virtual int GsxMenuStartupMaxFail { get => Source.GsxMenuStartupMaxFail; set => SetModelValue<int>(value); }
         public virtual bool RunGsxService { get => Source.RunGsxService; set => SetModelValue<bool>(value); }
         public virtual bool RunAudioService { get => Source.RunAudioService; set => SetModelValue<bool>(value); }
+        public virtual int AudioDeviceCheckInterval { get => Source.AudioDeviceCheckInterval; set => SetModelValue<int>(value); }
+        public virtual int AudioProcessCheckInterval { get => Source.AudioProcessCheckInterval; set => SetModelValue<int>(value); }
         public virtual bool OpenAppWindowOnStart { get => Source.OpenAppWindowOnStart; set => SetModelValue<bool>(value); }
     }
 }

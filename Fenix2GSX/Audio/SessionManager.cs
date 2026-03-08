@@ -109,10 +109,7 @@ namespace Fenix2GSX.Audio
                 {
                     if (session.IsActive && (session.SessionControls.Count == 0 || force))
                     {
-                        if (force)
-                            Logger.Debug($"Query SessionControls for AudioSession {session}");
-                        else
-                            Logger.Verbose($"Query SessionControls for AudioSession {session}");
+                        Logger.Verbose($"Query SessionControls for AudioSession {session}");
                         var sessions = DeviceManager.GetAudioSessions(session);
                         if (force || sessions.Count != session.SessionControls.Count)
                             session.SessionControls.Clear();
@@ -121,7 +118,10 @@ namespace Fenix2GSX.Audio
                         {
                             session.SetSessionList(sessions);
                             session.SynchControls();
-                            Logger.Debug($"Added {sessions.Count} SessionControls to AudioSession {session}");
+                            if (!force)
+                                Logger.Debug($"Added {sessions.Count} SessionControls to AudioSession {session}");
+                            else
+                                Logger.Verbose($"Added {sessions.Count} SessionControls to AudioSession {session}");
                         }
                         else if (session.SessionControls.Count == 0)
                             session.SearchCounter++;

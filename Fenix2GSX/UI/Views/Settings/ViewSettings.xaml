@@ -49,6 +49,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Column="0" Grid.Row="0" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Which Source is used to get the Unit used in the UI.">
@@ -140,7 +141,7 @@
                         <TextBox Name="InputRefuelOpenDelay" Style="{StaticResource TextBoxCentered}"/>
                         <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Grid.Row="10" Style="{StaticResource SettingItemPanel}" ToolTip="Delay in Seconds to close &amp; Power off the Refuel Panel after the Refuel Process has finished.">
+                    <StackPanel Orientation="Horizontal" ToolTip="Delay in Seconds to close &amp; Power off the Refuel Panel after the Refuel Process has finished.">
                         <TextBlock Margin="12,0,6,0" Style="{StaticResource TextBlockDefault}">Close:</TextBlock>
                         <TextBox Name="InputRefuelCloseDelay" Style="{StaticResource TextBoxCentered}"/>
                         <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">s</TextBlock>
@@ -176,10 +177,26 @@
                 </TextBlock>
                 <CheckBox Grid.Column="1" Grid.Row="16" IsChecked="{Binding RunAudioService}" Style="{StaticResource CheckBoxSettingItem}" ToolTip="Enable / Disable the Audio Controller for App Volume Control.&#x0a;Disable if you want to use Fenix' native Implementation."/>
 
-                <TextBlock Grid.Column="0" Grid.Row="17" Margin="6" Style="{StaticResource TextBlockDefault}" VerticalAlignment="Top" ToolTip="The Fuel-on-Board Values currently stored by Any2GSX for the various Aircrafts.">
-                    Saved Fuel Values:
+                <TextBlock Grid.Column="0" Grid.Row="17" Margin="6" Style="{StaticResource TextBlockDefault}" ToolTip="Intervals at which the App will Scan for Changes in Audio Devices and running Processes.&#x0a;Lower Values may increase CPU/Device Usage but detect Changes faster.">
+                    Audio Scan Intervals:
                 </TextBlock>
                 <StackPanel Grid.Column="1" Grid.Row="17" Margin="6" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" ToolTip="Interval in ms at which all Audio Devices in the System are queried.">
+                        <TextBlock Margin="0,0,6,0" Style="{StaticResource TextBlockDefault}">Devices:</TextBlock>
+                        <TextBox Name="InputAudioScanDevice" Style="{StaticResource TextBoxCentered}"/>
+                        <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">ms</TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" ToolTip="Interval in ms at which the Active Processes in the System are queried.">
+                        <TextBlock Margin="12,0,6,0" Style="{StaticResource TextBlockDefault}">Processes:</TextBlock>
+                        <TextBox Name="InputAudioScanProcess" Style="{StaticResource TextBoxCentered}"/>
+                        <TextBlock Margin="2,0,0,0" Style="{StaticResource TextBlockDefault}">ms</TextBlock>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Grid.Column="0" Grid.Row="18" Margin="6" Style="{StaticResource TextBlockDefault}" VerticalAlignment="Top" ToolTip="The Fuel-on-Board Values currently stored by Any2GSX for the various Aircrafts.">
+                    Saved Fuel Values:
+                </TextBlock>
+                <StackPanel Grid.Column="1" Grid.Row="18" Margin="6" Orientation="Horizontal">
                     <ListView MinWidth="228" MaxWidth="384" Height="96" MaxHeight="142" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                               HorizontalAlignment="Left" HorizontalContentAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center"
                               Name="ListSavedFuel">
