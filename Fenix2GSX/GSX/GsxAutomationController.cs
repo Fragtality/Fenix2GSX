@@ -344,6 +344,8 @@ namespace Fenix2GSX.GSX
             {
                 if (!Aircraft.EnginesRunning && Aircraft.IsBrakeSet && !Aircraft.LightBeacon)
                 {
+                    foreach (var activation in Profile.DepartureServices.Values)
+                        activation.ActivationCount++;
                     await Controller.Menu.OpenHide();
                     OfpArrivalId = FlightPlanId;
                     StateChange(AutomationState.Arrival);
@@ -704,7 +706,6 @@ namespace Fenix2GSX.GSX
         protected virtual void MoveDepartureQueue(GsxService service, bool asSkipped = false)
         {
             DepartureServicesCalled.Add(service);
-            DepartureServicesCurrent.ActivationCount++;
             if (asSkipped)
                 service.IsSkipped = true;
             else
