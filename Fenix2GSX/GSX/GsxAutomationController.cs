@@ -331,12 +331,14 @@ namespace Fenix2GSX.GSX
             {
                 if (IsOnGround && Aircraft.GroundSpeed < Config.SpeedTresholdTaxiIn)
                 {
+                    Logger.Debug("Entered Taxi-In phase Condition");
+                    StateChange(AutomationState.TaxiIn);
                     if (Config.RestartGsxOnTaxiIn)
                     {
+                        await Task.Delay(500, RequestToken);
                         Logger.Information($"Restarting GSX on Taxi-In");
                         await AppService.Instance.RestartGsx();
-                    }
-                    StateChange(AutomationState.TaxiIn);
+                    }                    
                 }
             }
             //TaxiIn => Arrival
