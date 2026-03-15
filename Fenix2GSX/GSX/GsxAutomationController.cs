@@ -193,8 +193,14 @@ namespace Fenix2GSX.GSX
                 DepartureServicesEnumerator.MoveNext();
                 foreach (var activation in Profile.DepartureServices.Values)
                     activation.ActivationCount = 0;
-                Logger.Information($"Automation Service started");
 
+                if (Aircraft?.IsLoaded == true && Controller?.SkippedWalkAround == true && SmartButtonRequest)
+                {
+                    Logger.Debug($"Reset Smart Button on Service Start");
+                    await Aircraft.ResetSmartButton();
+                }
+
+                Logger.Information($"Automation Service started");
                 while (RunFlag && Controller.IsActive && !Token.IsCancellationRequested && !RequestToken.IsCancellationRequested)
                 {
                     Logger.Verbose($"Automation Tick - State: {State} | ServicesValid: {ServicesValid}");
