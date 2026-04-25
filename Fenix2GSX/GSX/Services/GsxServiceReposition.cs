@@ -7,15 +7,16 @@ namespace Fenix2GSX.GSX.Services
     {
         public override GsxServiceType Type => GsxServiceType.Reposition;
         protected override ISimResourceSubscription SubStateVar => null;
+
         protected override GsxMenuSequence InitCallSequence()
         {
             var sequence = new GsxMenuSequence();
-            sequence.Commands.Add(new(10, GsxConstants.MenuGate, true));
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
-            sequence.Commands.Add(new(1, GsxConstants.MenuParkingSelect) { WaitReady = true });
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
-            sequence.Commands.Add(GsxMenuCommand.CreateReset());
+            sequence.Commands.Add(GsxMenuCommand.Open());
+            sequence.Commands.Add(GsxMenuCommand.Select(10, GsxConstants.MenuGate));
+            sequence.Commands.Add(GsxMenuCommand.Select(1, GsxConstants.MenuParkingSelect));
+            sequence.Commands.Add(GsxMenuCommand.Wait());
+            sequence.Commands.Add(GsxMenuCommand.Wait());
+            sequence.Commands.Add(GsxMenuCommand.Open());
             sequence.IgnoreGsxState = true;
 
             return sequence;
@@ -51,7 +52,8 @@ namespace Fenix2GSX.GSX.Services
 
         protected override bool CheckCalled()
         {
-            return SequenceResult;
+            IsCalled = SequenceResult;
+            return IsCalled;
         }
 
         protected override void SetStateVariable(GsxServiceState state)

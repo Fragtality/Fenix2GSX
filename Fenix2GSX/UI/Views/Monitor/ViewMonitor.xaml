@@ -107,7 +107,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2" Grid.Row="0" Style="{StaticResource LabelMonitorPanel}" ToolTip="State of the GSX Menu">
                     <Label>Menu</Label>
-                    <Label Content="{Binding GsxMenu}"/>
+                    <Label Content="{Binding GsxMenu, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="3" Grid.Row="0" Style="{StaticResource LabelMonitorPanel}" ToolTip="Passenger Count set for GSX">
                     <Label>Pax Target</Label>
@@ -124,36 +124,36 @@
 
                 <StackPanel Grid.Column="0" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="Was Reposition executed?">
                     <Label>Reposition</Label>
-                    <Label Content="{Binding ServiceReposition}"/>
+                    <Label Content="{Binding ServiceReposition, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="Refuel Service State">
                     <Label>Refuel</Label>
-                    <Label Content="{Binding ServiceRefuel}"/>
+                    <Label Content="{Binding ServiceRefuel, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="2" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="Catering Service State">
                     <Label>Catering</Label>
-                    <Label Content="{Binding ServiceCatering}"/>
+                    <Label Content="{Binding ServiceCatering, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="3" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="Lavatory Service State">
                     <Label>Lavatory</Label>
-                    <Label Content="{Binding ServiceLavatory}"/>
+                    <Label Content="{Binding ServiceLavatory, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="4" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="Water Service State">
                     <Label>Water</Label>
-                    <Label Content="{Binding ServiceWater}"/>
+                    <Label Content="{Binding ServiceWater, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="5" Grid.Row="1" Style="{StaticResource LabelMonitorPanel}" ToolTip="Cleaning Service State">
                     <Label>Cleaning</Label>
-                    <Label Content="{Binding ServiceCleaning}"/>
+                    <Label Content="{Binding ServiceCleaning, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="0" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Boarding Service State">
                     <Label>Boarding</Label>
-                    <Label Content="{Binding ServiceBoarding}"/>
+                    <Label Content="{Binding ServiceBoarding, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Debarding Service State">
                     <Label>Deboarding</Label>
-                    <Label Content="{Binding ServiceDeboarding}"/>
+                    <Label Content="{Binding ServiceDeboarding, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="2" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Departure/Pushback Service State (and State of the Pushback)">
                     <Label>Pushback</Label>
@@ -161,11 +161,11 @@
                 </StackPanel>
                 <StackPanel Grid.Column="3" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Jetway Service State (as reported by GSX)">
                     <Label>Jetway</Label>
-                    <Label Content="{Binding ServiceJetway}"/>
+                    <Label Content="{Binding ServiceJetway, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="4" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="Stair Service State">
                     <Label>Stairs</Label>
-                    <Label Content="{Binding ServiceStairs}"/>
+                    <Label Content="{Binding ServiceStairs, Converter={StaticResource SafeEnumConverter}}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="5" Grid.Row="2" Style="{StaticResource LabelMonitorPanel}" ToolTip="GSX (!) GPU Service State">
                     <Label>GPU</Label>

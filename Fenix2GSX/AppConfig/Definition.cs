@@ -8,7 +8,6 @@ namespace Fenix2GSX.AppConfig
         public override int BuildConfigVersion { get; } = 26;
         public override string ProductName => "Fenix2GSX";
         public override string ProductExePath => Path.Join(Path.Join(ProductPath, "bin"), ProductExe);
-        public override bool ProductVersionCheckDev => true;
         public override bool RequireSimRunning => false;
         public override bool WaitForSim => true;
         public override bool SingleInstance => true;

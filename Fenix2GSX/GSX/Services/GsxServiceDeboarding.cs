@@ -25,9 +25,9 @@ namespace Fenix2GSX.GSX.Services
         protected override GsxMenuSequence InitCallSequence()
         {
             var sequence = new GsxMenuSequence();
-            sequence.Commands.Add(new(1, GsxConstants.MenuGate, true));
-            sequence.Commands.Add(GsxMenuCommand.CreateOperator());
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
+            sequence.Commands.Add(GsxMenuCommand.Open());
+            sequence.Commands.Add(GsxMenuCommand.Select(1, GsxConstants.MenuGate));
+            sequence.Commands.Add(GsxMenuCommand.Operator());
 
             return sequence;
         }
@@ -35,7 +35,8 @@ namespace Fenix2GSX.GSX.Services
         protected override GsxMenuSequence InitCancelSequence()
         {
             var sequence = new GsxMenuSequence();
-            sequence.Commands.Add(new(1, GsxConstants.MenuGate, true) { WaitReady = true });
+            sequence.Commands.Add(GsxMenuCommand.Open());
+            sequence.Commands.Add(GsxMenuCommand.Select(1, GsxConstants.MenuGate));
 
             return sequence;
         }
@@ -43,13 +44,13 @@ namespace Fenix2GSX.GSX.Services
         protected override void InitSubscriptions()
         {
             SubDeboardService = SimStore.AddVariable(GsxConstants.VarServiceDeboarding);
-            SubDeboardService.OnReceived += OnStateChange;
+            SubDeboardService?.OnReceived += OnStateChange;
 
             SubPaxTarget = SimStore.AddVariable(GsxConstants.VarPaxTarget);
             SubPaxTotal = SimStore.AddVariable(GsxConstants.VarPaxTotalDeboard);
-            SubPaxTotal.OnReceived += NotifyPaxChange;
+            SubPaxTotal?.OnReceived += NotifyPaxChange;
             SubCargoPercent = SimStore.AddVariable(GsxConstants.VarCargoPercentDeboard);
-            SubCargoPercent.OnReceived += NotifyCargoChange;
+            SubCargoPercent?.OnReceived += NotifyCargoChange;
 
             SimStore.AddVariable(GsxConstants.VarNoCrewDeboard);
             SimStore.AddVariable(GsxConstants.VarNoPilotsDeboard);
@@ -62,9 +63,9 @@ namespace Fenix2GSX.GSX.Services
 
         public override void FreeResources()
         {
-            SubDeboardService.OnReceived -= OnStateChange;
-            SubPaxTotal.OnReceived -= NotifyPaxChange;
-            SubCargoPercent.OnReceived -= NotifyCargoChange;
+            SubDeboardService?.OnReceived -= OnStateChange;
+            SubPaxTotal?.OnReceived -= NotifyPaxChange;
+            SubCargoPercent?.OnReceived -= NotifyCargoChange;
 
             SimStore.Remove(GsxConstants.VarServiceDeboarding);
             SimStore.Remove(GsxConstants.VarPaxTarget);
@@ -87,57 +88,60 @@ namespace Fenix2GSX.GSX.Services
             return await SubPaxTarget.WriteValue(num);
         }
 
-        protected virtual void NotifyPaxChange(ISimResourceSubscription sub, object data)
+        protected virtual Task NotifyPaxChange(ISimResourceSubscription sub, object data)
         {
             if (!IsFenixAircraft)
-                return;
+                return Task.CompletedTask;
 
             if (State != GsxServiceState.Active)
             {
                 Logger.Debug($"Ignoring Pax Change - Service not active");
-                return;
+                return Task.CompletedTask;
             }
 
             var pax = sub.GetNumber();
             if (pax < 0 || pax > PaxTarget)
             {
                 Logger.Warning($"Ignoring Pax Change - Value received: {pax}");
-                return;
+                return Task.CompletedTask;
             }
 
-            TaskTools.RunLogged(() => OnPaxChange?.Invoke(this), Controller.Token);
+            TaskTools.RunPool(() => OnPaxChange?.Invoke(this), Controller.Token);
+            return Task.CompletedTask;
         }
 
-        protected virtual void NotifyCargoChange(ISimResourceSubscription sub, object data)
+        protected virtual Task NotifyCargoChange(ISimResourceSubscription sub, object data)
         {
             if (!IsFenixAircraft)
-                return;
+                return Task.CompletedTask;
 
             if (State != GsxServiceState.Active)
             {
                 Logger.Debug($"Ignoring Cargo Change - Service not active");
-                return;
+                return Task.CompletedTask;
             }
 
             var cargo = sub.GetNumber();
             if (cargo < 0 || cargo > 100)
             {
                 Logger.Warning($"Ignoring Cargo Change - Value received: {cargo}");
-                return;
+                return Task.CompletedTask;
             }
 
-            TaskTools.RunLogged(() => OnCargoChange?.Invoke(this), Controller.Token);
+            TaskTools.RunPool(() => OnCargoChange?.Invoke(this), Controller.Token);
 
             if (cargo == 100 && !Profile.SkipCrewQuestion)
             {
                 Logger.Debug($"Supressing Menu Refresh");
                 Controller.Menu.SuppressMenuRefresh = true;
             }
+
+            return Task.CompletedTask;
         }
 
-        protected override void OnStateChange(ISimResourceSubscription sub, object data)
+        protected override async Task OnStateChange(ISimResourceSubscription sub, object data)
         {
-            base.OnStateChange(sub, data);
+            await base.OnStateChange(sub, data);
             if (State == GsxServiceState.Completed || State == GsxServiceState.Callable)
                 Controller.Menu.SuppressMenuRefresh = false;
         }

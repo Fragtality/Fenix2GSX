@@ -45,8 +45,8 @@
                 </Label>
 
                 <CheckBox Grid.Column="0" Grid.Row="1" IsChecked="{Binding PlaceFenixStairsWalkaround}" Margin="6,6,6,6" Style="{StaticResource CheckBoxSettingItem}"
-                          ToolTip="Remove all Ground Equipment (including Jetway/Stairs) as soon as the Beacon is on, Brake is set and Power is disconnected.">
-                    <TextBlock>Place Fenix forward <Underline>Stairs</Underline> when Walkaround is <Underline>not skipped</Underline></TextBlock>
+                          ToolTip="When the Walkaround Mode is not skipped by the App, it will call either GSX or Fenix Stairs to enter the Plane (including Reposition when enabled).&#x0a;Fenix Stairs will be used on Jetway Stands (Sim Limitation) and GSX Stairs on non-Jetway Stands.&#x0a;Fenix Stairs will be removed after the Plan is entered and GSX (Rear) Stairs are called additionally when available.&#x0a;NOTE: Manual Operator Selection is overriden during these Calls!">
+                    <TextBlock>Connect <Underline>Stairs</Underline> in <Underline>Walkaround Mode</Underline> (not skipped)</TextBlock>
                 </CheckBox>
 
                 <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding ClearGroundEquipOnBeacon}" Margin="6,6,6,6" Style="{StaticResource CheckBoxSettingItem}"

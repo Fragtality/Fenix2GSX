@@ -7,6 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fenix2GSX.Audio
 {
@@ -152,19 +153,19 @@ namespace Fenix2GSX.Audio
             SetSimSubscription(AcpSide.FO, SubMute, AudioController.VarsVolumeLatchSwitchesFo, OnMuteChange);
         }
 
-        protected virtual void SetSimSubscription(AcpSide side, ConcurrentDictionary<AcpSide, ISimResourceSubscription> dict, ConcurrentDictionary<AudioChannel, string> varDict, Action<ISimResourceSubscription,object> action)
+        protected virtual void SetSimSubscription(AcpSide side, ConcurrentDictionary<AcpSide, ISimResourceSubscription> dict, ConcurrentDictionary<AudioChannel, string> varDict, Func<ISimResourceSubscription, object, Task> action)
         {
             var sub = Controller.SimStore[varDict[Channel]];
-            sub.OnReceived += action;
+            sub?.OnReceived += action;
             dict.Add(side, sub);
         }
 
         public virtual void ClearSimSubscriptions()
         {
             foreach (var sub in SubVolume)
-                try { sub.Value.OnReceived -= OnVolumeChange; } catch { }
+                try { sub.Value?.OnReceived -= OnVolumeChange; } catch { }
             foreach (var sub in SubMute)
-                try { sub.Value.OnReceived -= OnMuteChange; } catch { }
+                try { sub.Value?.OnReceived -= OnMuteChange; } catch { }
 
             SubVolume.Clear();
             SubMute.Clear();
@@ -178,18 +179,18 @@ namespace Fenix2GSX.Audio
                 OnMuteChange(subMute, null);
         }
 
-        protected virtual void OnVolumeChange(ISimResourceSubscription sub, object data)
+        protected virtual Task OnVolumeChange(ISimResourceSubscription sub, object data)
         {
             if (!IsActive || SessionControls.Count == 0 || !SubVolume.ContainsKey(Controller.Config.AudioAcpSide))
-                return;
+                return Task.CompletedTask;
             if (sub.Name != SubVolume[Controller.Config.AudioAcpSide].Name)
-                return;
+                return Task.CompletedTask;
 
             float value = sub.GetValue<float>();
             if (value < 0 || value > 1.0f)
             {
                 Logger.Debug($"Invalid Value Range for '{sub.Name}': {value}");
-                return;
+                return Task.CompletedTask;
             }
 
             try
@@ -212,20 +213,22 @@ namespace Fenix2GSX.Audio
             {
                 Logger.LogException(ex);
             }
+
+            return Task.CompletedTask;
         }
 
-        protected virtual void OnMuteChange(ISimResourceSubscription sub, object data)
+        protected virtual Task OnMuteChange(ISimResourceSubscription sub, object data)
         {
             if (!IsActive || SessionControls.Count == 0 || !UseLatch || !SubMute.ContainsKey(Controller.Config.AudioAcpSide))
-                return;
+                return Task.CompletedTask;
             if (sub.Name != SubMute[Controller.Config.AudioAcpSide].Name)
-                return;
+                return Task.CompletedTask;
 
             float value = sub.GetValue<float>();
             if (value < 0)
             {
                 Logger.Debug($"Invalid Value Range for '{sub.Name}': {value}");
-                return;
+                return Task.CompletedTask;
             }
             bool mute = value == 0.0f;
 
@@ -249,6 +252,8 @@ namespace Fenix2GSX.Audio
             {
                 Logger.LogException(ex);
             }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -66,7 +66,6 @@ namespace Fenix2GSX.GSX.Services
         public abstract GsxServiceType Type { get; }
         public virtual GsxController Controller { get; }
         protected virtual SimStore SimStore => Controller.SimStore;
-        protected virtual ReceiverStore ReceiverStore => Controller.ReceiverStore;
         protected virtual AircraftProfile Profile => Controller.AircraftProfile;
         protected virtual bool IsFenixAircraft => AppService.Instance.IsFenixAircraft;
 
@@ -128,10 +127,10 @@ namespace Fenix2GSX.GSX.Services
 
         }
 
-        protected virtual void OnStateChange(ISimResourceSubscription sub, object data)
+        protected virtual Task OnStateChange(ISimResourceSubscription sub, object data)
         {
             if (!IsFenixAircraft)
-                return;
+                return Task.CompletedTask;
 
             if (sub.GetNumber() == 4)
             {
@@ -151,6 +150,8 @@ namespace Fenix2GSX.GSX.Services
                 NotifyCompleted();
             }
             NotifyStateChange();
+
+            return Task.CompletedTask;
         }
 
         public virtual void ResetState(bool resetVariable = false)
@@ -231,11 +232,11 @@ namespace Fenix2GSX.GSX.Services
                 else
                     option = 1;
 
-            var sequence = new GsxMenuSequence();
-            sequence.Commands.AddRange(CancelSequence.Commands);
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
-            sequence.Commands.Add(new(option, GsxConstants.MenuCancelService) { WaitReady = true });
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
+            var sequence = new GsxMenuSequence(CancelSequence.Commands);
+            sequence.Commands.Add(GsxMenuCommand.Wait());
+            sequence.Commands.Add(GsxMenuCommand.Select(option, GsxConstants.MenuCancelService));
+            sequence.Commands.Add(GsxMenuCommand.Wait());
+            sequence.Commands.Add(GsxMenuCommand.Open());
 
             Logger.Debug($"Executing Cancel Sequence for Service {Type}");
             await Controller.Menu.RunSequence(sequence);
@@ -253,7 +254,7 @@ namespace Fenix2GSX.GSX.Services
             }
 
             Logger.Debug($"Notify State Change for {Type}: {State} (Var: {(int)ReadState()})");
-            TaskTools.RunLogged(() => OnStateChanged?.Invoke(this), Controller.Token);
+            TaskTools.RunPool(() => OnStateChanged?.Invoke(this), Controller.Token);
         }
 
         protected virtual void NotifyActive()
@@ -262,7 +263,7 @@ namespace Fenix2GSX.GSX.Services
                 return;
 
             Logger.Debug($"Notify Active for {Type}: {State}");
-            TaskTools.RunLogged(() => OnActive?.Invoke(this), Controller.Token);
+            TaskTools.RunPool(() => OnActive?.Invoke(this), Controller.Token);
         }
 
         protected virtual void NotifyCompleted()
@@ -271,7 +272,7 @@ namespace Fenix2GSX.GSX.Services
                 return;
 
             Logger.Debug($"Notify Completed for {Type}: {State}");
-            TaskTools.RunLogged(() => OnCompleted?.Invoke(this), Controller.Token);
+            TaskTools.RunPool(() => OnCompleted?.Invoke(this), Controller.Token);
         }
 
         public virtual void ForceComplete()

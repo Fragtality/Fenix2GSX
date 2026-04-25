@@ -5,6 +5,7 @@
                     xmlns:conv="clr-namespace:CFIT.AppFramework.UI.ValueConverter;assembly=CFIT.AppFramework">
     <src:TimeSpanConverter x:Key="TimeSpanConverter"/>
 
+    <conv:SafeEnumConverter x:Key="SafeEnumConverter"/>
     <conv:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
 
     <Style TargetType="{x:Type ContentPresenter}">

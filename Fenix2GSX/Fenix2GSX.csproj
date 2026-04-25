@@ -13,7 +13,7 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <Version>0.6.0</Version>
+    <Version>0.6.1</Version>
     <Title>$(AssemblyName)</Title>
     <Authors>Fragtality</Authors>
     <Company>Fragtality</Company>
@@ -45,10 +45,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="CFIT.AppFramework" Version="2026.71.19.406" />
-    <PackageReference Include="CFIT.AppLogger" Version="2026.71.18.3281" />
-    <PackageReference Include="CFIT.AppTools" Version="2026.71.18.3292" />
-    <PackageReference Include="CFIT.SimConnectLib" Version="2026.71.19.393" />
+    <PackageReference Include="CFIT.AppFramework" Version="2026.115.17.2557" />
+    <PackageReference Include="CFIT.AppLogger" Version="2026.111.20.1067" />
+    <PackageReference Include="CFIT.AppTools" Version="2026.111.20.1078" />
+    <PackageReference Include="CFIT.SimConnectLib" Version="2026.111.20.1101" />
     <PackageReference Include="CoreAudio" Version="1.40.0" />
   </ItemGroup>
 

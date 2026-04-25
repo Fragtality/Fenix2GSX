@@ -12,12 +12,10 @@ namespace Fenix2GSX.GSX.Services
         protected override GsxMenuSequence InitCallSequence()
         {
             var sequence = new GsxMenuSequence();
-            sequence.Commands.Add(new(8, GsxConstants.MenuGate, true));
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
-            sequence.Commands.Add(new(2, GsxConstants.MenuAdditionalServices) { WaitReady = true });
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
-            sequence.Commands.Add(GsxMenuCommand.CreateOperator());
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
+            sequence.Commands.Add(GsxMenuCommand.Open());
+            sequence.Commands.Add(GsxMenuCommand.Select(8, GsxConstants.MenuGate));
+            sequence.Commands.Add(GsxMenuCommand.Select(2, GsxConstants.MenuAdditionalServices));
+            sequence.Commands.Add(GsxMenuCommand.Operator());
 
             return sequence;
         }
@@ -25,9 +23,11 @@ namespace Fenix2GSX.GSX.Services
         protected override GsxMenuSequence InitCancelSequence()
         {
             var sequence = new GsxMenuSequence();
-            sequence.Commands.Add(new(8, GsxConstants.MenuGate, true));
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
-            sequence.Commands.Add(new(2, GsxConstants.MenuAdditionalServices) { WaitReady = true });
+            sequence.Commands.Add(GsxMenuCommand.Open());
+            sequence.Commands.Add(GsxMenuCommand.Select(8, GsxConstants.MenuGate));
+            sequence.Commands.Add(GsxMenuCommand.Select(2, GsxConstants.MenuAdditionalServices));
+            sequence.Commands.Add(GsxMenuCommand.Wait());
+            sequence.Commands.Add(GsxMenuCommand.Open());
 
             return sequence;
         }
@@ -35,7 +35,7 @@ namespace Fenix2GSX.GSX.Services
         protected override void InitSubscriptions()
         {
             SubDeiceService = SimStore.AddVariable(GsxConstants.VarServiceDeice);
-            SubDeiceService.OnReceived += OnStateChange;
+            SubDeiceService?.OnReceived += OnStateChange;
         }
 
         protected override void DoReset()
@@ -45,7 +45,7 @@ namespace Fenix2GSX.GSX.Services
 
         public override void FreeResources()
         {
-            SubDeiceService.OnReceived -= OnStateChange;
+            SubDeiceService?.OnReceived -= OnStateChange;
 
             SimStore.Remove(GsxConstants.VarServiceDeice);
         }

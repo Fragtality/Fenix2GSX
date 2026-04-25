@@ -15,6 +15,9 @@ namespace Fenix2GSX.GSX.Services
         public virtual ISimResourceSubscription SubRefuelHose { get; protected set; }
         protected override ISimResourceSubscription SubStateVar => SubRefuelService;
         public virtual bool IsRefueling => IsActive && SubRefuelHose.GetNumber() == 1;
+        public virtual ISimResourceSubscription SubRefuelUnderground { get; protected set; }
+        public virtual bool IsHoseConnected => IsActive && SubRefuelHose.GetNumber() == 1;
+        public virtual bool IsUnderground => SubRefuelUnderground?.GetNumber() == 1;
         public virtual bool WasHoseConnected { get; protected set; } = false;
         protected virtual bool CompleteNotified { get; set; } = false;
 
@@ -23,9 +26,9 @@ namespace Fenix2GSX.GSX.Services
         protected override GsxMenuSequence InitCallSequence()
         {
             var sequence = new GsxMenuSequence();
-            sequence.Commands.Add(new(3, GsxConstants.MenuGate, true));
-            sequence.Commands.Add(GsxMenuCommand.CreateOperator());
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
+            sequence.Commands.Add(GsxMenuCommand.Open());
+            sequence.Commands.Add(GsxMenuCommand.Select(3, GsxConstants.MenuGate));
+            sequence.Commands.Add(GsxMenuCommand.Operator());
 
             return sequence;
         }
@@ -33,7 +36,8 @@ namespace Fenix2GSX.GSX.Services
         protected override GsxMenuSequence InitCancelSequence()
         {
             var sequence = new GsxMenuSequence();
-            sequence.Commands.Add(new(3, GsxConstants.MenuGate, true) { WaitReady = true });
+            sequence.Commands.Add(GsxMenuCommand.Open());
+            sequence.Commands.Add(GsxMenuCommand.Select(3, GsxConstants.MenuGate));
 
             return sequence;
         }
@@ -42,9 +46,10 @@ namespace Fenix2GSX.GSX.Services
         {
             SubRefuelService = SimStore.AddVariable(GsxConstants.VarServiceRefuel);
             SubRefuelHose = SimStore.AddVariable(GsxConstants.VarServiceRefuelHose);
+            SubRefuelUnderground = SimStore.AddVariable(GsxConstants.VarServiceRefuelUnderground);
 
-            SubRefuelService.OnReceived += OnStateChange;
-            SubRefuelHose.OnReceived += OnHoseChange;
+            SubRefuelService?.OnReceived += OnStateChange;
+            SubRefuelHose?.OnReceived += OnHoseChange;
         }
 
         protected override bool EvaluateComplete(ISimResourceSubscription sub)
@@ -71,10 +76,10 @@ namespace Fenix2GSX.GSX.Services
             CompleteNotified = true;
         }
 
-        protected virtual void OnHoseChange(ISimResourceSubscription sub, object data)
+        protected virtual Task OnHoseChange(ISimResourceSubscription sub, object data)
         {
             if (!IsFenixAircraft)
-                return;
+                return Task.CompletedTask;
 
             if (sub.GetNumber() == 1 && State != GsxServiceState.Unknown && State != GsxServiceState.Completed)
             {
@@ -83,14 +88,16 @@ namespace Fenix2GSX.GSX.Services
                 {
                     WasHoseConnected = true;
                     ActivationTime = DateTime.Now;
-                    TaskTools.RunLogged(() => OnHoseConnection?.Invoke(true), Controller.Token);
+                    TaskTools.RunPool(() => OnHoseConnection?.Invoke(true), Controller.Token);
                 }
             }
             else if (sub.GetNumber() == 0 && State != GsxServiceState.Unknown && WasActive)
             {
                 Logger.Information($"Fuel Hose disconnected");
-                TaskTools.RunLogged(() => OnHoseConnection?.Invoke(false), Controller.Token);
+                TaskTools.RunPool(() => OnHoseConnection?.Invoke(false), Controller.Token);
             }
+
+            return Task.CompletedTask;
         }
 
         protected override void DoReset()
@@ -101,11 +108,12 @@ namespace Fenix2GSX.GSX.Services
 
         public override void FreeResources()
         {
-            SubRefuelService.OnReceived -= OnStateChange;
-            SubRefuelHose.OnReceived -= OnHoseChange;
+            SubRefuelService?.OnReceived -= OnStateChange;
+            SubRefuelHose?.OnReceived -= OnHoseChange;
 
             SimStore.Remove(GsxConstants.VarServiceRefuel);
             SimStore.Remove(GsxConstants.VarServiceRefuelHose);
+            SimStore.Remove(GsxConstants.VarServiceRefuelUnderground);
         }
 
         protected override GsxServiceState GetState()

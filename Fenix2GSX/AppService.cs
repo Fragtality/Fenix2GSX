@@ -26,7 +26,7 @@ namespace Fenix2GSX
         public virtual CancellationToken RequestToken { get; protected set; }
         public virtual GsxController GsxService { get; protected set; }
         public virtual AudioController AudioService { get; protected set; }
-        public virtual AppResetRequest ResetRequested {  get; set; } = AppResetRequest.None;
+        public virtual AppResetRequest ResetRequested { get; set; } = AppResetRequest.None;
         public virtual bool IsSessionInitializing { get; protected set; } = false;
         public virtual bool IsSessionInitialized { get; protected set; } = false;
         public virtual bool SessionStopRequested { get; protected set; } = false;
@@ -49,16 +49,17 @@ namespace Fenix2GSX
             AudioService = new AudioController(Config);
         }
 
-        protected override Task InitReceivers()
+        protected override Task DoInit()
         {
-            base.InitReceivers();
-            ReceiverStore.Add<MsgSessionReady>().OnMessage += OnSessionReady;
-            ReceiverStore.Add<MsgSessionEnded>().OnMessage += OnSessionEnded;
+            MessageService.Subscribe<MsgSessionReady>(OnSessionReady);
+            MessageService.Subscribe<MsgSessionEnded>(OnSessionEnded);
             return Task.CompletedTask;
         }
 
-        protected virtual void OnSessionEnded(MsgSessionEnded obj)
+        protected virtual Task OnSessionEnded()
         {
+            if (SessionStopRequested && !IsSessionInitialized)
+                return Task.CompletedTask;
             SessionStopRequested = true;
 
             try
@@ -86,14 +87,16 @@ namespace Fenix2GSX
             }
 
             IsSessionInitialized = false;
+            Logger.Debug($"Cleanup done");
+            return Task.CompletedTask;
         }
 
-        protected virtual void OnSessionReady(MsgSessionReady obj)
+        protected virtual Task OnSessionReady()
         {
             if (!IsFenixAircraft || IsSessionInitializing || IsSessionInitialized)
-                return;
+                return Task.CompletedTask;
             IsSessionInitializing = true;
-            SessionStopRequested = false;            
+            SessionStopRequested = false;
 
             try
             {
@@ -119,6 +122,7 @@ namespace Fenix2GSX
 
             IsSessionInitialized = true;
             IsSessionInitializing = false;
+            return Task.CompletedTask;
         }
 
         public virtual async Task RestartGsx()
@@ -157,21 +161,20 @@ namespace Fenix2GSX
             if (ResetRequested > AppResetRequest.None)
             {
                 Logger.Debug($"Reset was requested: {ResetRequested}");
-                OnSessionEnded(null);
+                await OnSessionEnded();
                 if (ResetRequested == AppResetRequest.App)
                     await Task.Delay(2500, Token);
                 else
                     await RestartGsx();
-                OnSessionReady(null);
+                await OnSessionReady();
                 ResetRequested = AppResetRequest.None;
             }
         }
 
-        protected override Task FreeResources()
+        protected override Task DoCleanup()
         {
-            base.FreeResources();
-            ReceiverStore.Remove<MsgSessionReady>().OnMessage -= OnSessionReady;
-            ReceiverStore.Remove<MsgSessionEnded>().OnMessage -= OnSessionEnded;
+            MessageService.Unsubscribe<MsgSessionReady>(OnSessionReady);
+            MessageService.Unsubscribe<MsgSessionEnded>(OnSessionEnded);
             return Task.CompletedTask;
         }
     }

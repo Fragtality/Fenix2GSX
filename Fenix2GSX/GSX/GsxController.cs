@@ -1,5 +1,4 @@
-﻿using CFIT.AppFramework.MessageService;
-using CFIT.AppFramework.Services;
+﻿using CFIT.AppFramework.Services;
 using CFIT.AppLogger;
 using CFIT.AppTools;
 using CFIT.SimConnectLib;
@@ -37,9 +36,27 @@ namespace Fenix2GSX.GSX
         public event Action<AircraftProfile> ProfileChanged;
         public virtual IAircraftProfile IAircraftProfile => AircraftProfile;
         public virtual GsxAutomationController AutomationController { get; }
-        public virtual MessageReceiver<MsgGsxCouatlStarted> MsgCouatlStarted { get; protected set; }
-        public virtual MessageReceiver<MsgGsxCouatlStopped> MsgCouatlStopped { get; protected set; }
         public virtual ConcurrentDictionary<GsxServiceType, GsxService> GsxServices { get; } = [];
+        public virtual GsxServiceReposition ServiceReposition => GsxServices[GsxServiceType.Reposition] as GsxServiceReposition;
+        public virtual GsxServiceRefuel ServiceRefuel => GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel;
+        public virtual GsxServiceCatering ServiceCatering => GsxServices[GsxServiceType.Catering] as GsxServiceCatering;
+        public virtual GsxServiceJetway ServiceJetway => GsxServices[GsxServiceType.Jetway] as GsxServiceJetway;
+        public virtual GsxServiceStairs ServiceStairs => GsxServices[GsxServiceType.Stairs] as GsxServiceStairs;
+        public virtual GsxServicePushback ServicePushBack => GsxServices[GsxServiceType.Pushback] as GsxServicePushback;
+        public virtual GsxServiceBoarding ServiceBoard => GsxServices[GsxServiceType.Boarding] as GsxServiceBoarding;
+        public virtual GsxServiceDeboarding ServiceDeboard => GsxServices[GsxServiceType.Deboarding] as GsxServiceDeboarding;
+        public virtual GsxServiceDeice ServiceDeice => GsxServices[GsxServiceType.Deice] as GsxServiceDeice;
+        public virtual GsxServiceGpu ServiceGpu => GsxServices[GsxServiceType.GPU] as GsxServiceGpu;
+        public int JetwayState => (int)(ServiceJetway?.State ?? 0);
+        public int JetwayOperation => (int)(ServiceJetway?.SubOperating?.GetNumber() ?? 0);
+        public int StairsState => (int)(ServiceStairs?.State ?? 0);
+        public int StairsOperation => (int)(ServiceStairs?.SubOperating?.GetNumber() ?? 0);
+        public virtual bool IsGateConnected => ServiceJetway.IsConnected || ServiceStairs.IsConnected;
+        public virtual bool HasGateJetway => ServiceJetway.State != GsxServiceState.NotAvailable;
+        public virtual bool HasGateStair => ServiceStairs.State != GsxServiceState.NotAvailable;
+        public virtual bool HasUndergroundRefuel => ServiceRefuel?.IsUnderground == true;
+        public virtual bool ServicesValid => ServiceStairs.State != GsxServiceState.Unknown || ServiceJetway.State != GsxServiceState.Unknown || !IsOnGround;
+        public virtual bool IsDeiceAvail => SubDeiceAvail?.GetNumber() != 0;
         public virtual bool IsRefuelActive => GsxServices[GsxServiceType.Refuel].State == GsxServiceState.Active;
         public virtual bool IsFuelHoseConnected => (GsxServices[GsxServiceType.Refuel] as GsxServiceRefuel)?.SubRefuelHose?.GetNumber() == 1;
 
@@ -71,7 +88,8 @@ namespace Fenix2GSX.GSX
 
         public virtual ISimResourceSubscription SubDoorToggleCargo1 { get; protected set; }
         public virtual ISimResourceSubscription SubDoorToggleCargo2 { get; protected set; }
-        
+        public virtual ISimResourceSubscription SubDeiceAvail { get; protected set; }
+
         public GsxController(Config config) : base(config)
         {
             PathInstallation = Sys.GetRegistryValue<string>(GsxConstants.RegPath, GsxConstants.RegValue, null) ?? GsxConstants.PathDefault;
@@ -113,15 +131,13 @@ namespace Fenix2GSX.GSX
             _ = new GsxServiceCleaning(this);
         }
 
-        protected override Task InitReceivers()
+        protected override Task DoInit()
         {
-            base.InitReceivers();
-
-            SimStore.AddVariable(GsxConstants.VarCouatlStarted).OnReceived += OnCouatlVariable;
-            SimStore.AddVariable(GsxConstants.VarCouatlSimbrief).OnReceived += OnCouatlSimbrief;
-            SimStore.AddVariable(GsxConstants.VarCouatlStartProg5).OnReceived += OnCouatlVariable;
-            SimStore.AddVariable(GsxConstants.VarCouatlStartProg6).OnReceived += OnCouatlVariable;
-            SimStore.AddVariable(GsxConstants.VarCouatlStartProg7).OnReceived += OnCouatlVariable;
+            SimStore.AddVariable(GsxConstants.VarCouatlStarted)?.OnReceived += OnCouatlVariable;
+            SimStore.AddVariable(GsxConstants.VarCouatlSimbrief)?.OnReceived += OnCouatlSimbrief;
+            SimStore.AddVariable(GsxConstants.VarCouatlStartProg5)?.OnReceived += OnCouatlVariable;
+            SimStore.AddVariable(GsxConstants.VarCouatlStartProg6)?.OnReceived += OnCouatlVariable;
+            SimStore.AddVariable(GsxConstants.VarCouatlStartProg7)?.OnReceived += OnCouatlVariable;
 
             SimStore.AddVariable("SIM ON GROUND", SimUnitType.Bool);
             SimStore.AddVariable("ABSOLUTE TIME", SimUnitType.Seconds);
@@ -130,15 +146,14 @@ namespace Fenix2GSX.GSX
                 SimStore.AddVariable("IS AIRCRAFT", SimUnitType.Number);
                 SimStore.AddVariable("IS AVATAR", SimUnitType.Number);
             }
-            MsgCouatlStarted = ReceiverStore.Add<MsgGsxCouatlStarted>();
-            MsgCouatlStopped = ReceiverStore.Add<MsgGsxCouatlStopped>();
 
             SubDoorToggleCargo1 = SimStore.AddVariable(GsxConstants.VarDoorToggleCargo1);
             SubDoorToggleCargo2 = SimStore.AddVariable(GsxConstants.VarDoorToggleCargo2);
+            SubDeiceAvail = SimStore.AddVariable(GsxConstants.VarDeiceAvail);
 
-            SimStore.AddVariable(GsxConstants.VarReadProgFuel).OnReceived += OnConfigChange;
-            SimStore.AddVariable(GsxConstants.VarReadCustFuel).OnReceived += OnConfigChange;
-            SimStore.AddVariable(GsxConstants.VarReadAutoMode).OnReceived += OnConfigChange;
+            SimStore.AddVariable(GsxConstants.VarReadProgFuel)?.OnReceived += OnConfigChange;
+            SimStore.AddVariable(GsxConstants.VarReadCustFuel)?.OnReceived += OnConfigChange;
+            SimStore.AddVariable(GsxConstants.VarReadAutoMode)?.OnReceived += OnConfigChange;
             SimStore.AddVariable(GsxConstants.VarSetProgFuel);
             SimStore.AddVariable(GsxConstants.VarSetCustFuel);
             SimStore.AddVariable(GsxConstants.VarSetAutoMode);
@@ -172,7 +187,7 @@ namespace Fenix2GSX.GSX
             return DateTime.UtcNow;
         }
 
-        protected virtual void OnCouatlSimbrief(ISimResourceSubscription sub, object data)
+        protected virtual Task OnCouatlSimbrief(ISimResourceSubscription sub, object data)
         {
             try
             {
@@ -194,9 +209,11 @@ namespace Fenix2GSX.GSX
                 CouatlInhibitStateChanges = DateTime.MinValue;
                 CouatlLastSimbrief = 0;
             }
+
+            return Task.CompletedTask;
         }
 
-        protected virtual void OnCouatlVariable(ISimResourceSubscription sub, object data)
+        protected virtual Task OnCouatlVariable(ISimResourceSubscription sub, object data)
         {
             while (_lock && !Token.IsCancellationRequested) { }
             _lock = true;
@@ -215,7 +232,7 @@ namespace Fenix2GSX.GSX
                         Logger.Debug($"Couatl Variables valid!");
                         CouatlVarsValid = true;
                         CouatlInvalidCount = 0;
-                        MessageService.Send(MessageGsx.Create<MsgGsxCouatlStarted>(this, true));
+                        MessageService.Send<MsgGsxCouatlStarted>();
                     }
                 }
                 else if (CouatlVarsValid)
@@ -223,7 +240,7 @@ namespace Fenix2GSX.GSX
                     if (CouatlInhibitStateChanges < DateTime.Now)
                     {
                         Logger.Debug($"Couatl Variables NOT valid! (started: {CouatlLastStarted} / progress: {CouatlLastProgress})");
-                        MessageService.Send(MessageGsx.Create<MsgGsxCouatlStopped>(this, true));
+                        MessageService.Send<MsgGsxCouatlStopped>();
                         CouatlVarsValid = false;
                         CouatlConfigSet = false;
                     }
@@ -240,7 +257,9 @@ namespace Fenix2GSX.GSX
             finally
             {
                 _lock = false;
-            }            
+            }
+
+            return Task.CompletedTask;
         }
 
         protected virtual void CheckGround()
@@ -305,39 +324,54 @@ namespace Fenix2GSX.GSX
 
                 Logger.Debug($"GsxService active (VarsReceived: {CouatlVarsReceived} | FirstReady: {Menu.FirstReadyReceived})");
                 IsActive = true;
-                Logger.Information($"GsxController active - waiting for Menu to be ready");
+                Logger.Information($"GsxController active - GSX Ready: {IsProcessRunning && CouatlVarsReceived && Menu.FirstReadyReceived}");
+
                 while (SimConnect.IsSessionRunning && IsExecutionAllowed && !RequestToken.IsCancellationRequested)
                 {
-                    if (Config.LogLevel == LogLevel.Verbose)
-                        Logger.Verbose($"Controller Tick - VarsReceived: {CouatlVarsReceived} | FirstReady: {Menu.FirstReadyReceived} | VarsValid: {CouatlVarsValid} | IsGsxRunning: {IsGsxRunning}");
                     CheckGround();
 
                     if (!CouatlVarsReceived && IsProcessRunning)
-                        OnCouatlVariable(null, null);
+                        await OnCouatlVariable(null, null);
 
-                    if (!SkippedWalkAround && !WalkAroundSkipActive)
+                    //Walkaround handling
+                    if (!SkippedWalkAround)
                     {
-                        if (AutomationController.IsOnGround && !AircraftInterface.EnginesRunning && AutomationController.State == AutomationState.SessionStart && !AircraftProfile.SkipWalkAround && AircraftProfile.PlaceFenixStairsWalkaround && !AircraftInterface.FenixInterface.StairsFwd)
-                            await AircraftInterface.FenixInterface.SetStairsFwd(true);
-                        else if (AutomationController.IsOnGround)
-                            _ = SkipWalkaround();
-                        else
-                            SkippedWalkAround = true;
+                        if (AircraftProfile.SkipWalkAround && !WalkAroundSkipActive)
+                        {
+                            if (AutomationController.IsOnGround)
+                                _ = SkipWalkaround();
+                            else
+                                SkippedWalkAround = true;
+                        }
+                        else if (!AircraftProfile.SkipWalkAround && AutomationController.IsOnGround && !AircraftInterface.EnginesRunning && AutomationController.State == AutomationState.SessionStart)
+                        {
+                            await HandleWalkaroundEquipment();
+                            if (!WalkAroundSkipActive)
+                                SkippedWalkAround = CheckSessionReady() && !IsWalkaround;
+                        }
                     }
 
-                    if (!Menu.FirstReadyReceived && IsProcessRunning && NextMenuStartupCheck <= DateTime.Now && AutomationController.IsOnGround)
+                    if (AutomationController.IsStarted && SkippedWalkAround && !WalkaroundNotified)
                     {
-                        if (CouatlVarsReceived && CouatlLastStarted == 1 && IsProcessRunning)
+                        if (AutomationController.IsOnGround && AutomationController.State < AutomationState.Departure)
+                            await TaskTools.RunPool(() => WalkaroundWasSkipped?.Invoke());
+                        WalkaroundNotified = true;
+                    }
+
+                    //GSX Startup handling
+                    if (!Menu.FirstReadyReceived && NextMenuStartupCheck <= DateTime.Now && AutomationController.IsOnGround)
+                    {
+                        if (CouatlVarsValid && CouatlLastStarted == 1 && IsProcessRunning && !Menu.IsOpeningMenu)
                         {
-                            Logger.Information($"Trying to open GSX Menu ...");
-                            await Menu.OpenHide();
-                            await Task.Delay(1000, RequestToken);
+                            Logger.Information($"Open GSX Menu on Startup ...");
+                            await Menu.Open();
                         }
 
-                        if (!CouatlVarsValid || !IsProcessRunning)
+                        if (!IsGsxRunning && NextMenuStartupCheck != DateTime.MinValue)
                         {
+                            if (CouatlInvalidCount > 0)
+                                Logger.Warning($"GSX Variable/Process State is still invalid #{CouatlInvalidCount}");
                             CouatlInvalidCount++;
-                            Logger.Warning($"GSX Menu is not starting #{CouatlInvalidCount}");
                             if (CouatlInvalidCount > Config.GsxMenuStartupMaxFail && Config.RestartGsxStartupFail)
                             {
                                 Logger.Information($"Restarting GSX ...");
@@ -356,14 +390,9 @@ namespace Fenix2GSX.GSX
                         CouatlConfigSet = true;
                     }
 
+                    //Start Automation
                     if (!AutomationController.IsStarted && CanAutomationRun && !AutomationController.RunFlag)
                         _ = AutomationController.Run();
-                    else if (AutomationController.IsStarted && SkippedWalkAround && !WalkaroundNotified)
-                    {
-                        if (AutomationController.IsOnGround && AutomationController.State < AutomationState.Departure)
-                            await TaskTools.RunLogged(async () => await WalkaroundWasSkipped?.Invoke());
-                        WalkaroundNotified = true;
-                    }
 
                     CheckProcess();
 
@@ -386,7 +415,7 @@ namespace Fenix2GSX.GSX
                 if (ex is not TaskCanceledException)
                     Logger.LogException(ex);
             }
-            
+
             Logger.Debug($"GsxService ended");
         }
 
@@ -402,7 +431,7 @@ namespace Fenix2GSX.GSX
             {
                 Logger.Debug($"Couatl Process not running!");
                 CouatlVarsValid = false;
-                MessageService.Send(MessageGsx.Create<MsgGsxCouatlStopped>(this, true));
+                MessageService.Send<MsgGsxCouatlStopped>();
             }
         }
 
@@ -433,36 +462,69 @@ namespace Fenix2GSX.GSX
         protected virtual async Task SkipWalkaround()
         {
             WalkAroundSkipActive = true;
-            Logger.Verbose($"ac: {SimStore["IS AIRCRAFT"]?.GetNumber()} | av: {SimStore["IS AVATAR"]?.GetNumber()}");
-            while (IsWalkaround && !SkippedWalkAround && AircraftProfile.SkipWalkAround && IsExecutionAllowed && !RequestToken.IsCancellationRequested)
+            try
             {
-                Logger.Information("Automation: Skip Walkaround");
-                string title = Tools.GetMsfsWindowTitle();
-                Sys.SetForegroundWindow(title);
-                await Task.Delay(Config.DelayForegroundChange, RequestToken);
-                string active = Sys.GetActiveWindowTitle();
-                if (active == title)
+                while (IsWalkaround && !SkippedWalkAround && AircraftProfile.SkipWalkAround && IsExecutionAllowed && !RequestToken.IsCancellationRequested)
                 {
-                    Logger.Debug($"Sending Keystrokes");
-                    Tools.SendWalkaroundKeystroke();
-                    await Task.Delay(Config.DelayAircraftModeChange, RequestToken);
-                }
-                else
-                    Logger.Debug($"Active Window did not match to '{title}'");
+                    Logger.Information("Automation: Skip Walkaround");
+                    string title = Tools.GetMsfsWindowTitle();
+                    Sys.SetForegroundWindow(title);
+                    await Task.Delay(Config.DelayForegroundChange, RequestToken);
+                    string active = Sys.GetActiveWindowTitle();
+                    if (active == title)
+                    {
+                        Logger.Debug($"Sending Keystrokes");
+                        Tools.SendWalkaroundKeystroke();
+                        await Task.Delay(Config.DelayAircraftModeChange, RequestToken);
+                    }
+                    else
+                        Logger.Debug($"Active Window did not match to '{title}'");
 
-                if (IsWalkaround)
-                    await Task.Delay(Config.TimerGsxCheck, Token);
-                
+                    if (IsWalkaround)
+                        await Task.Delay(Config.TimerGsxCheck, Token);
+
+                    SkippedWalkAround = CheckSessionReady() && !IsWalkaround;
+                }
                 SkippedWalkAround = CheckSessionReady() && !IsWalkaround;
             }
-            SkippedWalkAround = CheckSessionReady() && !IsWalkaround;
+            catch (Exception ex)
+            {
+                if (ex is not TaskCanceledException)
+                    Logger.LogException(ex);
+            }
             WalkAroundSkipActive = false;
         }
 
-        protected virtual void OnConfigChange(ISimResourceSubscription sub, object data)
+        protected virtual async Task HandleWalkaroundEquipment()
         {
-            if (!IsGsxRunning || !Menu.FirstReadyReceived || !AircraftInterface.IsLoaded)
-                return;
+            if (!SkippedWalkAround && AircraftProfile.PlaceFenixStairsWalkaround)
+            {
+                if (AircraftProfile.CallReposition && !ServiceReposition.IsCalled)
+                {
+                    Logger.Information("Automation: Reposition Aircraft on Gate");
+                    await ServiceReposition.Call();
+                }
+                else
+                {
+                    if (ServiceStairs.IsAvailable && !ServiceStairs.IsCalled)
+                    {
+                        Logger.Information("Automation: Call GSX Stairs on Walkaround");
+                        await ServiceStairs.Call();
+                        await AircraftInterface.FenixInterface.SetStairsFwd(false);
+                    }
+                    else if (HasGateJetway && !AircraftInterface.FenixInterface.StairsFwd)
+                    {
+                        Logger.Information($"Automation: Call Fenix Stairs on Walkaround");
+                        await AircraftInterface.FenixInterface.SetStairsFwd(true);
+                    }
+                }
+            }
+        }
+
+        protected virtual Task OnConfigChange(ISimResourceSubscription sub, object data)
+        {
+            if (!IsGsxRunning || !Menu.ReadyReceived || !AircraftInterface.IsLoaded)
+                return Task.CompletedTask;
 
             if (sub.Name == GsxConstants.VarReadProgFuel && sub.GetNumber() > 0)
             {
@@ -481,6 +543,8 @@ namespace Fenix2GSX.GSX
                 Logger.Debug($"Resetting GSX Setting {sub.Name}");
                 SimStore[GsxConstants.VarSetAutoMode].WriteValue(-1);
             }
+
+            return Task.CompletedTask;
         }
 
         protected virtual void SetCouatlConf()
@@ -494,11 +558,13 @@ namespace Fenix2GSX.GSX
         public virtual async Task ReloadSimbrief()
         {
             Logger.Information($"Refreshing GSX SimBrief/VDGS Data");
-            Logger.Debug("Simbrief Refresh - inhibiting Couatl State Changes for 7.5s");
-            CouatlInhibitStateChanges = DateTime.Now + TimeSpan.FromSeconds(7.5);
+            Logger.Debug($"Simbrief Refresh - inhibiting Couatl State Changes for {Config.MenuOpenTimeout / 1000}s");
+            CouatlInhibitStateChanges = DateTime.Now + TimeSpan.FromMilliseconds(Config.MenuOpenTimeout);
             var sequence = new GsxMenuSequence();
-            sequence.Commands.Add(new(15, "", true));
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
+            sequence.Commands.Add(GsxMenuCommand.Open());
+            sequence.Commands.Add(GsxMenuCommand.Select(15));
+            sequence.Commands.Add(GsxMenuCommand.Wait());
+            sequence.Commands.Add(GsxMenuCommand.Open());
 
             await Menu.RunSequence(sequence);
         }
@@ -510,12 +576,12 @@ namespace Fenix2GSX.GSX
 
         public override Task Stop()
         {
+            base.Stop();
+
             AutomationController.Stop();
             AircraftInterface.Reset();
             AircraftInterface.Stop();
             Menu.Reset();
-
-            base.Stop();
 
             foreach (var service in GsxServices)
                 service.Value.ResetState();
@@ -535,51 +601,53 @@ namespace Fenix2GSX.GSX
             FirstGroundCheck = true;
             IsAirStart = false;
             NextMenuStartupCheck = DateTime.MinValue;
+
             return Task.CompletedTask;
         }
 
-        protected override Task FreeResources()
+        protected override Task DoCleanup()
         {
-            base.FreeResources();
-
-            foreach (var service in GsxServices)
-                service.Value.FreeResources();
-
-            Menu.FreeResources();
-            AircraftInterface.FreeResources();
-            AutomationController.FreeResources();
-
-            SimStore[GsxConstants.VarReadProgFuel].OnReceived -= OnConfigChange;
-            SimStore[GsxConstants.VarReadCustFuel].OnReceived -= OnConfigChange;
-            SimStore[GsxConstants.VarReadAutoMode].OnReceived -= OnConfigChange;
-            SimStore.Remove(GsxConstants.VarReadProgFuel);
-            SimStore.Remove(GsxConstants.VarReadCustFuel);
-            SimStore.Remove(GsxConstants.VarReadAutoMode);
-            SimStore.Remove(GsxConstants.VarSetProgFuel);
-            SimStore.Remove(GsxConstants.VarSetCustFuel);
-            SimStore.Remove(GsxConstants.VarSetAutoMode);
-            SimStore.Remove(GsxConstants.VarDoorToggleCargo1);
-            SimStore.Remove(GsxConstants.VarDoorToggleCargo2);
-
-            SimStore[GsxConstants.VarCouatlStarted].OnReceived -= OnCouatlVariable;
-            SimStore[GsxConstants.VarCouatlSimbrief].OnReceived -= OnCouatlSimbrief;
-            SimStore[GsxConstants.VarCouatlStartProg5].OnReceived -= OnCouatlVariable;
-            SimStore[GsxConstants.VarCouatlStartProg6].OnReceived -= OnCouatlVariable;
-            SimStore[GsxConstants.VarCouatlStartProg7].OnReceived -= OnCouatlVariable;
-            SimStore.Remove(GsxConstants.VarCouatlStarted);
-            SimStore.Remove(GsxConstants.VarCouatlStartProg5);
-            SimStore.Remove(GsxConstants.VarCouatlStartProg6);
-            SimStore.Remove(GsxConstants.VarCouatlStartProg7);
-
-            SimStore.Remove("SIM ON GROUND");
-            SimStore.Remove("ABSOLUTE TIME");
-            if (IsMsfs2024)
+            try
             {
-                SimStore.Remove("IS AIRCRAFT");
-                SimStore.Remove("IS AVATAR");
+                foreach (var service in GsxServices)
+                    service.Value.FreeResources();
+
+                Menu.FreeResources();
+                AircraftInterface.FreeResources();
+                AutomationController.FreeResources();
+
+                SimStore[GsxConstants.VarReadProgFuel]?.OnReceived -= OnConfigChange;
+                SimStore[GsxConstants.VarReadCustFuel]?.OnReceived -= OnConfigChange;
+                SimStore[GsxConstants.VarReadAutoMode]?.OnReceived -= OnConfigChange;
+                SimStore.Remove(GsxConstants.VarDeiceAvail);
+                SimStore.Remove(GsxConstants.VarReadProgFuel);
+                SimStore.Remove(GsxConstants.VarReadCustFuel);
+                SimStore.Remove(GsxConstants.VarReadAutoMode);
+                SimStore.Remove(GsxConstants.VarSetProgFuel);
+                SimStore.Remove(GsxConstants.VarSetCustFuel);
+                SimStore.Remove(GsxConstants.VarSetAutoMode);
+                SimStore.Remove(GsxConstants.VarDoorToggleCargo1);
+                SimStore.Remove(GsxConstants.VarDoorToggleCargo2);
+
+                SimStore[GsxConstants.VarCouatlStarted]?.OnReceived -= OnCouatlVariable;
+                SimStore[GsxConstants.VarCouatlSimbrief]?.OnReceived -= OnCouatlSimbrief;
+                SimStore[GsxConstants.VarCouatlStartProg5]?.OnReceived -= OnCouatlVariable;
+                SimStore[GsxConstants.VarCouatlStartProg6]?.OnReceived -= OnCouatlVariable;
+                SimStore[GsxConstants.VarCouatlStartProg7]?.OnReceived -= OnCouatlVariable;
+                SimStore.Remove(GsxConstants.VarCouatlStarted);
+                SimStore.Remove(GsxConstants.VarCouatlStartProg5);
+                SimStore.Remove(GsxConstants.VarCouatlStartProg6);
+                SimStore.Remove(GsxConstants.VarCouatlStartProg7);
+
+                SimStore.Remove("SIM ON GROUND");
+                SimStore.Remove("ABSOLUTE TIME");
+                if (IsMsfs2024)
+                {
+                    SimStore.Remove("IS AIRCRAFT");
+                    SimStore.Remove("IS AVATAR");
+                }
             }
-            ReceiverStore.Remove<MsgGsxCouatlStarted>();
-            ReceiverStore.Remove<MsgGsxCouatlStopped>();
+            catch { }
 
             return Task.CompletedTask;
         }

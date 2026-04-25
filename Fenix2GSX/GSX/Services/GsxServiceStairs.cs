@@ -20,9 +20,9 @@ namespace Fenix2GSX.GSX.Services
         protected override GsxMenuSequence InitCallSequence()
         {
             var sequence = new GsxMenuSequence();
-            sequence.Commands.Add(new(7, GsxConstants.MenuGate, true));
-            sequence.Commands.Add(GsxMenuCommand.CreateOperator());
-            sequence.Commands.Add(GsxMenuCommand.CreateDummy());
+            sequence.Commands.Add(GsxMenuCommand.Open());
+            sequence.Commands.Add(GsxMenuCommand.Select(7, GsxConstants.MenuGate));
+            sequence.Commands.Add(GsxMenuCommand.Operator());
 
             return sequence;
         }
@@ -36,7 +36,7 @@ namespace Fenix2GSX.GSX.Services
         {
             SubService = SimStore.AddVariable(GsxConstants.VarServiceStairs);
             SubOperating = SimStore.AddVariable(GsxConstants.VarServiceStairsOperation);
-            SubService.OnReceived += OnStateChange;
+            SubService?.OnReceived += OnStateChange;
         }
 
         protected override void DoReset()
@@ -46,7 +46,7 @@ namespace Fenix2GSX.GSX.Services
 
         public override void FreeResources()
         {
-            SubService.OnReceived -= OnStateChange;
+            SubService?.OnReceived -= OnStateChange;
             SimStore.Remove(GsxConstants.VarServiceStairs);
             SimStore.Remove(GsxConstants.VarServiceStairsOperation);
         }
@@ -70,7 +70,7 @@ namespace Fenix2GSX.GSX.Services
             if (!IsConnected || !IsAvailable || IsOperating)
                 return;
 
-            await DoCall();
+            await base.DoCall();
         }
 
         public override async Task Cancel(int option = -1)
@@ -78,9 +78,9 @@ namespace Fenix2GSX.GSX.Services
             await Remove();
         }
 
-        protected override void OnStateChange(ISimResourceSubscription sub, object data)
+        protected override async Task OnStateChange(ISimResourceSubscription sub, object data)
         {
-            base.OnStateChange(sub, data);
+            await base.OnStateChange(sub, data);
             if (State == GsxServiceState.Callable && IsCalled)
             {
                 Logger.Debug($"Reset IsCalled for Stairs");

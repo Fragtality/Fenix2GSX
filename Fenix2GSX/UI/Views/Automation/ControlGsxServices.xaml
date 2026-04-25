@@ -36,6 +36,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding CallReposition}" Margin="6,8,6,6" Style="{StaticResource CheckBoxSettingItem}"
@@ -51,7 +52,7 @@
                 <CheckBox Grid.Column="0" Grid.Row="2" IsChecked="{Binding RunDepartureOnArrival}" Style="{StaticResource CheckBoxSettingItem}"
                           ToolTip="When the Deboarding Service becomes active, importing a new Flightplan (different OFP ID) will start the Departure Services.&#x0a;The Departure Services will be called as configured - as long as the next Service is not Boarding!&#x0a;The Deboard Service will not be considered as previous Service.">
                     <TextBlock>Start <Underline>Departure</Underline> Services while <Underline>Deboarding</Underline> is active</TextBlock>
-                </CheckBox>
+                </CheckBox>             
 
                 <StackPanel Grid.Column="0" Grid.Row="3" Style="{StaticResource SettingItemPanel}" Margin="6,4,6,6" ToolTip="When the INT/RAD Switch is used to call the next Service in the Queue, the last Service called is canceled.">
                     <TextBlock Style="{StaticResource TextBlockDefault}">
@@ -64,7 +65,13 @@
                     </ComboBox>
                 </StackPanel>
 
-                <Grid Grid.Column="0" Grid.Row="4">
+                <TextBlock Grid.Column="0" Grid.Row="4" Name="LabelQueueInUse" Style="{StaticResource TextBlockDefault}" Margin="8,8,0,0">
+                    <Italic>
+                        <Bold>Note:</Bold> Do not change the Service Queue while the Sim Session is active!
+                    </Italic>
+                </TextBlock>
+
+                <Grid Grid.Column="0" Grid.Row="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>

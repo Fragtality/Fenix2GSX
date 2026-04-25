@@ -101,10 +101,8 @@ namespace Fenix2GSX.Audio
             SessionManager = new(this);
         }
 
-        protected override Task InitReceivers()
+        protected override Task DoInit()
         {
-            base.InitReceivers();
-
             SubPlanePowered = SimStore.AddVariable(FenixConstants.VarPowered);
             foreach (var dict in AllVars)
                 foreach (var name in dict.Values)
@@ -113,10 +111,8 @@ namespace Fenix2GSX.Audio
             return Task.CompletedTask;
         }
 
-        protected override Task FreeResources()
+        protected override Task DoCleanup()
         {
-            base.FreeResources();
-
             SimStore.Remove(FenixConstants.VarPowered);
             foreach (var dict in AllVars)
                 foreach (var name in dict.Values)

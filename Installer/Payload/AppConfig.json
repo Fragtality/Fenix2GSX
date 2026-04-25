@@ -261,5 +261,8 @@
   "SizeEvents": 5000,
   "SizeInputEvents": 5000,
   "BinaryMsfs2020": "FlightSimulator",
-  "BinaryMsfs2024": "FlightSimulator2024"
+  "BinaryMsfs2024": "FlightSimulator2024",
+  "AppWindowRestorePosition": true,
+  "WindowPosTop": 0,
+  "WindowPosLeft": 0
 }

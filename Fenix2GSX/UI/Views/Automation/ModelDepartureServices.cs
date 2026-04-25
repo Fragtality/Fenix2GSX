@@ -9,7 +9,7 @@ namespace Fenix2GSX.UI.Views.Automation
     public partial class ModelDepartureServices(ModelAutomation modelAutomation) : ViewModelCollection<ServiceConfig, ServiceConfig>(modelAutomation.Source.DepartureServices.Values, (s) => s, (s) => s != null)
     {
         protected virtual ModelAutomation ModelAutomation { get; } = modelAutomation;
-        public override ICollection<ServiceConfig> Source => ModelAutomation.Source.DepartureServices.Values;
+        public override ICollection<ServiceConfig> Source => ModelAutomation?.Source?.DepartureServices?.Values ?? new List<ServiceConfig>() as ICollection<ServiceConfig>;
         public virtual SortedDictionary<int, ServiceConfig> DepartureServices => ModelAutomation.Source.DepartureServices;
 
         protected override void InitializeMemberBindings()

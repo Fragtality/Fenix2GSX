@@ -31,6 +31,7 @@
         public static string VarServiceStairsOperation { get; } = "L:FSDT_GSX_OPERATESTAIRS_STATE";
         public static string VarServiceRefuel { get; } = "L:FSDT_GSX_REFUELING_STATE";
         public static string VarServiceRefuelHose { get; } = "L:FSDT_GSX_FUELHOSE_CONNECTED";
+        public static string VarServiceRefuelUnderground { get; } = "L:FSDT_GSX_UNDERGROUND_REFUELING";
         public static string VarServiceCatering { get; } = "L:FSDT_GSX_CATERING_STATE";
         public static string VarServiceBoarding { get; } = "L:FSDT_GSX_BOARDING_STATE";
         public static string VarServiceDeboarding { get; } = "L:FSDT_GSX_DEBOARDING_STATE";
@@ -38,7 +39,8 @@
         public static string VarServiceGpu { get; } = "L:FSDT_GSX_GPU_STATE";
         public static string VarPusbackStatus { get; } = "L:FSDT_GSX_PUSHBACK_STATUS";
         public static string VarBypassPin { get; } = "L:FSDT_GSX_BYPASS_PIN";
-        public static string VarServiceDeice { get; } = "L:FSDT_GSX_DEICING_STATE";
+        public static string VarServiceDeice { get; } = "L:FSDT_GSX_DEICE_STATE";
+        public static string VarDeiceAvail { get; } = "L:FSDT_Deice_Available";
         public static string VarServiceLavatory { get; } = "L:FSDT_GSX_LAVATORY_STATE";
         public static string VarServiceWater { get; } = "L:FSDT_GSX_WATER_STATE";
         public static string VarServiceCleaning { get; } = "L:FSDT_GSX_CLEANING_STATE";
@@ -62,13 +64,13 @@
         public static string MenuAdditionalServices { get; } = "Activate Ground Services";
         public static string MenuOperatorHandling { get; } = "Select handling operator";
         public static string MenuOperatorCater { get; } = "Select catering operator";
-        public static string MenuTugAttach { get; } = "Attach Pushback Tug"; 
+        public static string MenuTugAttach { get; } = "Attach Pushback Tug";
         public static string MenuPushbackInterrupt { get; } = "Interrupt pushback";
         public static string MenuPushbackDirection { get; } = "Select pushback direction";
         public static string MenuPushbackChange { get; } = "Change Direction";
         public static string MenuDeiceOnPush { get; } = "Ice warning: do you request the de-icing treatment";
         public static string MenuPushbackConfirm { get; } = "Interrupt pushback";
-        public static string MenuPushbackRequest { get; } = "Do you want to request"; 
+        public static string MenuPushbackRequest { get; } = "Do you want to request";
         public static string MenuFollowMe { get; } = "Request FollowMe";
         public static string MenuBoardCrew { get; } = "Do you want to board crew";
         public static string MenuDeboardCrew { get; } = "Do you want to deboard crew";
