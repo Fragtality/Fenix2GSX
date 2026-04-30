@@ -1,3 +1,6 @@
+**DEPRECATION NOTICE**
+The App is now considered deprecated as it can be completely replaced by Any2GSX now.
+
 # Fenix2GSX
 <img src="img/icon.png" width="196"><br/>
 Full and proper GSX Integration and Automation for the Fenix A320 (all Variants, so including the 319/321)! <br/>
