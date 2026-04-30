@@ -1,5 +1,10 @@
-**DEPRECATION NOTICE**
-The App is now considered deprecated as it can be completely replaced by Any2GSX now.
+# DEPRECATION NOTICE
+
+<br/>
+
+**The App is now considered deprecated as it can be completely replaced by Any2GSX now.**
+
+<br/><br/>
 
 # Fenix2GSX
 <img src="img/icon.png" width="196"><br/>
